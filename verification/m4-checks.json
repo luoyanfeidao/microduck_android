@@ -80,7 +80,8 @@
   },
   "baseline_device_report": "device-M3-realtime-render-test.json",
   "previous_device_report": "device-M32-realtime-render-test.json",
-  "device_status": "M4 installed; browser connection and buttons user-confirmed; ADB remote running/pause evidence captured. Disconnect/lifecycle and LAN-on realtime budget remain pending.",
-  "device_status_updated_at": "2026-10-04T05:34:44.821572+08:00",
-  "device_evidence": "device-M4-lan-acceptance.json"
+  "device_status": "M4 browser/buttons, heartbeat-loss pause, and LAN-enabled 30s realtime budget passed. Foreground/background session lifecycle, long-duration thermal behavior, and 3D-off comparison remain pending.",
+  "device_status_updated_at": "2026-10-03T21:43:15.911Z",
+  "device_evidence": "device-M4-realtime-acceptance.json",
+  "previous_device_evidence": "device-M4-lan-acceptance.json"
 }

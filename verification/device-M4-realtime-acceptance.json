@@ -1,0 +1,171 @@
+{
+  "captured_at": "2026-10-03T21:40:39.918Z",
+  "scope": "Read-only ADB realtime archive and filtered app logs after user completed Wi-Fi disconnect and connected-browser 30s test",
+  "user_confirmation": "已补两项",
+  "source_commit": "38758026ab973183b46fe7b9a0f3656e86376fd8",
+  "baseline": "device-M32-realtime-render-test.json",
+  "candidate": "device-M4-realtime-render-test.json",
+  "heartbeat_timeout_log": {
+    "device_log_prefix": "10-04 05:37:40.108  9561  9725 I",
+    "state": {
+      "mujoco": "3.10.0",
+      "keyframe": "HOME",
+      "nbody": 16,
+      "nq": 21,
+      "nv": 20,
+      "nu": 14,
+      "nmesh": 38,
+      "timestep": 0.005,
+      "sim_time": 37.88,
+      "steps": 7576,
+      "trunk_z": 0.119453857801,
+      "trunk_x": 3.82290603686,
+      "trunk_y": -1.74098977867,
+      "root_x": 3.82290603686,
+      "root_y": -1.74098977867,
+      "root_z": 0.119453857801,
+      "root_quaternion": [
+        0.809890566703,
+        0.0146514412168,
+        -0.0162356687511,
+        -0.586173189677
+      ],
+      "contacts": 1,
+      "left_contacts": 0,
+      "right_contacts": 1,
+      "foot_geoms_resolved": true,
+      "finite": true,
+      "last_batch_ms": 7.684479,
+      "model": "scene.xml → robot_groundcontact.xml",
+      "stage": "M2: ONNX + XML position servo",
+      "policy_enabled": true,
+      "control_ms": 11.060677,
+      "app_stage": "M4",
+      "render_enabled": true,
+      "ready": true,
+      "running": false,
+      "lan_enabled": true,
+      "remote_control_active": false,
+      "remote_commands_applied": 17,
+      "remote_stop_reason": "heartbeat_timeout",
+      "report_pipeline": "separate thread; latest pending status; completed tests retained",
+      "report_coalesced_statuses": 0,
+      "visual_target_fps": 30,
+      "policy_tick_ms": 1.433437,
+      "physics_advance_ms": 9.62573,
+      "visual_snapshot_ms": 0.975313,
+      "control_with_visual_ms": 12.108073,
+      "render_backend": "OpenGL ES 3 custom mesh renderer",
+      "render_ready": true,
+      "gl_renderer": "Adreno (TM) 730",
+      "gl_version": "OpenGL ES 3.2 V@0615.98 (GIT@0c393b63cf, I94e2bd5684, 1746191168) (Date:05/02/25)",
+      "render_frames": 2437,
+      "render_fps": 30.455969164820615,
+      "render_cpu_ms": 3.92349,
+      "rendered_sim_time": 37.880001068115234,
+      "render_meshes": 38,
+      "render_unique_triangles": 431802,
+      "render_unique_vertices": 215317,
+      "render_mesh_bytes": 10349232,
+      "render_mesh_format": "indexed position-normal pairs / uint32",
+      "render_error": "",
+      "camera_follow": true,
+      "policy": "alpha_walking",
+      "onnx_runtime": "1.20.0",
+      "policy_smoke_max_abs_error": 6.705522537231445e-8,
+      "inference_ms": 1.289688,
+      "action_filter": "runtime defaults: head .5 / legs .7",
+      "velocity_command": [
+        0.30000001192092896,
+        0,
+        0
+      ],
+      "policy_sha256": "e36332d383997d51401897734cd3e79cf5038406feddb18b4d57ecfb141daa6c",
+      "device": "V2185A",
+      "android_api": 36,
+      "keyframe_requested": "HOME"
+    }
+  },
+  "configured_heartbeat_timeout_seconds": 3,
+  "measurements": {
+    "realtime_wall_seconds": {
+      "M3.2": 30.012871707,
+      "M4": 30.006296343
+    },
+    "realtime_sim_wall_ratio": {
+      "M3.2": 1.0002375078622796,
+      "M4": 1.000456692716867
+    },
+    "control_with_visual_p99_ms": {
+      "M3.2": 15.851406,
+      "M4": 15.185521
+    },
+    "control_with_visual_max_ms": {
+      "M3.2": 16.979895,
+      "M4": 18.207865
+    },
+    "worker_tick_p99_ms": {
+      "M3.2": 18.085261,
+      "M4": 16.61823
+    },
+    "worker_tick_max_ms": {
+      "M3.2": 19.922605,
+      "M4": 19.128542
+    },
+    "worker_over_20ms_ticks": {
+      "M3.2": 0,
+      "M4": 0
+    },
+    "control_over_20ms_ticks": {
+      "M3.2": 0,
+      "M4": 0
+    },
+    "late_ticks": {
+      "M3.2": 0,
+      "M4": 0
+    },
+    "test_render_fps": {
+      "M3.2": 30.020452850896532,
+      "M4": 29.993704978187218
+    },
+    "publish_mean_ms": {
+      "M3.2": 3.2538761465517236,
+      "M4": 2.0471183448275867
+    },
+    "publish_max_ms": {
+      "M3.2": 4.505156,
+      "M4": 9.651458
+    }
+  },
+  "worker_max_margin_ms": 0.8714580000000005,
+  "root_xyz_difference_m": {
+    "root_x": 0,
+    "root_y": 0,
+    "root_z": 0
+  },
+  "root_quaternion_exact_match": true,
+  "checks": {
+    "m4_report": true,
+    "lan_enabled": true,
+    "finite": true,
+    "foot_geoms_resolved": true,
+    "render_ready": true,
+    "render_error_empty": true,
+    "paced_ratio_near_one": true,
+    "worker_ticks_under_20ms": true,
+    "control_ticks_under_20ms": true,
+    "no_ticks_late_over_20ms": true,
+    "heartbeat_timeout_paused": true
+  },
+  "pending_device_checks": [
+    "Activity background closes listener; reopening creates a fresh session",
+    "Long-duration thermal behavior and 3D-off comparison"
+  ],
+  "limits": [
+    "Heartbeat-timeout log proves the pause reason; Wi-Fi-off-to-pause elapsed time was not instrumented",
+    "Connected-browser condition is user-reported; report confirms LAN enabled but does not count HTTP polling or heartbeats",
+    "One 30s foreground trial per version; temperature and CPU clock were not controlled, so no causal performance improvement claim",
+    "Worker timing excludes GPU completion/EGL swap and end-to-end command latency",
+    "Installed APK source hash is unavailable; source_commit identifies M4 implementation revision"
+  ]
+}

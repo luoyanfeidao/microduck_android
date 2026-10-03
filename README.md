@@ -6,7 +6,7 @@
 
 当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。M4增加局域网浏览器控制，另一台Android可发站立/步行/暂停/复位命令并读状态；操作和架构见 [NETWORK.md](NETWORK.md)。当前3D显示在仿真手机，视频链路后续接入。
 
-**M4浏览器连接及按钮已实测通过：** 用户已用Studio构建运行 `0.4-m4` / versionCode=6，并确认浏览器连接和按钮正常；ADB读取到15条远程控制命令、远程运行和网页暂停，数值及渲染正常。证据见 [verification/device-M4-lan-acceptance.json](verification/device-M4-lan-acceptance.json)。下一步补测控制端Wi-Fi断开3秒自动暂停、应用前后台关闭服务，以及保持网页连接时的“实时测试30s”；当前独立实时归档仍为M3.2。操作见 [NETWORK.md](NETWORK.md)。
+**M4浏览器控制、断连暂停及30秒实时测试已通过：** 用户用Studio构建运行 `0.4-m4` / versionCode=6，确认连接和按钮正常；后续断连日志明确记录 `heartbeat_timeout` 暂停。网页连接条件由用户确认，M4报告显示LAN开启、约30FPS、工作线程p99=16.618ms/max=19.129ms，超20ms周期和迟到周期均为0，最终位姿与M3.2相同。证据见 [verification/device-M4-realtime-acceptance.json](verification/device-M4-realtime-acceptance.json)。应用前后台会话变化、持续运行/温升及3D关闭对照仍待测；视频尚未接入。操作见 [NETWORK.md](NETWORK.md)。
 
 ## 在 Android Studio 编译
 
@@ -39,7 +39,7 @@ adb shell run-as com.microduck.sim cat files/last-realtime-test.json > /tmp/micr
 adb shell run-as com.microduck.sim cat files/last-realtime-test.json > /tmp/microduck-m32-3d-off.json
 ```
 
-保留默认动作过滤设置，关注数值有限、高度、最终位移，以及 `control_with_visual_p99_ms`、`worker_tick_p99_ms`、`worker_over_20ms_ticks`、`late_ticks`。M3.2手机工作线程p99=18.085ms/max=19.923ms，最终x=3.501m/y=-1.225m/z=.1198m；M4网络开启时的结果仍需复测。
+保留默认动作过滤设置，关注数值有限、高度、最终位移，以及 `control_with_visual_p99_ms`、`worker_tick_p99_ms`、`worker_over_20ms_ticks`、`late_ticks`。M3.2手机工作线程p99=18.085ms/max=19.923ms；M4网络开启时p99=16.618ms/max=19.129ms，超20ms周期0。两次最终x=3.501m/y=-1.225m/z=.1198m相同；温度/频率未控制，不据此推断性能提升原因。
 
 原来的“策略测试 10s”仍是不等待墙钟的 M2 快速计算基准，不能用来观看完整动画：循环中不逐步更新画面，只显示开始和结束姿态。看步行应使用“前进”或“实时测试30s”。
 
@@ -223,7 +223,7 @@ flowchart TD
 - 后续施工是手机 M3 验收、双设备命令通信和视频。当前 APK 尚不能替代桌面 `scripts/duck-sim up` 的完整系统。
 - M3.1 用户已编译并运行：索引网格和30FPS真机验证通过，完整工作线程的报告发布成本偏高，见 `verification/device-M31-realtime-render-test.json`。
 - M3.2 报告线程改造源码及队列测试通过；用户完成30秒开启3D的真机测试，工作线程p99=18.085ms/max=19.923ms，超20ms周期0，画面30.02FPS，位姿与之前一致。报告见 `verification/device-M32-realtime-render-test.json`。3D关闭对照、持续运行与生命周期尚未测，再推进双设备通信和视频。
-- M4局域网浏览器控制源码/编译和Mac回环检查通过，见 `verification/m4-checks.json`。2026-10-04用户确认浏览器连接与按钮功能正常，ADB核对版本及远程运行/暂停，见 `verification/device-M4-lan-acceptance.json`；断连、生命周期与网络开启后的30秒预算待补测。操作见 `NETWORK.md`。
+- M4局域网浏览器控制源码/编译和Mac回环检查通过，见 `verification/m4-checks.json`。2026-10-04用户确认连接与按钮正常，随后补测断连与网络开启的30秒运行；日志确认心跳超时暂停，实时工作线程p99=16.618ms/max=19.129ms、超20ms及迟到周期0、约30FPS。报告及对比见 `verification/device-M4-realtime-acceptance.json`。前后台会话、长期温升和3D关闭对照待测；视频尚未接入。
 
 ONNX Java API 和资源关闭方式依据 [官方 Java 文档](https://onnxruntime.ai/docs/get-started/with-java.html)。
 GL context/绘制线程的生命周期依据 [Android GLSurfaceView 文档](https://developer.android.com/reference/android/opengl/GLSurfaceView)；场景桥依据 [MuJoCo 可视化文档](https://mujoco.readthedocs.io/en/stable/programming/visualization.html) 和固定的本地 3.10.0 源码。

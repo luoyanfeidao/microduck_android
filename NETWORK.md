@@ -1,6 +1,6 @@
 # M4：一台 Android 仿真，另一台浏览器控制
 
-当前源码版本为 `0.4-m4` / versionCode=6，手机标题 `Microduck · Android M4`。由用户在 Android Studio 构建、安装和运行。M4 的源码编译、JavaScript 语法及 Mac 本地 HTTP 回环检查已通过，见 [verification/m4-checks.json](verification/m4-checks.json)。2026-10-04用户确认浏览器已连接且按钮功能正常；ADB确认安装版本、远程运行和网页暂停，见 [真机验收记录](verification/device-M4-lan-acceptance.json)。断连、生命周期与网络开启后的实时预算仍需补测。
+当前源码版本为 `0.4-m4` / versionCode=6，手机标题 `Microduck · Android M4`。由用户在 Android Studio 构建、安装和运行。源码/回环检查见 [verification/m4-checks.json](verification/m4-checks.json)。2026-10-04浏览器连接及按钮已通过用户实测，随后补测断连与网页连接时30秒运行；ADB记录到心跳超时暂停、网络开启时完整工作线程p99=16.618ms/max=19.129ms、超20ms周期0，见 [实时及断连验收](verification/device-M4-realtime-acceptance.json)。前后台会话变化、持续运行及温升仍待测。
 
 本版浏览器提供命令和实时状态；真实 CAD 的 3D 画面仍由仿真手机绘制。后续视频编码/传输另行接入。模型、ONNX、动作过滤及50Hz物理/策略沿用已验证的M3.2基线。
 
@@ -101,8 +101,9 @@ python3 scripts/check_source.py \
 ## 真机验收与边界
 
 - 已验证：用户确认浏览器连接及按钮功能正常；ADB报告显示M4、服务开启、已执行15条远程控制命令，应用日志包含远程运行及网页暂停；数值有限、GLES ready且无错误。报告 [device-M4-lan-state.json](verification/device-M4-lan-state.json)，验收来源及边界 [device-M4-lan-acceptance.json](verification/device-M4-lan-acceptance.json)。按钮为用户整体确认，未逐项保存独立断言；瞬时约29.84FPS不能替代30秒基准。
-- 尚待验证：心跳中断3秒后的暂停、前后台/重启后的会话变化。为单独测心跳超时，先在网页点前进，再关闭控制端Wi-Fi，仿真手机保持前台；重新连接后应显示已暂停，`remote_stop_reason=heartbeat_timeout`。直接关闭网页可能先触发主动暂停，`remote_pause`不能证明超时路径通过。
-- 网络开启且网页连接时，手机点一次“实时测试30s”，网页只读状态/心跳，核对M4的控制p99、完整工作线程p99、迟到及超20ms周期。本次读取的独立30秒归档仍标记M3.2，不能替代M4网络开销测试。
+- 断连补测已通过：用户完成关闭控制端Wi-Fi测试，应用日志记录 `remote_stop_reason=heartbeat_timeout`、`running=false`、`remote_control_active=false`。租期配置3秒，实际Wi-Fi断开至暂停的时间没有单独计时；记录见 [device-M4-realtime-acceptance.json](verification/device-M4-realtime-acceptance.json)。关闭网页可能先触发主动暂停，`remote_pause`不能证明超时路径通过。
+- 网络开启的30秒短实时测试已通过：[原始报告](verification/device-M4-realtime-render-test.json)为M4、LAN开启，墙钟30.006s/仿真30.02s、1501周期/6004步，约29.994FPS；控制+快照p99=15.186ms，完整工作线程p99=16.618ms/max=19.129ms，超20ms周期0、迟到周期0，最终位姿与M3.2完全一致。用户确认保持网页连接；报告未统计HTTP轮询次数。不同次测试未控制温度/频率，不能把耗时下降归因于网络改造。最大周期距20ms约0.871ms，本次结果不代表长期温升通过。
+- 尚待验证：仿真应用前后台/重启后的服务关闭及新会话。应用回前台后须手动重新开启服务、使用新访问码，网页心跳不能恢复仿真。
 - 仍待补M3.2的3D关闭对照、持续运行/温升；M4尚无视频编码/传输。
 
 当前targetSdk=34，新增INTERNET正常权限即可使用普通局域网socket；Android16的局域网限制为选择启用的测试功能。本工程没有开启该限制，也没有升级targetSdk。[Android官方局域网权限说明](https://developer.android.com/privacy-and-security/local-network-permission)、[网络连接权限说明](https://developer.android.com/develop/connectivity/network-ops/connecting)。
