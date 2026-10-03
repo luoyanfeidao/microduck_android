@@ -26,8 +26,8 @@ def main():
     parser.add_argument("--ort-aar", type=pathlib.Path, required=True)
     parser.add_argument("--mujoco-dir", type=pathlib.Path, required=True,
                         help="Desktop MuJoCo 3.10.0 Python package with include/ and libmujoco")
-    parser.add_argument("--stage", default="M4")
-    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m4-checks.json")
+    parser.add_argument("--stage", default="M5")
+    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m5-checks.json")
     parser.add_argument("--host-json-jar", type=pathlib.Path,
                         help="Host-only org.json jar to execute LAN loopback tests; not an APK dependency")
     args = parser.parse_args()
@@ -48,11 +48,11 @@ def main():
             (out / "ort.jar").write_bytes(aar.read("classes.jar"))
         sources = sorted((ROOT / "app/src/main/java/com/microduck/sim").glob("*.java"))
         sources += [ROOT / "verification" / (test + ".java") for test in
-                    ("SceneFrameCheck", "RenderOptimizationCheck", "ReportDispatcherCheck", "NetworkControlCheck")]
+                    ("SceneFrameCheck", "RenderOptimizationCheck", "ReportDispatcherCheck", "NetworkControlCheck", "VideoFramesCheck")]
         run([java / "javac", "-Xlint:all", "-cp",
              f"{sdk / 'platforms/android-34/android.jar'}:{out / 'ort.jar'}", "-d", out, *sources])
         report["java_android34_ort120_jdk11_compile"] = "passed"
-        for test in ("SceneFrameCheck", "RenderOptimizationCheck", "ReportDispatcherCheck"):
+        for test in ("SceneFrameCheck", "RenderOptimizationCheck", "ReportDispatcherCheck", "VideoFramesCheck"):
             report[test] = json.loads(run([java / "java", "-cp", out, "com.microduck.sim." + test]))
         if args.host_json_jar:
             report["NetworkControlCheck"] = json.loads(run([java / "java", "-cp",
@@ -65,6 +65,7 @@ def main():
             (out / "controller.js").write_text(script)
             run([node, "--check", out / "controller.js"])
             report["controller_javascript_syntax"] = "passed"
+            report["controller_behavior"] = json.loads(run([node, ROOT / "verification/controller-check.js"]))
         else:
             report["controller_javascript_syntax"] = "Not executed; node unavailable"
         ndk = sdk / "ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++"
@@ -89,11 +90,12 @@ def main():
     paths += sorted((ROOT / "app/src/main/cpp").glob("*"))
     paths += sources
     paths += [ROOT / "verification/visual-bridge-check.cpp", ROOT / "verification/native-contract-check.cpp"]
+    paths += [ROOT / "verification/controller-check.js"]
     report["source_sha256"] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                 for p in paths if p.is_file()}
     report["baseline_device_report"] = "device-M3-realtime-render-test.json"
-    report["previous_device_report"] = "device-M32-realtime-render-test.json"
-    report["device_status"] = "Pending user Android Studio M4 build, LAN command/lifecycle tests and realtime budget check"
+    report["previous_device_report"] = "device-M4-realtime-render-test.json"
+    report["device_status"] = "Pending user Android Studio " + args.stage + " build, browser video and video-on realtime budget check"
     target = args.report
     target.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))

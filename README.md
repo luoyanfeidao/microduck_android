@@ -1,12 +1,14 @@
-# Android Studio 施工入口（M4：3D + 物理 + ONNX + 局域网控制）
+# Android Studio 施工入口（M5：3D + 物理 + ONNX + 浏览器画面）
 
 在 Android Studio 中打开当前目录 `android-sim`，不要打开外层 Microduck 目录。由你完成 Sync、编译、安装和真机运行。
 
 首次从 GitHub 获取时，先按 [DEPENDENCIES.md](DEPENDENCIES.md) 准备外部源码和已验证策略；固定提交及资源摘要见 [UPSTREAM.lock.json](UPSTREAM.lock.json)。
 
-当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。M4增加局域网浏览器控制，另一台Android可发站立/步行/暂停/复位命令并读状态；操作和架构见 [NETWORK.md](NETWORK.md)。当前3D显示在仿真手机，视频链路后续接入。
+当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。另一台Android浏览器可发站立/步行/暂停/复位命令并读状态；M5进一步提供当前3D视图的连续JPEG画面。控制见 [NETWORK.md](NETWORK.md)，视频原理及验收见 [VIDEO.md](VIDEO.md)。
 
-**M4浏览器控制、断连暂停及30秒实时测试已通过：** 用户用Studio构建运行 `0.4-m4` / versionCode=6，确认连接和按钮正常；后续断连日志明确记录 `heartbeat_timeout` 暂停。网页连接条件由用户确认，M4报告显示LAN开启、约30FPS、工作线程p99=16.618ms/max=19.129ms，超20ms周期和迟到周期均为0，最终位姿与M3.2相同。证据见 [verification/device-M4-realtime-acceptance.json](verification/device-M4-realtime-acceptance.json)。应用前后台会话变化、持续运行/温升及3D关闭对照仍待测；视频尚未接入。操作见 [NETWORK.md](NETWORK.md)。
+**当前先验收M5：** Studio编译运行 `0.5-m5` / versionCode=7，标题 `Microduck · Android M5`。开启局域网控制，控制端浏览器重新打开页面并连接，勾选“开启实时画面”，观察站立/前进/暂停，再保持画面开启，在仿真手机点“实时测试30s”。画面目标10FPS、最大640×480；仿真手机仍30FPS绘制、50Hz控制。编译及本机协议/页面逻辑检查见 [verification/m5-checks.json](verification/m5-checks.json)，Android实际采集与视频开启的实时预算尚待验证。
+
+**已通过的M4基线：** 浏览器按钮、断连心跳超时暂停、网络开启的30秒测试均通过；工作线程p99=16.618ms/max=19.129ms、超20ms和迟到周期0、约30FPS，见 [verification/device-M4-realtime-acceptance.json](verification/device-M4-realtime-acceptance.json)。不能用此结果代替M5视频测试。前后台会话、持续运行/温升及3D关闭对照仍待测。
 
 ## 在 Android Studio 编译
 
@@ -26,7 +28,7 @@ CMake 会从源码构建 MuJoCo 和 JNI 库，不需要手动复制 `.so`。MuJo
 
 **保留的 M3 实时验收：**
 
-1. 在 Android Studio 重新 Sync、Build、Run；当前M4沿用已跑通的M3.2物理/策略/渲染及构建配置，本次没有新增Maven依赖。
+1. 在 Android Studio 重新 Sync、Build、Run；当前M5沿用已跑通的物理/策略/渲染及构建配置，本次没有新增Maven依赖。
 2. 上方应出现真实机器人 CAD 外观及地面网格。单指拖动旋转视角，双指缩放；“复位视角”恢复默认角度和距离。“跟随机器人”保持机器人在中心，取消后可以观察它在地面上的位移。
 3. 点击“策略站立”观察平衡；点击“前进 0.30m/s”观察脚步。橙线是最近约 512 个绘制快照的地面轨迹，红点是 MuJoCo 当前接触点，可以关闭接触点显示。
 4. 等 3D 正常显示后，点击“实时测试 30s”。从 HOME 重置，发送 vx=.30，按 50Hz 运行 30 秒墙钟，然后自动暂停。保持应用在前台且不再点击重置；告诉 Codex 完成，以便经 ADB 获取报告。
@@ -108,7 +110,7 @@ python3 scripts/check_source.py \
   --mujoco-dir ../Pollen/microduck_rl/.venv/lib/python3.12/site-packages/mujoco
 ```
 
-当前绘制视觉 mesh（group<3），不显示碰撞几何；采用模型材质颜色和简化光照。地面是与当前场景水平 floor 对齐的程序网格，不复制桌面纹理、阴影或完整材质。它是观察真实模型姿态的 3D 视图，尚不是桌面画面效果的完全移植，也没有视频编码/传输。
+当前绘制视觉 mesh（group<3），不显示碰撞几何；采用模型材质颜色和简化光照。地面是与当前场景水平 floor 对齐的程序网格，不复制桌面纹理、阴影或完整材质。它是观察真实模型姿态的3D视图，尚不是桌面画面效果的完全移植。M5对该视图做PixelCopy/JPEG采集并提供浏览器画面，真机效果及开销需验收。
 
 ## 61D / 14D 接线约定
 
@@ -199,6 +201,8 @@ flowchart TD
 | `app/src/main/java/com/microduck/sim/RemoteCommand.java` | 命令和速度范围校验 |
 | `app/src/main/java/com/microduck/sim/RemoteMailbox.java` | 单个等待确认命令、排队超时取消 |
 | `app/src/main/java/com/microduck/sim/RemoteLease.java` | 3秒心跳与本地接管 |
+| `app/src/main/java/com/microduck/sim/VideoCapture.java` | 按需SurfaceView采集、独立线程JPEG编码 |
+| `app/src/main/java/com/microduck/sim/VideoFrames.java` | 单帧缓存、单个采集、时限和会话关闭 |
 | `app/src/main/assets/controller.html` | 第二台Android的浏览器控制页面 |
 | `scripts/check_source.py` | Mac源码检查及带摘要的报告；不运行Gradle或安装APK |
 | `scripts/host_baseline.py` | 桌面物理基线，结果见 `verification/host-baseline.json` |
@@ -223,7 +227,8 @@ flowchart TD
 - 后续施工是手机 M3 验收、双设备命令通信和视频。当前 APK 尚不能替代桌面 `scripts/duck-sim up` 的完整系统。
 - M3.1 用户已编译并运行：索引网格和30FPS真机验证通过，完整工作线程的报告发布成本偏高，见 `verification/device-M31-realtime-render-test.json`。
 - M3.2 报告线程改造源码及队列测试通过；用户完成30秒开启3D的真机测试，工作线程p99=18.085ms/max=19.923ms，超20ms周期0，画面30.02FPS，位姿与之前一致。报告见 `verification/device-M32-realtime-render-test.json`。3D关闭对照、持续运行与生命周期尚未测，再推进双设备通信和视频。
-- M4局域网浏览器控制源码/编译和Mac回环检查通过，见 `verification/m4-checks.json`。2026-10-04用户确认连接与按钮正常，随后补测断连与网络开启的30秒运行；日志确认心跳超时暂停，实时工作线程p99=16.618ms/max=19.129ms、超20ms及迟到周期0、约30FPS。报告及对比见 `verification/device-M4-realtime-acceptance.json`。前后台会话、长期温升和3D关闭对照待测；视频尚未接入。
+- M4局域网浏览器控制源码/编译和Mac回环检查通过，见 `verification/m4-checks.json`。2026-10-04用户确认连接与按钮正常，随后补测断连与网络开启的30秒运行；日志确认心跳超时暂停，实时工作线程p99=16.618ms/max=19.129ms、超20ms及迟到周期0、约30FPS。报告及对比见 `verification/device-M4-realtime-acceptance.json`。该版本未包含视频。
+- M5增加按需PixelCopy/JPEG、访问码保护的最新帧接口及浏览器画面开关。源码编译、缓存/会话检查、HTTP图片与心跳并发、浏览器关闭/后台/访问码失效/URL释放逻辑检查见 `verification/m5-checks.json`；这些不是实际Android采集/GPU/浏览器显示的证明。真机视频与视频开启时20ms预算、前后台会话、长期温升待测。
 
 ONNX Java API 和资源关闭方式依据 [官方 Java 文档](https://onnxruntime.ai/docs/get-started/with-java.html)。
 GL context/绘制线程的生命周期依据 [Android GLSurfaceView 文档](https://developer.android.com/reference/android/opengl/GLSurfaceView)；场景桥依据 [MuJoCo 可视化文档](https://mujoco.readthedocs.io/en/stable/programming/visualization.html) 和固定的本地 3.10.0 源码。

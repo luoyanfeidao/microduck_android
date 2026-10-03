@@ -42,6 +42,7 @@ public final class MainActivity extends Activity {
     private TextView status, report;
     private TextView networkInfo;
     private LanControlServer lan;
+    private VideoCapture video;
     private long lanGeneration,remoteCommandsApplied;
     private final RemoteLease remoteLease=new RemoteLease();
     private final RemoteMailbox remoteMailbox=new RemoteMailbox(worker);
@@ -65,6 +66,7 @@ public final class MainActivity extends Activity {
     private double policyTickMs,physicsMs;
     private final VisualCadence visualCadence=new VisualCadence();
     private long realtimeFramesAtStart,realtimeStarted;
+    private long videoPublishedAtStart,videoServedAtStart;
     private int realtimeSampleCount,realtimeOverBudget;
     private final double[] realtimeSamples=new double[2500];
     private final double[][] componentSamples=new double[4][2500];
@@ -80,7 +82,7 @@ public final class MainActivity extends Activity {
         column.setPadding(24, 32, 24, 24);
         column.setBackgroundColor(Color.rgb(237, 244, 247));
         TextView title = new TextView(this);
-        title.setText("Microduck · Android M4"); title.setTextSize(24);
+        title.setText("Microduck · Android M5"); title.setTextSize(24);
         title.setTextColor(Color.rgb(23, 52, 75)); column.addView(title);
         TextView scope = new TextView(this);
         scope.setText("3D 物理仿真 + ONNX 站立 / 步行\n单指旋转、双指缩放；橙色轨迹、红色接触点。");
@@ -253,6 +255,9 @@ public final class MainActivity extends Activity {
         realtimeSampleCount=0; realtimeOverBudget=0; realtimeStarted=System.nanoTime();
         workerOverBudget=0; publishSamples=0; publishMaxMs=0; publishTotalMs=0;
         realtimeFramesAtStart=preview.frames(); maxLatenessMs=0; realtimeTesting=true; start();
+        VideoFrames.Status videoStart=video==null?null:video.status();
+        videoPublishedAtStart=videoStart==null?0:videoStart.published;
+        videoServedAtStart=videoStart==null?0:videoStart.served;
         realtimeStop=worker.schedule(this::finishRealtimeTest,30,TimeUnit.SECONDS);
     }
     private void finishRealtimeTest() {
@@ -269,6 +274,11 @@ public final class MainActivity extends Activity {
             data.put("publish_mean_ms",publishSamples>0?publishTotalMs/publishSamples:0);
             data.put("test_render_frames",preview.frames()-realtimeFramesAtStart);
             data.put("test_render_fps",(preview.frames()-realtimeFramesAtStart)/wall);
+            VideoFrames.Status videoEnd=video==null?null:video.status();
+            long videoPublished=videoEnd==null?0:videoEnd.published-videoPublishedAtStart;
+            data.put("test_video_frames_published",videoPublished);
+            data.put("test_video_capture_fps",videoPublished/wall);
+            data.put("test_video_frames_served",videoEnd==null?0:videoEnd.served-videoServedAtStart);
             if(samples>0) {
                 data.put("control_with_visual_p95_ms",sorted[(int)((samples-1)*.95)]);
                 data.put("control_with_visual_p99_ms",sorted[(int)((samples-1)*.99)]);
@@ -307,7 +317,7 @@ public final class MainActivity extends Activity {
             data.put("model","scene.xml → robot_groundcontact.xml");
             data.put("stage",policyEnabled?"M2: ONNX + XML position servo":"M1: position servo only; no policy");
             data.put("policy_enabled",policyEnabled); data.put("control_ms",controlMs);
-            data.put("app_stage","M4"); data.put("render_enabled",renderEnabled);
+            data.put("app_stage","M5"); data.put("render_enabled",renderEnabled);
             data.put("ready",ready); data.put("running",ticker!=null);
             data.put("lan_enabled",lan!=null); data.put("remote_control_active",remoteLease.active());
             data.put("remote_commands_applied",remoteCommandsApplied); data.put("remote_stop_reason",remoteStopReason);
@@ -317,6 +327,7 @@ public final class MainActivity extends Activity {
             data.put("policy_tick_ms",policyTickMs); data.put("physics_advance_ms",physicsMs);
             data.put("visual_snapshot_ms",snapshotMs); data.put("control_with_visual_ms",controlWithVisualMs);
             preview.annotate(data);
+            if(video!=null) video.annotate(data);
             if(policies!=null) policies.annotate(data);
             data.put("device",android.os.Build.MODEL);
             data.put("android_api",android.os.Build.VERSION.SDK_INT);
@@ -376,12 +387,14 @@ public final class MainActivity extends Activity {
             ByteArrayOutputStream bytes=new ByteArrayOutputStream(); byte[] chunk=new byte[4096]; int size;
             while((size=input.read(chunk))!=-1) bytes.write(chunk,0,size);
             byte[] page=bytes.toByteArray(); long generation=++lanGeneration;
+            video=new VideoCapture(preview);
+            VideoCapture sessionVideo=video;
             lan=new LanControlServer(8080,page,()->remoteState,
                 command->remoteMailbox.submit(command,value->{
                     try { return applyRemote(value,generation); }
                     catch(LanControlServer.CommandFailure e) { throw e; }
                     catch(Exception e) { failed(e); throw e; }
-                }));
+                }),sessionVideo::frame);
             StringBuilder links=new StringBuilder("另一台设备连接同一 Wi-Fi，在浏览器打开以下地址（可长按复制）：\n");
             for(NetworkInterface nic:Collections.list(NetworkInterface.getNetworkInterfaces())) {
                 if(!nic.isUp() || nic.isLoopback()) continue;
@@ -421,6 +434,7 @@ public final class MainActivity extends Activity {
     }
     private void stopLan() {
         lanGeneration++; remoteLease.release();
+        if(video!=null) video.close();
         if(lan!=null) { lan.close(); lan=null; }
         main.post(()->{ if(!destroyed && networkInfo!=null) networkInfo.setText("局域网控制已关闭"); });
     }

@@ -31,16 +31,25 @@ public final class NetworkControlCheck {
         lease.release(); lease.heartbeat(5_000_000_000L); if(lease.active() || lease.expired(9_000_000_000L)) throw new AssertionError("Local ownership");
         mailboxCheck(walk);
         AtomicInteger commands=new AtomicInteger(); byte[] page="<h1>Microduck 🦆</h1>".getBytes(StandardCharsets.UTF_8);
+        VideoFrames video=new VideoFrames(); video.available(true); AtomicInteger frameRequests=new AtomicInteger();
         try(LanControlServer server=new LanControlServer(0,page,()->"{\"running\":false}",cmd->{
             if(cmd.op.equals("reset")) throw new LanControlServer.CommandFailure(409,"Local test running");
             commands.incrementAndGet(); return "{\"ok\":true}";
-        })) {
+        },()->{frameRequests.incrementAndGet();return video.request(System.nanoTime());})) {
             String origin="http://127.0.0.1:"+server.port(),auth="Bearer "+server.token();
             check(request(origin,"/",null,null),200,"Microduck");
             check(request(origin,"/health",null,null),200,"microduck-lan");
             check(request(origin,"/api/state",null,null),401,"error");
             check(request(origin,"/api/state","Bearer wrong",null),401,"error");
             check(request(origin,"/api/state",auth,null),200,"running");
+            check(request(origin,"/api/frame",null,null),401,"error");
+            if(frameRequests.get()!=0) throw new AssertionError("Unauthenticated request started video");
+            check(request(origin,"/api/frame",auth,null),503,"Waiting");
+            if(!video.begin(System.nanoTime())) throw new AssertionError("Frame request did not activate capture");
+            byte[] jpeg={(byte)255,(byte)216,42,(byte)255,(byte)217};
+            video.publish(jpeg,640,480,System.nanoTime(),1,2);
+            frameCheck(origin,auth,jpeg);
+            check(request(origin,"/api/frame",auth,"{}"),405,"error");
             check(request(origin,"/api/command",auth,"{\"op\":\"walk\",\"vx\":0.3}"),200,"ok");
             check(request(origin,"/api/command",auth,"{\"op\":\"stand\"}"),200,"ok");
             check(request(origin,"/api/command",auth,"{\"op\":\"pause\"}"),200,"ok");
@@ -55,6 +64,19 @@ public final class NetworkControlCheck {
             checkRaw(server,prefix+"\r\n",411);
             checkRaw(server,"GET /health HTTP/1.1\r\nX-Long: "+"x".repeat(5000)+"\r\n\r\n",431);
             if(commands.get()!=3) throw new AssertionError("Rejected request executed command");
+            ExecutorService concurrent=Executors.newFixedThreadPool(2);
+            try {
+                Future<?> pictures=concurrent.submit(()->{
+                    try { for(int i=0;i<8;i++) frameCheck(origin,auth,jpeg); }
+                    catch(Exception e) { throw new IllegalStateException(e); }
+                });
+                Future<?> heartbeats=concurrent.submit(()->{
+                    try { for(int i=0;i<8;i++) check(request(origin,"/api/command",auth,"{\"op\":\"heartbeat\"}"),200,"ok"); }
+                    catch(Exception e) { throw new IllegalStateException(e); }
+                });
+                pictures.get(2,TimeUnit.SECONDS); heartbeats.get(2,TimeUnit.SECONDS);
+            } finally { concurrent.shutdownNow(); }
+            video.close(); check(request(origin,"/api/frame",auth,null),503,"Waiting");
             try(Socket slow=new Socket(InetAddress.getLoopbackAddress(),server.port())) {
                 slow.setSoTimeout(3500); slow.getOutputStream().write('G');
                 if(slow.getInputStream().read()!=-1) throw new AssertionError("Slow header not closed");
@@ -62,7 +84,22 @@ public final class NetworkControlCheck {
         }
         System.out.println("{\"http_page_state_commands\":true,\"token_required\":true,\"invalid_requests_never_apply\":true,"
             +"\"http_size_duplicate_transfer_and_timeout_checks\":true,\"velocity_pose_validation\":true,"
-            +"\"heartbeat_and_local_takeover\":true,\"mailbox_timeout_cancels_queued_command\":true,\"mailbox_pending_limit\":true}");
+            +"\"heartbeat_and_local_takeover\":true,\"mailbox_timeout_cancels_queued_command\":true,\"mailbox_pending_limit\":true,"
+            +"\"jpeg_auth_bytes_headers_and_unavailable\":true,\"concurrent_frames_and_heartbeats\":true}");
+    }
+    private static void frameCheck(String origin,String auth,byte[] expected) throws Exception {
+        HttpURLConnection connection=(HttpURLConnection)new URL(origin+"/api/frame").openConnection();
+        try {
+            connection.setConnectTimeout(1000); connection.setReadTimeout(1000); connection.setRequestProperty("Authorization",auth);
+            if(connection.getResponseCode()!=200 || !"image/jpeg".equals(connection.getContentType())
+                || !"1".equals(connection.getHeaderField("X-Frame-Sequence"))
+                || connection.getHeaderField("X-Frame-Age-Ms")==null
+                || !connection.getHeaderField("Content-Security-Policy").contains("img-src 'self' blob:"))
+                throw new AssertionError("JPEG response headers");
+            try(InputStream input=connection.getInputStream()) {
+                if(!java.util.Arrays.equals(input.readAllBytes(),expected)) throw new AssertionError("JPEG bytes changed");
+            }
+        } finally { connection.disconnect(); }
     }
     private static void mailboxCheck(RemoteCommand walk) throws Exception {
         AtomicReference<Runnable> queued=new AtomicReference<>(); AtomicInteger applied=new AtomicInteger();

@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ScheduledFuture;
 import java.util.function.Supplier;
 
 /** Small HTTP/1.1 LAN server; bounded requests, no native handles or policy sessions. */
@@ -39,19 +41,25 @@ final class LanControlServer implements AutoCloseable {
     private final ThreadPoolExecutor clients=new ThreadPoolExecutor(2,2,0,TimeUnit.MILLISECONDS,
         new ArrayBlockingQueue<>(4));
     private final Set<Socket> sockets=ConcurrentHashMap.newKeySet();
+    private final ScheduledThreadPoolExecutor deadlines=new ScheduledThreadPoolExecutor(1);
     private final byte[] page;
     private final Supplier<String> state;
     private final Commands commands;
+    private final Supplier<VideoFrames.Frame> video;
     private final String token;
     private volatile boolean closed;
     LanControlServer(int port,byte[] page,Supplier<String> state,Commands commands) throws IOException {
-        this.page=page.clone(); this.state=state; this.commands=commands;
+        this(port,page,state,commands,()->null);
+    }
+    LanControlServer(int port,byte[] page,Supplier<String> state,Commands commands,Supplier<VideoFrames.Frame> video) throws IOException {
+        this.page=page.clone(); this.state=state; this.commands=commands; this.video=video;
+        deadlines.setRemoveOnCancelPolicy(true);
         byte[] random=new byte[16]; new SecureRandom().nextBytes(random);
         StringBuilder key=new StringBuilder();
         for(byte value:random) key.append(String.format(Locale.ROOT,"%02x",value&255));
         token=key.toString();
         try { listener.setReuseAddress(true); listener.bind(new InetSocketAddress(port),6); }
-        catch(IOException e) { clients.shutdownNow(); listener.close(); throw e; }
+        catch(IOException e) { clients.shutdownNow(); deadlines.shutdownNow(); listener.close(); throw e; }
         Thread accept=new Thread(this::acceptLoop,"microduck-lan-accept"); accept.start();
     }
     int port() { return listener.getLocalPort(); }
@@ -66,12 +74,15 @@ final class LanControlServer implements AutoCloseable {
         }
     }
     private void serve(Socket socket) {
+        ScheduledFuture<?> timeout;
+        try { timeout=deadlines.schedule(()->{ try { socket.close(); } catch(IOException ignored) {} },3,TimeUnit.SECONDS); }
+        catch(RejectedExecutionException e) { try { socket.close(); } catch(IOException ignored) {} sockets.remove(socket); return; }
         try(Socket connection=socket) {
             try { handle(connection); }
             catch(BadRequest e) { json(connection,e.status,"{\"error\":\"Invalid HTTP request\"}"); }
         } catch(IOException ignored) {
             // Disconnected peer or bounded socket timeout; no simulation work here.
-        } finally { sockets.remove(socket); }
+        } finally { timeout.cancel(false); sockets.remove(socket); }
     }
     private void handle(Socket connection) throws IOException,BadRequest {
         InputStream in=connection.getInputStream(); long deadline=System.nanoTime()+2_000_000_000L;
@@ -95,6 +106,14 @@ final class LanControlServer implements AutoCloseable {
             json(connection,401,"{\"error\":\"Pairing token required\"}"); return;
         }
         if(words[0].equals("GET") && path.equals("/api/state")) { json(connection,200,state.get()); return; }
+        if(path.equals("/api/frame")) {
+            if(!words[0].equals("GET")) throw new BadRequest(405);
+            VideoFrames.Frame frame=video.get();
+            if(frame==null) { json(connection,503,"{\"error\":\"Waiting for 3D frame; keep simulator visible\"}"); return; }
+            respondHead(connection,200,"image/jpeg",frame.size(),
+                "\r\nX-Frame-Sequence: "+frame.sequence+"\r\nX-Frame-Age-Ms: "+Math.max(0,(System.nanoTime()-frame.capturedNs)/1_000_000L));
+            OutputStream out=connection.getOutputStream(); frame.writeTo(out); out.flush(); return;
+        }
         if(!path.equals("/api/command")) { json(connection,404,"{\"error\":\"Unknown path\"}"); return; }
         if(!words[0].equals("POST")) throw new BadRequest(405);
         if(!headers.getOrDefault("content-type","").split(";",2)[0].trim().equalsIgnoreCase("application/json")) throw new BadRequest(415);
@@ -131,16 +150,21 @@ final class LanControlServer implements AutoCloseable {
         respond(socket,status,"application/json; charset=utf-8",body.getBytes(StandardCharsets.UTF_8));
     }
     private static void respond(Socket socket,int status,String type,byte[] body) throws IOException {
-        String head="HTTP/1.1 "+status+" Response\r\nContent-Type: "+type+"\r\nContent-Length: "+body.length
+        respondHead(socket,status,type,body.length,"");
+        OutputStream out=socket.getOutputStream(); out.write(body); out.flush();
+    }
+    private static void respondHead(Socket socket,int status,String type,int length,String extra) throws IOException {
+        String head="HTTP/1.1 "+status+" Response\r\nContent-Type: "+type+"\r\nContent-Length: "+length
             +"\r\nConnection: close\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff"
-            +"\r\nContent-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'"
-            +"\r\nReferrer-Policy: no-referrer\r\n\r\n";
-        OutputStream out=socket.getOutputStream(); out.write(head.getBytes(StandardCharsets.US_ASCII)); out.write(body); out.flush();
+            +"\r\nContent-Security-Policy: default-src 'self'; img-src 'self' blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'"
+            +"\r\nReferrer-Policy: no-referrer"+extra+"\r\n\r\n";
+        socket.getOutputStream().write(head.getBytes(StandardCharsets.US_ASCII));
     }
     @Override public void close() {
         closed=true;
         try { listener.close(); } catch(IOException ignored) {}
         for(Socket socket:sockets) try { socket.close(); } catch(IOException ignored) {}
         clients.shutdownNow();
+        deadlines.shutdownNow();
     }
 }
