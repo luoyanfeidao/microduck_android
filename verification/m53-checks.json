@@ -116,5 +116,5 @@
   },
   "baseline_device_report": "device-M3-realtime-render-test.json",
   "previous_device_report": "device-M52-video-on-realtime-test.json",
-  "device_status": "Pending user Android Studio M5.3 build, browser video and video-on realtime budget check"
+  "device_status": "User completed M5.3 video-on realtime test: video works, 2 worker ticks over 20ms (max 20.369479ms); paired wake-up wall intervals high with low submit-thread CPU; see device-M53-video-acceptance.json"
 }

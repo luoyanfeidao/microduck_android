@@ -1,0 +1,100 @@
+{
+  "captured_at": "2026-10-03T22:47:03.544Z",
+  "user_confirmation": "已完成",
+  "source_commit": "95368fa",
+  "scope": "Read-only ADB video-on realtime archive",
+  "baseline": "device-M52-video-on-realtime-test.json",
+  "candidate": "device-M53-video-on-realtime-test.json",
+  "result": "Video maintained; two worker ticks slightly exceed 20ms; paired wake-up wall intervals high with low submit-thread CPU",
+  "measurements": {
+    "publish_mean_ms": {
+      "M5.2": 1.984858586206897,
+      "M5.3": 1.6360497672413796
+    },
+    "publish_max_ms": {
+      "M5.2": 12.849062,
+      "M5.3": 15.14026
+    },
+    "worker_tick_p99_ms": {
+      "M5.2": 13.129948,
+      "M5.3": 12.55724
+    },
+    "worker_tick_max_ms": {
+      "M5.2": 21.26974,
+      "M5.3": 20.369479
+    },
+    "worker_over_20ms_ticks": {
+      "M5.2": 1,
+      "M5.3": 2
+    },
+    "test_render_fps": {
+      "M5.2": 29.993519223318053,
+      "M5.3": 30.028721015875288
+    },
+    "test_video_capture_fps": {
+      "M5.2": 9.897861343694958,
+      "M5.3": 9.898479624544906
+    },
+    "test_video_frames_served": {
+      "M5.2": 269,
+      "M5.3": 263
+    }
+  },
+  "slow_tick_samples": [
+    {
+      "sample_index": 65,
+      "worker_tick_ms": 20.369479,
+      "control_with_visual_ms": 8.676042,
+      "native_state_capture_ms": 0.151041,
+      "report_metadata_submit_ms": 11.500052,
+      "app_metadata_capture_ms": 0.025521,
+      "render_metadata_capture_ms": 0.014218,
+      "video_metadata_capture_ms": 0.032761,
+      "policy_metadata_capture_ms": 0.023073,
+      "report_queue_submit_ms": 11.386875,
+      "report_admission_ms": 0.007396,
+      "report_mailbox_ms": 0.009219,
+      "report_wakeup_ms": 11.347916,
+      "report_submit_cpu_ms": 0.136718
+    },
+    {
+      "sample_index": 325,
+      "worker_tick_ms": 20.0975,
+      "control_with_visual_ms": 4.916927,
+      "native_state_capture_ms": 0.144219,
+      "report_metadata_submit_ms": 14.994479,
+      "app_metadata_capture_ms": 0.023593,
+      "render_metadata_capture_ms": 0.014636,
+      "video_metadata_capture_ms": 0.0375,
+      "policy_metadata_capture_ms": 0.023229,
+      "report_queue_submit_ms": 14.875781,
+      "report_admission_ms": 0.008229,
+      "report_mailbox_ms": 0.009271,
+      "report_wakeup_ms": 14.834479,
+      "report_submit_cpu_ms": 0.167239
+    }
+  ],
+  "checks": {
+    "expected_stage": true,
+    "video_in_test": true,
+    "finite": true,
+    "render_ready": true,
+    "no_render_error": true,
+    "no_video_error": true,
+    "control_under_20ms": true,
+    "worker_under_20ms": false,
+    "late_over_20ms_ticks_zero": true
+  },
+  "root_xyz_difference_m": {
+    "root_x": 0,
+    "root_y": 0,
+    "root_z": 0
+  },
+  "limits": [
+    "One 30s trial per version; temperature and CPU frequency uncontrolled",
+    "Wake-up wall interval includes unpark and scheduling/measurement gaps. Low submit-thread CPU indicates little CPU consumption within the submission interval, but does not distinguish kernel wait, preemption or GC pauses",
+    "Submit-thread CPU interval and wake-up wall interval have different boundaries; do not subtract them as exact wait time",
+    "HTTP served count does not prove browser display FPS or end-to-end latency",
+    "Video-off, lifecycle and long-duration thermal checks remain pending"
+  ]
+}

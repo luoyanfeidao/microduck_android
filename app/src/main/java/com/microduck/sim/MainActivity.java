@@ -72,13 +72,13 @@ public final class MainActivity extends Activity {
     private long videoPublishedAtStart,videoServedAtStart;
     private int realtimeSampleCount,realtimeOverBudget;
     private final double[] realtimeSamples=new double[2500];
-    private final double[][] componentSamples=new double[15][2500];
+    private final double[][] componentSamples=new double[14][2500];
     private final String[] componentNames={"policy_tick","physics_advance","visual_snapshot","worker_tick","native_state_capture","report_metadata_submit",
         "app_metadata_capture","render_metadata_capture","video_metadata_capture","policy_metadata_capture","report_queue_submit",
-        "report_admission","report_mailbox","report_wakeup","report_submit_cpu"};
-    private final double[] metadataCaptureMs=new double[9];
-    private final long[] reportSubmitTiming=new long[3];
-    private final double[][] overBudgetSamples=new double[16][14];
+        "report_admission","report_mailbox","report_submit_cpu"};
+    private final double[] metadataCaptureMs=new double[8];
+    private final long[] reportSubmitTiming=new long[2];
+    private final double[][] overBudgetSamples=new double[16][13];
     private int overBudgetSampleCount;
     private int workerOverBudget,publishSamples;
     private double publishMaxMs,publishTotalMs;
@@ -91,7 +91,7 @@ public final class MainActivity extends Activity {
         column.setPadding(24, 32, 24, 24);
         column.setBackgroundColor(Color.rgb(237, 244, 247));
         TextView title = new TextView(this);
-        title.setText("Microduck · Android M5.3"); title.setTextSize(24);
+        title.setText("Microduck · Android M5.4"); title.setTextSize(24);
         title.setTextColor(Color.rgb(23, 52, 75)); column.addView(title);
         TextView scope = new TextView(this);
         scope.setText("3D 物理仿真 + ONNX 站立 / 步行\n单指旋转、双指缩放；橙色轨迹、红色接触点。");
@@ -362,11 +362,12 @@ public final class MainActivity extends Activity {
                 data.put("model","scene.xml → robot_groundcontact.xml");
                 data.put("stage",policy?"M2: ONNX + XML position servo":"M1: position servo only; no policy");
                 data.put("policy_enabled",policy); data.put("control_ms",control);
-                data.put("app_stage","M5.3"); data.put("render_enabled",render);
+                data.put("app_stage","M5.4"); data.put("render_enabled",render);
                 data.put("ready",loaded); data.put("running",running);
                 data.put("lan_enabled",lanEnabled); data.put("remote_control_active",remoteActive);
                 data.put("remote_commands_applied",commands); data.put("remote_stop_reason",stopReason);
-                data.put("report_pipeline","atomic latest status + completed queue; persistent report thread parses JSON; captured scalar values only");
+                data.put("report_pipeline","atomic latest status + completed queue; report thread polls without submit wake; captured scalar values only");
+                data.put("report_poll_interval_ms",ReportDispatcher.POLL_INTERVAL_MS);
                 data.put("report_coalesced_statuses",coalesced); data.put("visual_target_fps",VisualCadence.FPS);
                 data.put("policy_tick_ms",inference); data.put("physics_advance_ms",physics);
                 data.put("visual_snapshot_ms",snapshot); data.put("control_with_visual_ms",withVisual);
@@ -390,8 +391,7 @@ public final class MainActivity extends Activity {
             metadataCaptureMs[4]=(System.nanoTime()-policyDone)/1e6;
             metadataCaptureMs[5]=reportSubmitTiming[0]/1e6;
             metadataCaptureMs[6]=reportSubmitTiming[1]/1e6;
-            metadataCaptureMs[7]=reportSubmitTiming[2]/1e6;
-            metadataCaptureMs[8]=Math.max(0,Debug.threadCpuTimeNanos()-submitCpuBegin)/1e6;
+            metadataCaptureMs[7]=Math.max(0,Debug.threadCpuTimeNanos()-submitCpuBegin)/1e6;
         } catch(Exception e) { throw new IllegalStateException("Cannot capture simulation state",e); }
     }
     private void writeReport(JSONObject data) throws Exception {

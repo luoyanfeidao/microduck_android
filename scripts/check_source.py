@@ -26,8 +26,8 @@ def main():
     parser.add_argument("--ort-aar", type=pathlib.Path, required=True)
     parser.add_argument("--mujoco-dir", type=pathlib.Path, required=True,
                         help="Desktop MuJoCo 3.10.0 Python package with include/ and libmujoco")
-    parser.add_argument("--stage", default="M5.3")
-    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m53-checks.json")
+    parser.add_argument("--stage", default="M5.4")
+    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m54-checks.json")
     parser.add_argument("--host-json-jar", type=pathlib.Path,
                         help="Host-only org.json jar to execute LAN loopback tests; not an APK dependency")
     args = parser.parse_args()
@@ -97,7 +97,7 @@ def main():
     report["source_sha256"] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                 for p in paths if p.is_file()}
     report["baseline_device_report"] = "device-M3-realtime-render-test.json"
-    report["previous_device_report"] = "device-M52-video-on-realtime-test.json"
+    report["previous_device_report"] = "device-M53-video-on-realtime-test.json"
     report["device_status"] = "Pending user Android Studio " + args.stage + " build, browser video and video-on realtime budget check"
     target = args.report
     target.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")

@@ -10,6 +10,8 @@ import java.util.function.Consumer;
 /** One report thread. Keep only the newest pending ordinary status; retain completed tests. */
 final class ReportDispatcher implements AutoCloseable {
     private static final int CLOSED=Integer.MIN_VALUE;
+    static final int POLL_INTERVAL_MS=50;
+    private static final long POLL_INTERVAL_NS=POLL_INTERVAL_MS*1_000_000L;
     private final ConcurrentLinkedQueue<Runnable> completed=new ConcurrentLinkedQueue<>();
     private final AtomicReference<Runnable> latest=new AtomicReference<>();
     private final AtomicLong coalesced=new AtomicLong();
@@ -30,22 +32,17 @@ final class ReportDispatcher implements AutoCloseable {
             if(admission.compareAndSet(state,state+1)) break;
         }
         long admitted=timing==null?0:System.nanoTime();
-        long published;
         try {
             Runnable previous=latest.getAndSet(completedTest?null:task);
             if(previous!=null) coalesced.incrementAndGet();
             if(completedTest) completed.add(task);
         } finally {
             admission.decrementAndGet();
-            published=timing==null?0:System.nanoTime();
-            // A permit survives a wake just before park; no shared monitor with report I/O.
-            LockSupport.unpark(thread);
         }
-        // Unpark is inside finally so exceptions cannot strand a closing consumer.
+        // The consumer checks periodically: no unpark/native wake on the simulation thread.
         if(timing!=null) {
             timing[0]=admitted-begin;
-            timing[1]=published-admitted;
-            timing[2]=System.nanoTime()-published;
+            timing[1]=System.nanoTime()-admitted;
         }
         return true;
     }
@@ -56,7 +53,7 @@ final class ReportDispatcher implements AutoCloseable {
             if(task==null) task=latest.getAndSet(null);
             if(task==null) {
                 if(admission.get()==CLOSED && completed.isEmpty() && latest.get()==null) return;
-                LockSupport.park(this);
+                LockSupport.parkNanos(this,POLL_INTERVAL_NS);
                 continue;
             }
             try { task.run(); } catch(Exception e) { errors.accept(e); }

@@ -37,7 +37,7 @@ public final class ReportDispatcherCheck {
             failures.submit(recovered::countDown,true); failures.close(); await(recovered);
             if(errors.size()!=1) throw new AssertionError("Failure not delivered");
         } finally { failures.close(); }
-        // Repeated idle -> wake transitions must not lose the unpark permit.
+        // A submit does not signal the consumer: repeated idle reports still get delivered.
         ReportDispatcher idle=new ReportDispatcher(errors::add);
         try {
             for(int i=0;i<100;i++) {
@@ -79,7 +79,7 @@ public final class ReportDispatcherCheck {
         if(errors.size()!=1) throw new AssertionError("Unexpected dispatcher error");
         System.out.println("{\"blocked_io_does_not_block_submit_or_close\":true,\"ordinary_status_coalesced\":true,"
             +"\"completed_tests_preserved\":true,\"accepted_tasks_drain_on_close\":true,\"error_recovery\":true,"
-            +"\"idle_wakeup_preserved\":true,\"concurrent_close_preserves_accepted_archives\":true}");
+            +"\"idle_polling_delivers_reports\":true,\"concurrent_close_preserves_accepted_archives\":true}");
     }
     private static void await(CountDownLatch latch) {
         try { if(!latch.await(5,TimeUnit.SECONDS)) throw new AssertionError("Report dispatcher timeout"); }
