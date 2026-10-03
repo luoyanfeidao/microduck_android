@@ -18,10 +18,15 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import org.json.JSONObject;
 import java.io.File;
+import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
+import java.net.Inet4Address;
+import java.net.NetworkInterface;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Locale;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -35,7 +40,15 @@ public final class MainActivity extends Activity {
         enqueue(()->failed(new IllegalStateException("Cannot save simulation report",error)));
     });
     private TextView status, report;
+    private TextView networkInfo;
+    private LanControlServer lan;
+    private long lanGeneration,remoteCommandsApplied;
+    private final RemoteLease remoteLease=new RemoteLease();
+    private final RemoteMailbox remoteMailbox=new RemoteMailbox(worker);
+    private volatile String remoteState="{\"ready\":false,\"running\":false}";
+    private String remoteStopReason="";
     private volatile boolean destroyed;
+    private volatile boolean foreground;
     // Every native call, including deletion, runs on worker. No UI/render access to mjData.
     private long handle;
     private ScheduledFuture<?> ticker;
@@ -67,7 +80,7 @@ public final class MainActivity extends Activity {
         column.setPadding(24, 32, 24, 24);
         column.setBackgroundColor(Color.rgb(237, 244, 247));
         TextView title = new TextView(this);
-        title.setText("Microduck · Android M3.2"); title.setTextSize(24);
+        title.setText("Microduck · Android M4"); title.setTextSize(24);
         title.setTextColor(Color.rgb(23, 52, 75)); column.addView(title);
         TextView scope = new TextView(this);
         scope.setText("3D 物理仿真 + ONNX 站立 / 步行\n单指旋转、双指缩放；橙色轨迹、红色接触点。");
@@ -75,25 +88,25 @@ public final class MainActivity extends Activity {
         status = new TextView(this); status.setText("正在校验模型并加载 MuJoCo…");
         status.setTextSize(15); status.setTypeface(Typeface.MONOSPACE); column.addView(status);
         LinearLayout controls = row(column);
-        button(controls,"运行",()->enqueue(this::start));
-        button(controls,"暂停",()->enqueue(this::pause));
-        button(controls,"步进 20ms",()->enqueue(()->{ pause(); controlStep(false); publish(NativeSim.state(handle)); }));
+        button(controls,"运行",()->enqueueLocal(this::start));
+        button(controls,"暂停",()->enqueueLocal(()->{ pause(); publish(NativeSim.state(handle)); }));
+        button(controls,"步进 20ms",()->enqueueLocal(()->{ pause(); controlStep(false); publish(NativeSim.state(handle)); }));
         LinearLayout resets = row(column);
         for(String name:new String[]{"SIT","STAND","INIT"}) {
-            button(resets,name,()->enqueue(()->{ pause(); policyEnabled=false; if(policies!=null) policies.reset(); keyframe=name; publish(NativeSim.reset(handle,name)); }));
+            button(resets,name,()->enqueueLocal(()->{ pause(); policyEnabled=false; if(policies!=null) policies.reset(); keyframe=name; publish(NativeSim.reset(handle,name)); }));
         }
         LinearLayout bench = row(column);
-        button(bench,"基准测试 2000 步",()->enqueue(()->benchmark(2000)));
+        button(bench,"基准测试 2000 步",()->enqueueLocal(()->benchmark(2000)));
         LinearLayout policyButtons=row(column);
-        button(policyButtons,"策略站立",()->enqueue(()->{ enablePolicy(0); start(); }));
-        button(policyButtons,"前进 0.30m/s",()->enqueue(()->{ enablePolicy(.30f); start(); }));
+        button(policyButtons,"策略站立",()->enqueueLocal(()->{ enablePolicy(0); start(); }));
+        button(policyButtons,"前进 0.30m/s",()->enqueueLocal(()->{ enablePolicy(.30f); start(); }));
         LinearLayout policyTests=row(column);
-        button(policyTests,"策略测试 10s",()->enqueue(this::policyBenchmark));
-        button(policyTests,"关闭策略",()->enqueue(()->{ pause(); policyEnabled=false; publish(NativeSim.state(handle)); }));
+        button(policyTests,"策略测试 10s",()->enqueueLocal(this::policyBenchmark));
+        button(policyTests,"关闭策略",()->enqueueLocal(()->{ pause(); policyEnabled=false; publish(NativeSim.state(handle)); }));
         preview=new RobotSurfaceView(this,error->main.post(()->{ if(!destroyed) report.setText("3D 渲染错误："+error); }));
         LinearLayout visualControls=row(column);
         button(visualControls,"复位视角",preview::resetCamera);
-        button(visualControls,"实时测试 30s",()->enqueue(this::startRealtimeTest));
+        button(visualControls,"实时测试 30s",()->enqueueLocal(this::startRealtimeTest));
         CheckBox visual=new CheckBox(this); visual.setText("显示 3D"); visual.setChecked(true);
         visual.setOnCheckedChangeListener((v,checked)->{
             preview.setVisibility(checked?View.VISIBLE:View.GONE);
@@ -105,12 +118,17 @@ public final class MainActivity extends Activity {
         CheckBox contacts=new CheckBox(this); contacts.setText("接触点"); contacts.setChecked(true);
         contacts.setOnCheckedChangeListener((v,checked)->preview.contacts(checked)); cameraControls.addView(contacts);
         CheckBox filter=new CheckBox(this); filter.setText("按桌面运行时过滤动作：头 .5 / 腿 .7"); filter.setChecked(true);
-        filter.setOnCheckedChangeListener((v,checked)->enqueue(()->{ if(policies!=null) policies.filter=checked; })); column.addView(filter);
+        filter.setOnCheckedChangeListener((v,checked)->enqueueLocal(()->{ if(policies!=null) policies.filter=checked; })); column.addView(filter);
         TextView hint = new TextView(this);
         hint.setText("物理 dt=5ms；每 20ms 推理并推进 4 步。\n策略测试 10s 是快速计算基准；实时测试 30s 按墙钟运行，结束自动暂停。");
         hint.setTextSize(14); column.addView(hint);
         report = new TextView(this); report.setTextSize(13); report.setTypeface(Typeface.MONOSPACE);
         column.addView(report);
+        LinearLayout networkButtons=row(column);
+        button(networkButtons,"开启局域网控制",()->enqueue(this::startLan));
+        button(networkButtons,"关闭局域网控制",()->enqueue(()->{ pause(); stopLan(); publish(NativeSim.state(handle)); }));
+        networkInfo=new TextView(this); networkInfo.setText("局域网控制未开启；另一台 Android 可用浏览器连接。");
+        networkInfo.setTextIsSelectable(true); column.addView(networkInfo);
         ScrollView scroll = new ScrollView(this); scroll.addView(column);
         LinearLayout screen=new LinearLayout(this); screen.setOrientation(LinearLayout.VERTICAL);
         column.removeView(title); screen.addView(title);
@@ -148,6 +166,9 @@ public final class MainActivity extends Activity {
             try { action.run(); } catch(Throwable e) { failed(e); }
         });
     }
+    private void enqueueLocal(Runnable action) {
+        enqueue(()->{ remoteLease.release(); action.run(); });
+    }
     private void start() {
         if(ticker != null) return;
         startedAt=System.nanoTime(); lastLog=0; expectedTick=startedAt; lateTicks=0;
@@ -155,6 +176,9 @@ public final class MainActivity extends Activity {
         ticker=worker.scheduleAtFixedRate(()->{
             try {
                 long now=System.nanoTime();
+                if(remoteLease.expired(now)) {
+                    remoteStopReason="heartbeat_timeout"; pause(); publish(NativeSim.state(handle)); return;
+                }
                 double lateness=Math.max(0,(now-expectedTick)/1e6); maxLatenessMs=Math.max(maxLatenessMs,lateness);
                 if(now-expectedTick > 20_000_000L) lateTicks++;
                 expectedTick+=20_000_000L;
@@ -188,6 +212,7 @@ public final class MainActivity extends Activity {
         if(ticker != null) { ticker.cancel(false); ticker=null; }
         if(realtimeStop!=null) { realtimeStop.cancel(false); realtimeStop=null; }
         realtimeTesting=false;
+        remoteLease.release();
         visualCadence.reset();
     }
     private void benchmark(int count) {
@@ -282,7 +307,10 @@ public final class MainActivity extends Activity {
             data.put("model","scene.xml → robot_groundcontact.xml");
             data.put("stage",policyEnabled?"M2: ONNX + XML position servo":"M1: position servo only; no policy");
             data.put("policy_enabled",policyEnabled); data.put("control_ms",controlMs);
-            data.put("app_stage","M3.2"); data.put("render_enabled",renderEnabled);
+            data.put("app_stage","M4"); data.put("render_enabled",renderEnabled);
+            data.put("ready",ready); data.put("running",ticker!=null);
+            data.put("lan_enabled",lan!=null); data.put("remote_control_active",remoteLease.active());
+            data.put("remote_commands_applied",remoteCommandsApplied); data.put("remote_stop_reason",remoteStopReason);
             data.put("report_pipeline","separate thread; latest pending status; completed tests retained");
             data.put("report_coalesced_statuses",reports.coalesced());
             data.put("visual_target_fps",VisualCadence.FPS);
@@ -310,7 +338,7 @@ public final class MainActivity extends Activity {
             : data.has("policy_control_ticks") ? "last-policy-benchmark.json"
             : data.has("benchmark_steps") ? "last-physics-benchmark.json" : null;
         if(archive!=null) Files.write(new File(getFilesDir(),archive).toPath(),reportBytes);
-        Log.i("MicroduckM1",data.toString());
+        String compact=data.toString(); remoteState=compact; Log.i("MicroduckM1",compact);
         String text=String.format(Locale.ROOT,
             "MuJoCo %s / %s\nbody=%d  nq=%d  nv=%d  actuator=%d\nmesh=%d  dt=%.3f s\n仿真时间 %.3f s / %d 步\n躯干高度 %.4f m\n位移 x %.3f / y %.3f m\n接触 %d / 左脚 %d / 右脚 %d\n有限数值 %s / 脚底匹配 %s\n最近批次 %.3f ms / 20ms 预算",
             data.getString("mujoco"),data.getString("keyframe"),
@@ -341,20 +369,76 @@ public final class MainActivity extends Activity {
         final String shownDetails=details;
         main.post(()->{ if(!destroyed) { status.setText(text); report.setText(shownDetails); } });
     }
+    private void startLan() {
+        if(lan!=null) return;
+        if(realtimeTesting) throw new IllegalStateException("请先完成或暂停实时测试");
+        try(InputStream input=getAssets().open("controller.html")) {
+            ByteArrayOutputStream bytes=new ByteArrayOutputStream(); byte[] chunk=new byte[4096]; int size;
+            while((size=input.read(chunk))!=-1) bytes.write(chunk,0,size);
+            byte[] page=bytes.toByteArray(); long generation=++lanGeneration;
+            lan=new LanControlServer(8080,page,()->remoteState,
+                command->remoteMailbox.submit(command,value->{
+                    try { return applyRemote(value,generation); }
+                    catch(LanControlServer.CommandFailure e) { throw e; }
+                    catch(Exception e) { failed(e); throw e; }
+                }));
+            StringBuilder links=new StringBuilder("另一台设备连接同一 Wi-Fi，在浏览器打开以下地址（可长按复制）：\n");
+            for(NetworkInterface nic:Collections.list(NetworkInterface.getNetworkInterfaces())) {
+                if(!nic.isUp() || nic.isLoopback()) continue;
+                for(java.net.InetAddress address:Collections.list(nic.getInetAddresses()))
+                    if(address instanceof Inet4Address && address.isSiteLocalAddress())
+                        links.append(nic.getName()).append(": http://").append(address.getHostAddress()).append(':')
+                            .append(lan.port()).append("/#token=").append(lan.token()).append('\n');
+            }
+            links.append("访问码：").append(lan.token()).append("\n浏览器断开超过3秒自动暂停；离开本应用会关闭服务。");
+            String shown=links.toString(); main.post(()->{ if(!destroyed) networkInfo.setText(shown); });
+            publish(NativeSim.state(handle));
+        } catch(Exception e) {
+            stopLan(); main.post(()->{ if(!destroyed) networkInfo.setText("局域网服务启动失败："+e.getClass().getSimpleName()+"，检查8080端口或网络权限。"); });
+        }
+    }
+    private String applyRemote(RemoteCommand command,long generation) throws Exception {
+        if(destroyed || !foreground || !ready || lan==null || lanGeneration!=generation)
+            throw new LanControlServer.CommandFailure(503,"LAN session ended");
+        if(realtimeTesting && !command.op.equals("heartbeat"))
+            throw new LanControlServer.CommandFailure(409,"Local realtime test owns control");
+        long now=System.nanoTime();
+        switch(command.op) {
+            case "heartbeat": remoteLease.heartbeat(now); break;
+            case "pause": remoteStopReason="remote_pause"; pause(); break;
+            case "stand": case "walk":
+                enablePolicy(command.op.equals("walk")?command.vx:0);
+                if(command.op.equals("walk")) policies.velocity(command.vx,command.vy,command.yaw);
+                remoteStopReason=""; start(); remoteLease.claim(now); break;
+            case "reset":
+                pause(); policyEnabled=false; if(policies!=null) policies.reset(); keyframe=command.pose;
+                NativeSim.reset(handle,keyframe); remoteStopReason="remote_reset"; break;
+            default: throw new LanControlServer.CommandFailure(400,"Invalid command");
+        }
+        if(!command.op.equals("heartbeat")) { remoteCommandsApplied++; publish(NativeSim.state(handle)); }
+        return new JSONObject().put("ok",true).put("op",command.op).put("running",ticker!=null)
+            .put("remote_control_active",remoteLease.active()).put("command_count",remoteCommandsApplied).toString();
+    }
+    private void stopLan() {
+        lanGeneration++; remoteLease.release();
+        if(lan!=null) { lan.close(); lan=null; }
+        main.post(()->{ if(!destroyed && networkInfo!=null) networkInfo.setText("局域网控制已关闭"); });
+    }
     private void failed(Throwable e) {
-        pause(); policyEnabled=false; Log.e("MicroduckM1","Simulation error",e);
+        pause(); stopLan(); policyEnabled=false; Log.e("MicroduckM1","Simulation error",e);
         String text="暂停："+e.getClass().getSimpleName()+"\n"+e.getMessage();
         main.post(()->{ if(!destroyed) status.setText(text); });
     }
     @Override protected void onStop() {
         super.onStop();
-        if(!destroyed) worker.execute(this::pause); // M1 runs only while its Activity is visible.
+        foreground=false;
+        if(!destroyed) worker.execute(()->{ pause(); stopLan(); }); // Local and LAN runs require a visible Activity.
     }
-    @Override protected void onResume() { super.onResume(); if(preview!=null) preview.onResume(); }
+    @Override protected void onResume() { super.onResume(); foreground=true; if(preview!=null) preview.onResume(); }
     @Override protected void onPause() { if(preview!=null) preview.onPause(); super.onPause(); }
     @Override protected void onDestroy() {
         destroyed=true;
-        worker.execute(()->{ pause(); if(policies!=null) policies.close(); if(handle!=0) { NativeSim.close(handle); handle=0; } reports.close(); });
+        worker.execute(()->{ pause(); stopLan(); if(policies!=null) policies.close(); if(handle!=0) { NativeSim.close(handle); handle=0; } reports.close(); });
         worker.shutdown(); super.onDestroy();
     }
 }

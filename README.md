@@ -1,10 +1,12 @@
-# Android Studio 施工入口（M3.2：3D + 物理 + ONNX）
+# Android Studio 施工入口（M4：3D + 物理 + ONNX + 局域网控制）
 
 在 Android Studio 中打开当前目录 `android-sim`，不要打开外层 Microduck 目录。由你完成 Sync、编译、安装和真机运行。
 
 首次从 GitHub 获取时，先按 [DEPENDENCIES.md](DEPENDENCIES.md) 准备外部源码和已验证策略；固定提交及资源摘要见 [UPSTREAM.lock.json](UPSTREAM.lock.json)。
 
-当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试，新增真实 CAD 网格视图和按墙钟运行的 30 秒测试。远程命令和视频尚未接入。
+当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。M4增加局域网浏览器控制，另一台Android可发站立/步行/暂停/复位命令并读状态；操作和架构见 [NETWORK.md](NETWORK.md)。当前3D显示在仿真手机，视频链路后续接入。
+
+**当前先验收M4：** Studio重新编译运行，确认标题为 `Microduck · Android M4`（versionName `0.4-m4` / versionCode=6），然后点“开启局域网控制”。第二台手机连接同一Wi-Fi，浏览器打开应用显示的完整地址。检查站立、前进、暂停和断开3秒后暂停，再做网络开启时的30秒实时测试。源码/回环已通过，真机网络尚待验证。
 
 ## 在 Android Studio 编译
 
@@ -22,9 +24,9 @@ CMake 会从源码构建 MuJoCo 和 JNI 库，不需要手动复制 `.so`。MuJo
 
 ## 手机上怎么验收
 
-**当前验收 M3.2：**
+**保留的 M3 实时验收：**
 
-1. 在 Android Studio 重新 Sync、Build、Run，确认标题为 `Microduck · Android M3.2`（versionName `0.3.2-m3`，versionCode=5）。本次没有新增 Maven 渲染依赖，JDK/NDK/CMake 配置沿用已跑通的版本。
+1. 在 Android Studio 重新 Sync、Build、Run；当前M4沿用已跑通的M3.2物理/策略/渲染及构建配置，本次没有新增Maven依赖。
 2. 上方应出现真实机器人 CAD 外观及地面网格。单指拖动旋转视角，双指缩放；“复位视角”恢复默认角度和距离。“跟随机器人”保持机器人在中心，取消后可以观察它在地面上的位移。
 3. 点击“策略站立”观察平衡；点击“前进 0.30m/s”观察脚步。橙线是最近约 512 个绘制快照的地面轨迹，红点是 MuJoCo 当前接触点，可以关闭接触点显示。
 4. 等 3D 正常显示后，点击“实时测试 30s”。从 HOME 重置，发送 vx=.30，按 50Hz 运行 30 秒墙钟，然后自动暂停。保持应用在前台且不再点击重置；告诉 Codex 完成，以便经 ADB 获取报告。
@@ -37,7 +39,7 @@ adb shell run-as com.microduck.sim cat files/last-realtime-test.json > /tmp/micr
 adb shell run-as com.microduck.sim cat files/last-realtime-test.json > /tmp/microduck-m32-3d-off.json
 ```
 
-保留默认动作过滤设置，关注数值有限、高度、最终位移，以及 `control_with_visual_p99_ms`、`worker_tick_p99_ms`、`worker_over_20ms_ticks`、`late_ticks`。原 M3 实测参考为 p99=16.616ms/max=19.442ms，最终 x=3.501m/y=-1.225m/z=.1198m；优化后真机结果尚未取得，不能用静态数据量降幅推算手机提速。
+保留默认动作过滤设置，关注数值有限、高度、最终位移，以及 `control_with_visual_p99_ms`、`worker_tick_p99_ms`、`worker_over_20ms_ticks`、`late_ticks`。M3.2手机工作线程p99=18.085ms/max=19.923ms，最终x=3.501m/y=-1.225m/z=.1198m；M4网络开启时的结果仍需复测。
 
 原来的“策略测试 10s”仍是不等待墙钟的 M2 快速计算基准，不能用来观看完整动画：循环中不逐步更新画面，只显示开始和结束姿态。看步行应使用“前进”或“实时测试30s”。
 
@@ -193,6 +195,11 @@ flowchart TD
 | `app/src/main/java/com/microduck/sim/VisualMesh.java` | 索引网格包、长度/索引/有限数校验 |
 | `app/src/main/java/com/microduck/sim/VisualCadence.java` | 50Hz控制下的30Hz墙钟快照门限 |
 | `app/src/main/java/com/microduck/sim/ReportDispatcher.java` | 独立报告线程、状态合并、完成测试保留 |
+| `app/src/main/java/com/microduck/sim/LanControlServer.java` | 局域网HTTP页面、访问码、请求边界、状态读取 |
+| `app/src/main/java/com/microduck/sim/RemoteCommand.java` | 命令和速度范围校验 |
+| `app/src/main/java/com/microduck/sim/RemoteMailbox.java` | 单个等待确认命令、排队超时取消 |
+| `app/src/main/java/com/microduck/sim/RemoteLease.java` | 3秒心跳与本地接管 |
+| `app/src/main/assets/controller.html` | 第二台Android的浏览器控制页面 |
 | `scripts/check_source.py` | Mac源码检查及带摘要的报告；不运行Gradle或安装APK |
 | `scripts/host_baseline.py` | 桌面物理基线，结果见 `verification/host-baseline.json` |
 | `scripts/policy_rehearsal.py` | ONNX 对照、观测夹具、过滤开关与速度命令的闭环预演 |
@@ -216,6 +223,7 @@ flowchart TD
 - 后续施工是手机 M3 验收、双设备命令通信和视频。当前 APK 尚不能替代桌面 `scripts/duck-sim up` 的完整系统。
 - M3.1 用户已编译并运行：索引网格和30FPS真机验证通过，完整工作线程的报告发布成本偏高，见 `verification/device-M31-realtime-render-test.json`。
 - M3.2 报告线程改造源码及队列测试通过；用户完成30秒开启3D的真机测试，工作线程p99=18.085ms/max=19.923ms，超20ms周期0，画面30.02FPS，位姿与之前一致。报告见 `verification/device-M32-realtime-render-test.json`。3D关闭对照、持续运行与生命周期尚未测，再推进双设备通信和视频。
+- M4局域网浏览器控制源码/编译和Mac回环检查通过，见 `verification/m4-checks.json`；下一步由用户Studio构建、开启服务，验收真实两设备、浏览器、断连与网络开启的控制预算。操作见 `NETWORK.md`。
 
 ONNX Java API 和资源关闭方式依据 [官方 Java 文档](https://onnxruntime.ai/docs/get-started/with-java.html)。
 GL context/绘制线程的生命周期依据 [Android GLSurfaceView 文档](https://developer.android.com/reference/android/opengl/GLSurfaceView)；场景桥依据 [MuJoCo 可视化文档](https://mujoco.readthedocs.io/en/stable/programming/visualization.html) 和固定的本地 3.10.0 源码。
