@@ -45,9 +45,15 @@ public final class MainActivity extends Activity {
     private boolean renderEnabled=true, realtimeTesting;
     private ScheduledFuture<?> realtimeStop;
     private double snapshotMs,controlWithVisualMs,maxLatenessMs;
+    private double policyTickMs,physicsMs;
+    private final VisualCadence visualCadence=new VisualCadence();
     private long realtimeFramesAtStart,realtimeStarted;
     private int realtimeSampleCount,realtimeOverBudget;
     private final double[] realtimeSamples=new double[2500];
+    private final double[][] componentSamples=new double[4][2500];
+    private final String[] componentNames={"policy_tick","physics_advance","visual_snapshot","worker_tick"};
+    private int workerOverBudget,publishSamples;
+    private double publishMaxMs,publishTotalMs;
 
     @Override public void onCreate(Bundle saved) {
         super.onCreate(saved);
@@ -57,7 +63,7 @@ public final class MainActivity extends Activity {
         column.setPadding(24, 32, 24, 24);
         column.setBackgroundColor(Color.rgb(237, 244, 247));
         TextView title = new TextView(this);
-        title.setText("Microduck · Android M3"); title.setTextSize(24);
+        title.setText("Microduck · Android M3.1"); title.setTextSize(24);
         title.setTextColor(Color.rgb(23, 52, 75)); column.addView(title);
         TextView scope = new TextView(this);
         scope.setText("3D 物理仿真 + ONNX 站立 / 步行\n单指旋转、双指缩放；橙色轨迹、红色接触点。");
@@ -67,7 +73,7 @@ public final class MainActivity extends Activity {
         LinearLayout controls = row(column);
         button(controls,"运行",()->enqueue(this::start));
         button(controls,"暂停",()->enqueue(this::pause));
-        button(controls,"步进 20ms",()->enqueue(()->{ pause(); publish(controlStep()); }));
+        button(controls,"步进 20ms",()->enqueue(()->{ pause(); controlStep(false); publish(NativeSim.state(handle)); }));
         LinearLayout resets = row(column);
         for(String name:new String[]{"SIT","STAND","INIT"}) {
             button(resets,name,()->enqueue(()->{ pause(); policyEnabled=false; if(policies!=null) policies.reset(); keyframe=name; publish(NativeSim.reset(handle,name)); }));
@@ -148,16 +154,28 @@ public final class MainActivity extends Activity {
                 double lateness=Math.max(0,(now-expectedTick)/1e6); maxLatenessMs=Math.max(maxLatenessMs,lateness);
                 if(now-expectedTick > 20_000_000L) lateTicks++;
                 expectedTick+=20_000_000L;
-                String raw=controlStep();
-                if(realtimeTesting) {
-                    if(realtimeSampleCount<realtimeSamples.length) realtimeSamples[realtimeSampleCount++]=controlWithVisualMs;
-                    if(controlWithVisualMs>20) realtimeOverBudget++;
-                }
+                controlStep(true);
                 if(now-lastLog >= 250_000_000L) {
-                    JSONObject data=new JSONObject(raw);
+                    long publishBegin=System.nanoTime();
+                    JSONObject data=new JSONObject(NativeSim.state(handle));
                     data.put("wall_run_seconds",(now-startedAt)/1e9);
                     data.put("late_ticks",lateTicks); data.put("mode","running");
-                    publish(data.toString()); lastLog=now;
+                    publish(data.toString(),false); lastLog=now;
+                    if(realtimeTesting) {
+                        double cost=(System.nanoTime()-publishBegin)/1e6;
+                        publishSamples++; publishTotalMs+=cost; publishMaxMs=Math.max(publishMaxMs,cost);
+                    }
+                }
+                if(realtimeTesting) {
+                    double tickMs=(System.nanoTime()-now)/1e6;
+                    if(realtimeSampleCount<realtimeSamples.length) {
+                        int i=realtimeSampleCount++;
+                        realtimeSamples[i]=controlWithVisualMs;
+                        componentSamples[0][i]=policyTickMs; componentSamples[1][i]=physicsMs;
+                        componentSamples[2][i]=snapshotMs; componentSamples[3][i]=tickMs;
+                    }
+                    if(controlWithVisualMs>20) realtimeOverBudget++;
+                    if(tickMs>20) workerOverBudget++;
                 }
             } catch(Throwable e) { failed(e); }
         },0,20,TimeUnit.MILLISECONDS);
@@ -166,6 +184,7 @@ public final class MainActivity extends Activity {
         if(ticker != null) { ticker.cancel(false); ticker=null; }
         if(realtimeStop!=null) { realtimeStop.cancel(false); realtimeStop=null; }
         realtimeTesting=false;
+        visualCadence.reset();
     }
     private void benchmark(int count) {
         pause(); main.post(()->status.setText("基准测试中…"));
@@ -184,13 +203,16 @@ public final class MainActivity extends Activity {
         }
         policies.velocity(vx,0,0);
     }
-    private String controlStep() { return controlStep(true); }
-    private String controlStep(boolean withVisual) {
+    private void controlStep(boolean withVisual) {
         long begin=System.nanoTime();
         try { if(policyEnabled) policies.tick(handle); }
         catch(Exception e) { throw new IllegalStateException("Policy inference failed",e); }
-        String raw=NativeSim.step(handle,4); controlMs=(System.nanoTime()-begin)/1e6;
-        snapshotMs=0; if(withVisual) pushVisual(); controlWithVisualMs=(System.nanoTime()-begin)/1e6; return raw;
+        long physicsBegin=System.nanoTime(); policyTickMs=(physicsBegin-begin)/1e6;
+        NativeSim.advance(handle,4); physicsMs=(System.nanoTime()-physicsBegin)/1e6;
+        controlMs=(System.nanoTime()-begin)/1e6;
+        snapshotMs=0;
+        if(withVisual && renderEnabled && visualCadence.due(System.nanoTime())) pushVisual();
+        controlWithVisualMs=(System.nanoTime()-begin)/1e6;
     }
     private void pushVisual() {
         if(!renderEnabled || !ready || destroyed) return;
@@ -200,6 +222,7 @@ public final class MainActivity extends Activity {
         if(renderEnabled && !preview.ready()) throw new IllegalStateException("请等待 3D 画面加载完成；如有渲染错误，可关闭 3D 做对照测试");
         pause(); policyEnabled=false; enablePolicy(.30f);
         realtimeSampleCount=0; realtimeOverBudget=0; realtimeStarted=System.nanoTime();
+        workerOverBudget=0; publishSamples=0; publishMaxMs=0; publishTotalMs=0;
         realtimeFramesAtStart=preview.frames(); maxLatenessMs=0; realtimeTesting=true; start();
         realtimeStop=worker.schedule(this::finishRealtimeTest,30,TimeUnit.SECONDS);
     }
@@ -212,12 +235,21 @@ public final class MainActivity extends Activity {
             data.put("realtime_sim_wall_ratio",data.getDouble("sim_time")/wall);
             data.put("late_ticks",lateTicks); data.put("scheduler_max_lateness_ms",maxLatenessMs);
             data.put("control_over_20ms_ticks",realtimeOverBudget);
+            data.put("worker_over_20ms_ticks",workerOverBudget);
+            data.put("publish_samples",publishSamples); data.put("publish_max_ms",publishMaxMs);
+            data.put("publish_mean_ms",publishSamples>0?publishTotalMs/publishSamples:0);
             data.put("test_render_frames",preview.frames()-realtimeFramesAtStart);
             data.put("test_render_fps",(preview.frames()-realtimeFramesAtStart)/wall);
             if(samples>0) {
                 data.put("control_with_visual_p95_ms",sorted[(int)((samples-1)*.95)]);
                 data.put("control_with_visual_p99_ms",sorted[(int)((samples-1)*.99)]);
                 data.put("control_with_visual_max_ms",sorted[samples-1]);
+                for(int c=0;c<componentSamples.length;c++) {
+                    double[] values=Arrays.copyOf(componentSamples[c],samples); Arrays.sort(values);
+                    data.put(componentNames[c]+"_p95_ms",values[(int)((samples-1)*.95)]);
+                    data.put(componentNames[c]+"_p99_ms",values[(int)((samples-1)*.99)]);
+                    data.put(componentNames[c]+"_max_ms",values[samples-1]);
+                }
             }
             publish(data.toString());
         } catch(Exception e) { failed(e); }
@@ -225,11 +257,11 @@ public final class MainActivity extends Activity {
     private void policyBenchmark() {
         pause(); policyEnabled=false; enablePolicy(.30f);
         main.post(()->status.setText("策略测试中：前进 0.30m/s，500 个控制周期…"));
-        double[] ms=new double[500]; long begin=System.nanoTime(); String raw="";
-        for(int i=0;i<ms.length;i++) { raw=controlStep(false); ms[i]=controlMs; }
+        double[] ms=new double[500]; long begin=System.nanoTime();
+        for(int i=0;i<ms.length;i++) { controlStep(false); ms[i]=controlMs; }
         double wall=(System.nanoTime()-begin)/1e9; Arrays.sort(ms);
         try {
-            JSONObject data=new JSONObject(raw); data.put("mode","policy_benchmark");
+            JSONObject data=new JSONObject(NativeSim.state(handle)); data.put("mode","policy_benchmark");
             data.put("policy_control_ticks",500); data.put("policy_wall_seconds",wall);
             data.put("policy_realtime_factor",10/wall); data.put("control_p50_ms",ms[249]);
             data.put("control_p95_ms",ms[474]); data.put("control_p99_ms",ms[494]);
@@ -237,13 +269,18 @@ public final class MainActivity extends Activity {
         } catch(Exception e) { throw new IllegalStateException(e); }
     }
     private void publish(String raw) {
+        publish(raw,true);
+    }
+    private void publish(String raw,boolean refreshVisual) {
         try {
-            pushVisual();
+            if(refreshVisual) pushVisual();
             JSONObject data=new JSONObject(raw);
             data.put("model","scene.xml → robot_groundcontact.xml");
             data.put("stage",policyEnabled?"M2: ONNX + XML position servo":"M1: position servo only; no policy");
             data.put("policy_enabled",policyEnabled); data.put("control_ms",controlMs);
-            data.put("app_stage","M3"); data.put("render_enabled",renderEnabled);
+            data.put("app_stage","M3.1"); data.put("render_enabled",renderEnabled);
+            data.put("visual_target_fps",VisualCadence.FPS);
+            data.put("policy_tick_ms",policyTickMs); data.put("physics_advance_ms",physicsMs);
             data.put("visual_snapshot_ms",snapshotMs); data.put("control_with_visual_ms",controlWithVisualMs);
             preview.annotate(data);
             if(policies!=null) policies.annotate(data);
@@ -281,9 +318,10 @@ public final class MainActivity extends Activity {
             details+=String.format(Locale.ROOT,"\n3D %s / %.1f FPS / CPU提交 %.3f ms\n快照 %.3f ms / GPU %s",
                 data.getBoolean("render_ready"),data.getDouble("render_fps"),data.getDouble("render_cpu_ms"),snapshotMs,data.getString("gl_renderer"));
             if(data.has("realtime_wall_seconds")) details+=String.format(Locale.ROOT,
-                "\n实时测试：墙钟 %.2fs / 仿真 %.2fs\n画面 %.1f FPS / 控制p99 %.3f ms\n超20ms周期 %d / 调度迟到 %d",
+                "\n实时测试：墙钟 %.2fs / 仿真 %.2fs\n画面 %.1f FPS / 控制p99 %.3f ms\n超20ms周期 %d / 调度迟到 %d\n工作线程p99 %.3f ms / 超20ms %d",
                 data.getDouble("realtime_wall_seconds"),data.getDouble("sim_time"),data.getDouble("test_render_fps"),
-                data.optDouble("control_with_visual_p99_ms",0),data.getInt("control_over_20ms_ticks"),data.getLong("late_ticks"));
+                data.optDouble("control_with_visual_p99_ms",0),data.getInt("control_over_20ms_ticks"),data.getLong("late_ticks"),
+                data.optDouble("worker_tick_p99_ms",0),data.optInt("worker_over_20ms_ticks",0));
             final String shownDetails=details;
             main.post(()->{ if(!destroyed) { status.setText(text); report.setText(shownDetails); } });
         } catch(Exception e) { throw new IllegalStateException("Cannot publish simulation state",e); }

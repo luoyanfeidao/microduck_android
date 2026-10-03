@@ -71,6 +71,14 @@ void one_step(Simulation& s) {
         throw std::runtime_error("Numerical instability: simulation paused; reset required");
     }
 }
+void advance(Simulation& s,int count) {
+    if(count<1 || count>10000) throw std::runtime_error("Invalid step count");
+    const auto start=Clock::now();
+    for(int i=0;i<count;++i) one_step(s);
+    s.last_batch_ms=std::chrono::duration<double,std::milli>(Clock::now()-start).count();
+    // Retain the baseline final-state forward pass, including contact/solver work.
+    mj_forward(s.model,s.data);
+}
 void build_observation(const Simulation& s,const float* previous,const float* command,float* obs) {
     std::copy(previous,previous+N,obs+34); std::copy(command,command+13,obs+48);
     // Free-joint angular velocity is local; projected gravity is R^T * (0,0,-1).
@@ -169,14 +177,12 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_microduck_sim_NativeSim_state(JNIE
 }
 extern "C" JNIEXPORT jstring JNICALL Java_com_microduck_sim_NativeSim_step(JNIEnv* env,jclass,jlong handle,jint count) {
     try {
-        if (count < 1 || count > 10000) throw std::runtime_error("Invalid step count");
-        auto& s=sim(handle); const auto start=Clock::now();
-        for(int i=0;i<count;++i) one_step(s);
-        s.last_batch_ms=std::chrono::duration<double,std::milli>(Clock::now()-start).count();
-        // Make displayed world transforms correspond to the final integrated state.
-        mj_forward(s.model,s.data);
+        auto& s=sim(handle); advance(s,count);
         return java_string(env,state(s));
     } catch(const std::exception& e) { fail(env,e); return nullptr; }
+}
+extern "C" JNIEXPORT void JNICALL Java_com_microduck_sim_NativeSim_advance(JNIEnv* env,jclass,jlong handle,jint count) {
+    try { advance(sim(handle),count); } catch(const std::exception& e) { fail(env,e); }
 }
 extern "C" JNIEXPORT jstring JNICALL Java_com_microduck_sim_NativeSim_reset(JNIEnv* env,jclass,jlong handle,jstring key) {
     try {
@@ -251,16 +257,25 @@ extern "C" JNIEXPORT void JNICALL Java_com_microduck_sim_NativeSim_applyAction(
 extern "C" JNIEXPORT jobjectArray JNICALL Java_com_microduck_sim_NativeSim_visualMeshes(JNIEnv* env,jclass,jlong handle) {
     try {
         const auto& s=sim(handle);
-        jclass floats=env->FindClass("[F"); if(!floats) return nullptr;
-        jobjectArray out=env->NewObjectArray(s.model->nmesh,floats,nullptr); env->DeleteLocalRef(floats);
+        jclass mesh_class=env->FindClass("com/microduck/sim/VisualMesh"); if(!mesh_class) return nullptr;
+        jmethodID ctor=env->GetMethodID(mesh_class,"<init>","([F[I)V");
+        if(!ctor) { env->DeleteLocalRef(mesh_class); return nullptr; }
+        jobjectArray out=env->NewObjectArray(s.model->nmesh,mesh_class,nullptr);
         if(!out) return nullptr;
         for(int mesh=0;mesh<s.model->nmesh;++mesh) {
-            auto vertices=duck_visual::mesh_triangles(*s.model,mesh);
-            jfloatArray array=env->NewFloatArray(vertices.size()); if(!array) return nullptr;
-            env->SetFloatArrayRegion(array,0,vertices.size(),vertices.data());
-            env->SetObjectArrayElement(out,mesh,array); env->DeleteLocalRef(array);
+            auto data=duck_visual::indexed_mesh(*s.model,mesh);
+            jfloatArray vertices=env->NewFloatArray(data.vertices.size()); if(!vertices) return nullptr;
+            jintArray indices=env->NewIntArray(data.indices.size()); if(!indices) return nullptr;
+            env->SetFloatArrayRegion(vertices,0,data.vertices.size(),data.vertices.data());
+            env->SetIntArrayRegion(indices,0,data.indices.size(),data.indices.data());
+            if(env->ExceptionCheck()) return nullptr;
+            jobject packet=env->NewObject(mesh_class,ctor,vertices,indices);
+            env->DeleteLocalRef(vertices); env->DeleteLocalRef(indices);
+            if(!packet) return nullptr;
+            env->SetObjectArrayElement(out,mesh,packet); env->DeleteLocalRef(packet);
             if(env->ExceptionCheck()) return nullptr;
         }
+        env->DeleteLocalRef(mesh_class);
         return out;
     } catch(const std::exception& e) { fail(env,e); return nullptr; }
 }

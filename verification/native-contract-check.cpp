@@ -40,5 +40,22 @@ int main(int argc,char** argv) {
     action[0]=std::numeric_limits<float>::quiet_NaN(); bool rejected=false;
     try { apply_policy_action(s,action,true,true); } catch(const std::runtime_error&) { rejected=true; }
     if(!rejected) throw std::runtime_error("NaN action accepted");
-    std::cout<<"{\"observation_max_error\":"<<max_error<<",\"action_scale_filter_gain\":\"passed\",\"nan_rejection\":\"passed\"}\n";
+    Simulation baseline; baseline.model=mj_copyModel(nullptr,s.model); baseline.data=mj_makeData(baseline.model);
+    mj_copyData(baseline.data,baseline.model,s.data);
+    for(int tick=0;tick<500;++tick) {
+        advance(s,4);
+        for(int step=0;step<4;++step) one_step(baseline);
+        mj_forward(baseline.model,baseline.data);
+        for(int i=0;i<s.model->nq;++i) if(s.data->qpos[i]!=baseline.data->qpos[i]) throw std::runtime_error("Advance qpos regression");
+        for(int i=0;i<s.model->nv;++i) if(s.data->qvel[i]!=baseline.data->qvel[i]) throw std::runtime_error("Advance qvel regression");
+        if(s.data->time!=baseline.data->time || s.data->ncon!=baseline.data->ncon || s.steps!=baseline.steps)
+            throw std::runtime_error("Advance time/contact regression");
+        for(int i=0;i<s.model->ngeom*3;++i) if(s.data->geom_xpos[i]!=baseline.data->geom_xpos[i])
+            throw std::runtime_error("Advance transform regression");
+    }
+    auto steps=s.steps; rejected=false;
+    try { advance(s,0); } catch(const std::runtime_error&) { rejected=true; }
+    if(!rejected || s.steps!=steps) throw std::runtime_error("Invalid advance accepted");
+    std::cout<<"{\"observation_max_error\":"<<max_error<<",\"action_scale_filter_gain\":\"passed\",\"nan_rejection\":\"passed\","
+             <<"\"advance_baseline_500_ticks_exact\":true,\"invalid_step_rejection\":true}\n";
 }

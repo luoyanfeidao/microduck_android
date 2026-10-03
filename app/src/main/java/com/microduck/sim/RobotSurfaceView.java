@@ -31,7 +31,7 @@ final class RobotSurfaceView extends GLSurfaceView {
             }
         });
     }
-    void meshes(float[][] meshes) { scene.source=meshes; requestRender(); }
+    void meshes(VisualMesh[] meshes) { scene.source=meshes; requestRender(); }
     void frame(float[] packet) { scene.latest=new SceneFrame(packet,System.nanoTime()); requestRender(); }
     void follow(boolean enabled) { scene.follow=enabled; requestRender(); }
     void contacts(boolean enabled) { scene.showContacts=enabled; requestRender(); }
@@ -44,6 +44,8 @@ final class RobotSurfaceView extends GLSurfaceView {
         data.put("render_frames",scene.totalFrames); data.put("render_fps",scene.fps);
         data.put("render_cpu_ms",scene.cpuMs); data.put("rendered_sim_time",scene.simTime);
         data.put("render_meshes",scene.meshCount); data.put("render_unique_triangles",scene.triangles);
+        data.put("render_unique_vertices",scene.uniqueVertices); data.put("render_mesh_bytes",scene.meshBytes);
+        data.put("render_mesh_format","indexed position-normal pairs / uint32");
         data.put("render_error",scene.problem); data.put("camera_follow",scene.follow);
     }
     @Override public boolean onTouchEvent(MotionEvent event) {
@@ -60,17 +62,18 @@ final class RobotSurfaceView extends GLSurfaceView {
     @Override public boolean performClick() { super.performClick(); return true; }
 
     private static final class SceneRenderer implements Renderer {
-        volatile float[][] source;
+        volatile VisualMesh[] source;
         volatile SceneFrame latest;
         volatile float azimuth=-50,elevation=25,distance=.75f;
         volatile boolean follow=true,showContacts=true,ready;
         volatile String gpu="",glVersion="",problem="";
         volatile long totalFrames;
         volatile double fps,cpuMs,simTime;
-        volatile int meshCount,triangles;
+        volatile int meshCount,triangles,uniqueVertices;
+        volatile long meshBytes;
         Consumer<String> error;
-        private float[][] uploaded;
-        private int[] buffers,vertices;
+        private VisualMesh[] uploaded;
+        private int[] buffers,indexBuffers,indexCounts;
         private int program,ground,points,lines,uModel,uVP,uColor,uMode,width=1,height=1;
         private long fpsAt,fpsFrames,lastPacketNs;
         private final float[] projection=new float[16],view=new float[16],vp=new float[16],model=new float[16];
@@ -99,7 +102,7 @@ final class RobotSurfaceView extends GLSurfaceView {
             "color*=.38+.62*diffuse;frag=vec4(pow(max(color,vec3(0)),vec3(.4545)),uColor.a);}\n";
 
         @Override public void onSurfaceCreated(GL10 ignored,EGLConfig config) {
-            ready=false; uploaded=null; buffers=null; problem="";
+            ready=false; uploaded=null; buffers=null; indexBuffers=null; problem="";
             gpu=GLES30.glGetString(GLES30.GL_RENDERER); glVersion=GLES30.glGetString(GLES30.GL_VERSION);
             try {
                 program=GLES30.glCreateProgram(); int v=shader(GLES30.GL_VERTEX_SHADER,VERTEX),f=shader(GLES30.GL_FRAGMENT_SHADER,FRAGMENT);
@@ -122,18 +125,22 @@ final class RobotSurfaceView extends GLSurfaceView {
         @Override public void onDrawFrame(GL10 ignored) {
             GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT|GLES30.GL_DEPTH_BUFFER_BIT);
             if(!problem.isEmpty()) return;
-            float[][] meshes=source; SceneFrame frame=latest;
+            VisualMesh[] meshes=source; SceneFrame frame=latest;
             if(meshes==null || frame==null) return;
             long start=System.nanoTime();
             try {
                 if(uploaded!=meshes) {
                     if(buffers!=null) GLES30.glDeleteBuffers(buffers.length,buffers,0);
-                    buffers=new int[meshes.length]; vertices=new int[meshes.length]; int sum=0;
+                    if(indexBuffers!=null) GLES30.glDeleteBuffers(indexBuffers.length,indexBuffers,0);
+                    buffers=new int[meshes.length]; indexBuffers=new int[meshes.length]; indexCounts=new int[meshes.length];
+                    int sum=0,vertexSum=0; long bytes=0;
                     for(int i=0;i<meshes.length;i++) {
-                        if(meshes[i].length%18!=0) throw new IllegalArgumentException("Invalid mesh triangle packet");
-                        buffers[i]=upload(meshes[i]); vertices[i]=meshes[i].length/6; sum+=vertices[i]/3;
+                        VisualMesh mesh=meshes[i];
+                        buffers[i]=upload(mesh.vertices); indexBuffers[i]=uploadIndices(mesh.indices);
+                        indexCounts[i]=mesh.indices.length; sum+=indexCounts[i]/3; vertexSum+=mesh.vertices.length/6;
+                        bytes+=4L*(mesh.vertices.length+mesh.indices.length);
                     }
-                    uploaded=meshes; meshCount=meshes.length; triangles=sum;
+                    uploaded=meshes; meshCount=meshes.length; triangles=sum; uniqueVertices=vertexSum; meshBytes=bytes;
                 }
                 float[] data=frame.values;
                 float cx=follow?data[4]:0,cy=follow?data[5]:0,cz=follow?Math.max(.1f,data[6]+.05f):.15f;
@@ -149,7 +156,9 @@ final class RobotSurfaceView extends GLSurfaceView {
                     int at=SceneFrame.HEADER+g*SceneFrame.STRIDE,id=(int)data[at];
                     if(id<0 || id>=buffers.length || data[at]!=id) throw new IllegalArgumentException("Invalid visual mesh id");
                     frame.modelMatrix(g,model);
-                    draw(buffers[id],vertices[id],GLES30.GL_TRIANGLES,model,data[at+13],data[at+14],data[at+15],data[at+16],0);
+                    bind(buffers[id],model,data[at+13],data[at+14],data[at+15],data[at+16],0);
+                    GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER,indexBuffers[id]);
+                    GLES30.glDrawElements(GLES30.GL_TRIANGLES,indexCounts[id],GLES30.GL_UNSIGNED_INT,0);
                 }
                 Matrix.setIdentityM(model,0); updateTrail(frame);
                 if(trailCount>1) {
@@ -163,7 +172,9 @@ final class RobotSurfaceView extends GLSurfaceView {
                     if(contactVertices==null || contactVertices.capacity()<required)
                         contactVertices=ByteBuffer.allocateDirect(required*4).order(ByteOrder.nativeOrder()).asFloatBuffer();
                     contactVertices.clear(); int at=SceneFrame.HEADER+frame.geoms*SceneFrame.STRIDE;
-                    for(int c=0;c<frame.contacts;c++) contactVertices.put(new float[]{data[at++],data[at++],data[at++]+.002f,0,0,1});
+                    for(int c=0;c<frame.contacts;c++) {
+                        contactVertices.put(data[at++]).put(data[at++]).put(data[at++]+.002f).put(0).put(0).put(1);
+                    }
                     contactVertices.flip(); GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,points);
                     GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER,required*4,contactVertices,GLES30.GL_DYNAMIC_DRAW);
                     draw(points,frame.contacts,GLES30.GL_POINTS,model,1,.18f,.12f,1,2);
@@ -185,10 +196,14 @@ final class RobotSurfaceView extends GLSurfaceView {
             trail[at+3]=0; trail[at+4]=0; trail[at+5]=1;
         }
         private void draw(int buffer,int count,int primitive,float[] transform,float r,float g,float b,float a,int mode) {
+            bind(buffer,transform,r,g,b,a,mode);
+            GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER,0);
+            GLES30.glDrawArrays(primitive,0,count);
+        }
+        private void bind(int buffer,float[] transform,float r,float g,float b,float a,int mode) {
             GLES30.glUniformMatrix4fv(uModel,1,false,transform,0); GLES30.glUniform4f(uColor,r,g,b,a); GLES30.glUniform1i(uMode,mode);
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,buffer); GLES30.glEnableVertexAttribArray(0); GLES30.glEnableVertexAttribArray(1);
             GLES30.glVertexAttribPointer(0,3,GLES30.GL_FLOAT,false,24,0); GLES30.glVertexAttribPointer(1,3,GLES30.GL_FLOAT,false,24,12);
-            GLES30.glDrawArrays(primitive,0,count);
         }
         private static int shader(int type,String code) {
             int shader=GLES30.glCreateShader(type); GLES30.glShaderSource(shader,code); GLES30.glCompileShader(shader);
@@ -198,6 +213,12 @@ final class RobotSurfaceView extends GLSurfaceView {
         private static int upload(float[] values) {
             int[] id=new int[1]; GLES30.glGenBuffers(1,id,0); GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,id[0]);
             GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER,values.length*4,direct(values),GLES30.GL_STATIC_DRAW); return id[0];
+        }
+        private static int uploadIndices(int[] values) {
+            java.nio.IntBuffer data=ByteBuffer.allocateDirect(values.length*4).order(ByteOrder.nativeOrder()).asIntBuffer();
+            data.put(values).flip();
+            int[] id=new int[1]; GLES30.glGenBuffers(1,id,0); GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER,id[0]);
+            GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER,values.length*4,data,GLES30.GL_STATIC_DRAW); return id[0];
         }
         private static FloatBuffer direct(float[] values) {
             FloatBuffer out=ByteBuffer.allocateDirect(values.length*4).order(ByteOrder.nativeOrder()).asFloatBuffer(); out.put(values).flip(); return out;

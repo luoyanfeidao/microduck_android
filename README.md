@@ -1,4 +1,4 @@
-# Android Studio 施工入口（M3：3D + 物理 + ONNX）
+# Android Studio 施工入口（M3.1：3D + 物理 + ONNX）
 
 在 Android Studio 中打开当前目录 `android-sim`，不要打开外层 Microduck 目录。由你完成 Sync、编译、安装和真机运行。
 
@@ -22,19 +22,28 @@ CMake 会从源码构建 MuJoCo 和 JNI 库，不需要手动复制 `.so`。MuJo
 
 ## 手机上怎么验收
 
-**先验收 M3：**
+**当前验收 M3.1：**
 
-1. 在 Android Studio 重新 Sync、Build、Run，确认标题为 `Microduck · Android M3`。本次没有新增 Maven 渲染依赖，JDK/NDK/CMake 配置沿用已跑通的版本。
+1. 在 Android Studio 重新 Sync、Build、Run，确认标题为 `Microduck · Android M3.1`（versionName `0.3.1-m3`）。本次没有新增 Maven 渲染依赖，JDK/NDK/CMake 配置沿用已跑通的版本。
 2. 上方应出现真实机器人 CAD 外观及地面网格。单指拖动旋转视角，双指缩放；“复位视角”恢复默认角度和距离。“跟随机器人”保持机器人在中心，取消后可以观察它在地面上的位移。
 3. 点击“策略站立”观察平衡；点击“前进 0.30m/s”观察脚步。橙线是最近约 512 个绘制快照的地面轨迹，红点是 MuJoCo 当前接触点，可以关闭接触点显示。
 4. 等 3D 正常显示后，点击“实时测试 30s”。从 HOME 重置，发送 vx=.30，按 50Hz 运行 30 秒墙钟，然后自动暂停。保持应用在前台且不再点击重置；告诉 Codex 完成，以便经 ADB 获取报告。
-5. 报告 `mode=realtime_render_test`，包含墙钟/仿真时间比例、控制周期与快照的 p95/p99/max、超过 20ms 的周期数、调度迟到及绘制帧率。关闭“显示3D”可重复做 CPU 对照；此时帧率应接近零。
+5. 报告 `mode=realtime_render_test`，包含墙钟/仿真时间比例、控制周期与快照的 p95/p99/max、超过 20ms 的周期数、调度迟到及绘制帧率。本版画面目标约 **30FPS**，物理与推理仍是 **50Hz**；不要用原 M3 的 53.74FPS 作为新版本帧率目标。
+6. 先导出开启 3D 的报告，再关闭“显示3D”重复实时测试并另存。关闭时绘制回调应接近零。同类新测试会覆盖独立归档；暂停后转动相机也会请求额外绘制，因此测速期间勿操作相机。
+
+```bash
+# 开启 3D 的测试结束后，先执行第一条；关闭 3D 再测后，执行第二条。
+adb shell run-as com.microduck.sim cat files/last-realtime-test.json > /tmp/microduck-m31-3d-on.json
+adb shell run-as com.microduck.sim cat files/last-realtime-test.json > /tmp/microduck-m31-3d-off.json
+```
+
+保留默认动作过滤设置，关注数值有限、高度、最终位移，以及 `control_with_visual_p99_ms`、`worker_tick_p99_ms`、`worker_over_20ms_ticks`、`late_ticks`。原 M3 实测参考为 p99=16.616ms/max=19.442ms，最终 x=3.501m/y=-1.225m/z=.1198m；优化后真机结果尚未取得，不能用静态数据量降幅推算手机提速。
 
 原来的“策略测试 10s”仍是不等待墙钟的 M2 快速计算基准，不能用来观看完整动画：循环中不逐步更新画面，只显示开始和结束姿态。看步行应使用“前进”或“实时测试30s”。
 
-**先验收 M2：**
+**保留的 M2 操作：**
 
-1. 重新 Sync、Build、Run，确认标题为 `Microduck · Android M2`。加载两份策略时会核验 SHA-256、float32 输入 `[1,61]`、输出 `[1,14]`，并执行四组桌面 ONNX 对照；最大绝对误差超过 0.001 会拒绝加载策略。M1 操作仍可用。
+1. 加载两份策略时会核验 SHA-256、float32 输入 `[1,61]`、输出 `[1,14]`，并执行四组桌面 ONNX 对照；最大绝对误差超过 0.001 会拒绝加载策略。M1 操作仍可用。
 2. 点击“策略站立”：从 HOME 放置开始（躯干 0.125m、关节 home、速度/原始动作反馈归零），50Hz 推理。点击暂停后查看高度、位移与数值。
 3. 点击“前进 0.30m/s”：选择步行策略。已启用策略时只改变速度命令，保留机器人状态；尚未启用时先重置 HOME。
 4. 点击“策略测试 10s”：总是从 HOME 重置，发送 vx=0.30m/s，执行 500 个控制周期，每次推理后推进四个物理步。结束保持暂停，读取位移、姿态和周期 p95/p99/max；这测的是 10 秒**仿真时间**，不等待 10 秒墙钟。
@@ -52,15 +61,36 @@ CMake 会从源码构建 MuJoCo 和 JNI 库，不需要手动复制 `.so`。MuJo
 
 性能数字只覆盖当前位置伺服的物理测试。`last_batch_ms` 包含四次物理推进及数值检查，不包含最终 `mj_forward`、JNI 返回、JSON、文件写入和 UI 更新；基准也不包含 ONNX、渲染、视频。不能用这个数字宣称整套系统已达到实时要求。
 
-策略模式另报 `inference_ms` 和 `control_ms`。后者包括观测 JNI、ONNX、动作 JNI、物理推进、`mj_forward` 和原生状态 JSON，不包含报告落盘与 UI 更新。策略基准没有墙钟节拍，仍需另做实时运行、温升和持续性测试。
+策略模式另报 `inference_ms` 和 `control_ms`。M3.1 的后者包括观测 JNI、ONNX、动作 JNI、物理推进及 `mj_forward`，不再包含原生状态 JSON（原 M3 包含），也不包含报告落盘与 UI 更新。策略基准没有墙钟节拍，仍需另做实时运行、温升和持续性测试。
 
 M3 的 `control_with_visual_ms` 及实时测试分位数包含额外的场景快照构造/JNI 拷贝/请求绘制。GPU 在独立 GL 线程工作，不在该计时范围；`render_cpu_ms` 是 GL 回调内的 CPU 提交时间，既不含之后的 EGL swap，也不是 GPU 完成耗时。`test_render_fps` 是实际执行的绘制回调数量/测试墙钟时间，不等于屏幕面板刷新率。
 
+M3.1 增加各项 p95/p99/max：`policy_tick_*`（观测→推理→动作）、`physics_advance_*`（4 步及 forward）、`visual_snapshot_*`（未取快照的周期为零）、`worker_tick_*`（整个工作线程回调，包含当次 JSON、文件写入、日志和 UI 投递）。`publish_mean_ms / publish_max_ms` 单独记录发布成本。原 `control_over_20ms_ticks` 不包含发布成本，新的 `worker_over_20ms_ticks` 包含；两者均不包含 GPU 完成、EGL swap 或 UI 实际绘制。
+
 ## M3 渲染机制
 
-MuJoCo 传统渲染器调用桌面 OpenGL 的兼容接口，Android 提供 OpenGL ES，因此本工程没有直接调用 `mjr_render`。JNI 从已编译的模型导出真实 mesh 顶点/法线；Java `GLSurfaceView` 用 GLES3 绘制。当前模型有 38 个独立网格（431,802 个三角形），被 70 个可视 geom 引用，初始化三角形数据约 29.65MiB。静态数据每个 GL context 上传一次，丢失 context 后用保留的 CPU 数据重建。
+MuJoCo 传统渲染器调用桌面 OpenGL 的兼容接口，Android 提供 OpenGL ES，因此本工程没有直接调用 `mjr_render`。JNI 从已编译的模型导出真实 mesh 顶点/法线；Java `GLSurfaceView` 用 GLES3 绘制。当前模型有 38 个独立网格（431,802 个三角形），被 70 个可视 geom 引用。M3.1 按“顶点索引+法线索引”共享渲染顶点，保留棱角、全部三角形及原顺序，使用 `glDrawElements / GL_UNSIGNED_INT`。215,317 个共享顶点及索引合计 10,349,232 字节（9.87MiB），原逐三角形展开为 31,089,744 字节（29.65MiB），数据量减少约 66.71%；这不等同于 GPU 内存总量或实测性能降幅。静态数据每个 GL context 上传一次，丢失 context 后用保留的 CPU 数据重建。
 
-所有 `mjModel/mjData` 访问仍在仿真工作线程；每个控制周期拷贝 geom 的世界位置、旋转、颜色和接触点。GL 线程只读不可变快照，没有原生仿真句柄。仅保留最新快照并按需绘制，慢画面不会积累无界队列；场景导出与画面线程都不推进物理。
+所有 `mjModel/mjData` 访问仍在仿真工作线程；物理/策略保持 50Hz，通过墙钟门限平均 30Hz 拷贝 geom 的世界位置、旋转、颜色和接触点。50Hz 控制周期下相邻快照通常间隔 20ms 或 40ms，未做姿态插值；相机操作、重置、测试完成仍可主动刷新。GL 线程只读不可变快照，没有原生仿真句柄。仅保留最新快照并按需绘制，慢画面不会积累无界队列；场景导出与画面线程都不推进物理。
+
+连续控制使用 `NativeSim.advance`，保留原四步 `mj_step`、数值检查及最终 `mj_forward`，每约 250ms 生成一次状态 JSON。定期发布复用已有画面，不再重复取快照；单步、重置及完成测试即时发布。文件写入仍在工作线程，新增计时用于判断它是否还占用控制预算。
+
+M3.1 真机已完成一次开启 3D 的 30 秒测试，报告见 `verification/device-M31-realtime-render-test.json`：画面 30.05FPS、控制加快照 p99=16.252ms/max=18.083ms，位姿与原 M3 报告相同。新增完整工作线程计时 p99=25.791ms/max=28.381ms、超20ms 76周期；发布平均9.243ms/max=13.206ms。因此下一步是把报告格式化、文件及日志移出控制线程。原 M3 未测这项总耗时，不能把76周期解释为新引入的退化。
+
+## 源码检查（不打包或安装 APK）
+
+已验证的检查见 `verification/m31-checks.json`：Java/JNI 编译检查、全部三角形展开后的位置和法线一致、棱角/平面法线保留、500周期物理推进与旧流程完全一致、30FPS门限在50Hz及抖动时钟下无累计漂移或补帧队列。
+
+Mac 上可重复执行；下面路径对应本机环境，其他机器按实际位置修改。ORT AAR 可使用 Gradle 已下载的1.20.0文件；MuJoCo目录是桌面Python包，不是Android源码缓存。
+
+```bash
+# 在 android-sim 目录执行；先准备好模型 assets。
+python3 scripts/check_source.py \
+  --java-home /Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home \
+  --android-sdk /Users/navinfo/Android/sdk \
+  --ort-aar /private/tmp/microduck-onnxruntime-android-1.20.0.aar \
+  --mujoco-dir ../Pollen/microduck_rl/.venv/lib/python3.12/site-packages/mujoco
+```
 
 当前绘制视觉 mesh（group<3），不显示碰撞几何；采用模型材质颜色和简化光照。地面是与当前场景水平 floor 对齐的程序网格，不复制桌面纹理、阴影或完整材质。它是观察真实模型姿态的 3D 视图，尚不是桌面画面效果的完全移植，也没有视频编码/传输。
 

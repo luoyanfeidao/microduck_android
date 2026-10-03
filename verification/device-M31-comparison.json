@@ -1,0 +1,12 @@
+{
+  "baseline": "device-M3-realtime-render-test.json",
+  "candidate": "device-M31-realtime-render-test.json",
+  "control_p99_change_percent": -2.1866742225357783,
+  "root_xyz_difference_m": {
+    "root_x": 0.0,
+    "root_y": 0.0,
+    "root_z": 0.0
+  },
+  "important": "M3 baseline did not measure worker_tick; M3.1 exposes report publishing cost. No claim that the 76 worker overruns are newly introduced.",
+  "next": "Move report formatting/files/log/UI preparation to separate thread; keep native/policy access on control worker."
+}

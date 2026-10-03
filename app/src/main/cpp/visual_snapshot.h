@@ -2,20 +2,28 @@
 #include <mujoco/mujoco.h>
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <limits>
 #include <stdexcept>
+#include <unordered_map>
 #include <vector>
 
 // Pure CPU bridge. Called only by the simulation worker; no OpenGL or mjData
 // pointers leave it. Mesh vertices are already compiled into MuJoCo's mesh frame.
 namespace duck_visual {
 constexpr int kHeader = 9, kGeomStride = 17, kVersion = 1;
-inline std::vector<float> mesh_triangles(const mjModel& m,int mesh) {
+struct IndexedMesh {
+    std::vector<float> vertices; // interleaved position + normal
+    std::vector<int> indices;   // GLES GL_UNSIGNED_INT, in original face order
+};
+inline IndexedMesh indexed_mesh(const mjModel& m,int mesh) {
     if(mesh<0 || mesh>=m.nmesh) throw std::runtime_error("Invalid visual mesh");
     const int faces=m.mesh_facenum[mesh], fadr=m.mesh_faceadr[mesh];
     const int vadr=m.mesh_vertadr[mesh], nadr=m.mesh_normaladr[mesh];
     if(faces<0 || faces>std::numeric_limits<int>::max()/18) throw std::runtime_error("Visual mesh too large");
-    std::vector<float> out(static_cast<std::size_t>(faces)*18);
+    IndexedMesh out;
+    out.indices.reserve(static_cast<std::size_t>(faces)*3);
+    std::unordered_map<std::uint64_t,int> pairs;
     for(int f=0;f<faces;++f) {
         const int* ids=m.mesh_face+3*(fadr+f);
         for(int corner=0;corner<3;++corner) if(ids[corner]<0 || ids[corner]>=m.mesh_vertnum[mesh])
@@ -28,11 +36,19 @@ inline std::vector<float> mesh_triangles(const mjModel& m,int mesh) {
         mju_cross(flat,a,b); if(mju_normalize3(flat)<1e-12) { flat[0]=flat[1]=0; flat[2]=1; }
         for(int corner=0;corner<3;++corner) {
             int vid=ids[corner], nid=m.mesh_facenormal[3*(fadr+f)+corner];
+            bool normal_valid=nid>=0 && nid<m.mesh_normalnum[mesh];
+            // Preserve hard edges: position alone is not a render vertex.
+            // Missing normals use a separate flat vertex for each face corner.
+            std::uint64_t key=(std::uint64_t(std::uint32_t(vid))<<32)|std::uint32_t(nid);
+            auto found=normal_valid ? pairs.find(key) : pairs.end();
+            if(found!=pairs.end()) { out.indices.push_back(found->second); continue; }
+            int index=static_cast<int>(out.vertices.size()/6);
+            out.indices.push_back(index);
+            if(normal_valid) pairs.emplace(key,index);
             for(int k=0;k<3;++k) {
-                auto base=static_cast<std::size_t>(f)*18+corner*6;
-                out[base+k]=m.mesh_vert[3*(vadr+vid)+k];
-                out[base+3+k]=(nid>=0 && nid<m.mesh_normalnum[mesh]) ? m.mesh_normal[3*(nadr+nid)+k] : flat[k];
+                out.vertices.push_back(m.mesh_vert[3*(vadr+vid)+k]);
             }
+            for(int k=0;k<3;++k) out.vertices.push_back(normal_valid ? m.mesh_normal[3*(nadr+nid)+k] : flat[k]);
         }
     }
     return out;
