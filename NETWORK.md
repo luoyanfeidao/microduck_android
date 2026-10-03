@@ -1,6 +1,6 @@
-# M5.2：一台 Android 仿真，另一台浏览器观看和控制
+# M5.3：一台 Android 仿真，另一台浏览器观看和控制
 
-当前源码版本为 `0.5.2-m52` / versionCode=9，手机标题 `Microduck · Android M5.2`，由用户在Android Studio构建/安装/运行。M5/M5.1视频功能已验证，但M5.1仍有1个22.613ms周期，配对记录落在元数据捕获/提交区间；见 [M5.1实测](verification/device-M51-video-acceptance.json)。M5.2把周期性元数据JSON组装移入报告线程、JPEG副本分配移出状态锁，并增加5段计时，检查 [verification/m52-checks.json](verification/m52-checks.json)，性能效果待测。使用及线程图见 [VIDEO.md](VIDEO.md)。
+当前源码版本为 `0.5.3-m53` / versionCode=10，手机标题 `Microduck · Android M5.3`，由用户在Android Studio构建/安装/运行。M5.2视频开启实测约9.90FPS、错误0，但仍有1个21.270ms周期，其中报告队列提交12.545ms；见 [M5.2实测](verification/device-M52-video-acceptance.json)。M5.3移除报告提交的共享monitor/Executor启动路径，改用常驻线程、原子最新状态槽及完成测试队列，新增准入/发布/唤醒和线程CPU计时。检查 [verification/m53-checks.json](verification/m53-checks.json)，真机效果待测。使用及线程图见 [VIDEO.md](VIDEO.md)。
 
 真实CAD视图仍由仿真手机以约30FPS绘制；浏览器默认关闭画面，勾选“开启实时画面”后按需采集、传输，目标10FPS、最大640×480。模型、ONNX、动作过滤及50Hz物理/策略沿用原基线。
 
@@ -106,7 +106,7 @@ python3 scripts/check_source.py \
 - 断连补测已通过：用户完成关闭控制端Wi-Fi测试，应用日志记录 `remote_stop_reason=heartbeat_timeout`、`running=false`、`remote_control_active=false`。租期配置3秒，实际Wi-Fi断开至暂停的时间没有单独计时；记录见 [device-M4-realtime-acceptance.json](verification/device-M4-realtime-acceptance.json)。关闭网页可能先触发主动暂停，`remote_pause`不能证明超时路径通过。
 - 网络开启的30秒短实时测试已通过：[原始报告](verification/device-M4-realtime-render-test.json)为M4、LAN开启，墙钟30.006s/仿真30.02s、1501周期/6004步，约29.994FPS；控制+快照p99=15.186ms，完整工作线程p99=16.618ms/max=19.129ms，超20ms周期0、迟到周期0，最终位姿与M3.2完全一致。用户确认保持网页连接；报告未统计HTTP轮询次数。不同次测试未控制温度/频率，不能把耗时下降归因于网络改造。最大周期距20ms约0.871ms，本次结果不代表长期温升通过。
 - 尚待验证：仿真应用前后台/重启后的服务关闭及新会话。应用回前台后须手动重新开启服务、使用新访问码，网页心跳不能恢复仿真。
-- M5视频已采到576×480画面、30秒298发布帧/9.93FPS、268帧提供HTTP、错误0；完整工作线程预算未通过，见 [device-M5-video-acceptance.json](verification/device-M5-video-acceptance.json)。M5.1报告优化后须按 [VIDEO.md](VIDEO.md) 重测，仍待video-off/3D关闭对照、持续运行/温升。
+- M5至M5.2视频实际采集正常；最新M5.2仍有1个超20ms周期，见 [device-M52-video-acceptance.json](verification/device-M52-video-acceptance.json)。M5.3报告队列优化后须按 [VIDEO.md](VIDEO.md) 重测，仍待video-off/3D关闭对照、持续运行/温升。
 
 当前targetSdk=34，新增INTERNET正常权限即可使用普通局域网socket；Android16的局域网限制为选择启用的测试功能。本工程没有开启该限制，也没有升级targetSdk。[Android官方局域网权限说明](https://developer.android.com/privacy-and-security/local-network-permission)、[网络连接权限说明](https://developer.android.com/develop/connectivity/network-ops/connecting)。
 
@@ -114,10 +114,10 @@ python3 scripts/check_source.py \
 
 | file:line | 作用 |
 | --- | --- |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:430` | 开启服务、显示地址 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:460` | 仿真线程执行命令及会话检查 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:179` | 控制周期及心跳检查 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:493` | 退出前台时关闭 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:436` | 开启服务、显示地址 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:466` | 仿真线程执行命令及会话检查 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:183` | 控制周期及心跳检查 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:499` | 退出前台时关闭 |
 | `app/src/main/java/com/microduck/sim/LanControlServer.java:28` | Socket、线程与请求边界 |
 | `app/src/main/java/com/microduck/sim/LanControlServer.java:87` | HTTP路径、授权和命令路由 |
 | `app/src/main/java/com/microduck/sim/RemoteCommand.java:7` | 命令验证 |
@@ -125,4 +125,4 @@ python3 scripts/check_source.py \
 | `app/src/main/java/com/microduck/sim/RemoteLease.java:4` | 心跳/控制归属 |
 | `app/src/main/assets/controller.html:38` | 浏览器画面、状态和心跳 |
 | `verification/NetworkControlCheck.java:1` | 回环与协议检查 |
-| `verification/m52-checks.json:1` | 当前检查结果及源码摘要 |
+| `verification/m53-checks.json:1` | 当前检查结果及源码摘要 |

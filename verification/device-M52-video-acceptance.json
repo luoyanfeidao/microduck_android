@@ -1,0 +1,78 @@
+{
+  "captured_at": "2026-10-03T22:30:42.883Z",
+  "user_confirmation": "已测完",
+  "source_commit": "19a47da",
+  "scope": "Read-only ADB video-on realtime archive",
+  "baseline": "device-M51-video-on-realtime-test.json",
+  "candidate": "device-M52-video-on-realtime-test.json",
+  "result": "Video maintained; full worker 20ms budget still not passed",
+  "measurements": {
+    "publish_mean_ms": {
+      "M5.1": 1.3118340862068962,
+      "M5.2": 1.984858586206897
+    },
+    "publish_max_ms": {
+      "M5.1": 18.047708,
+      "M5.2": 12.849062
+    },
+    "worker_tick_p99_ms": {
+      "M5.1": 12.068438,
+      "M5.2": 13.129948
+    },
+    "worker_tick_max_ms": {
+      "M5.1": 22.6125,
+      "M5.2": 21.26974
+    },
+    "worker_over_20ms_ticks": {
+      "M5.1": 1,
+      "M5.2": 1
+    },
+    "test_render_fps": {
+      "M5.1": 29.99463336719669,
+      "M5.2": 29.993519223318053
+    },
+    "test_video_capture_fps": {
+      "M5.1": 9.931556381582904,
+      "M5.2": 9.897861343694958
+    },
+    "test_video_frames_served": {
+      "M5.1": 271,
+      "M5.2": 269
+    }
+  },
+  "slow_tick_samples": [
+    {
+      "sample_index": 1365,
+      "worker_tick_ms": 21.26974,
+      "control_with_visual_ms": 8.403854,
+      "native_state_capture_ms": 0.151562,
+      "report_metadata_submit_ms": 12.697344,
+      "app_metadata_capture_ms": 0.035938,
+      "render_metadata_capture_ms": 0.011927,
+      "video_metadata_capture_ms": 0.070521,
+      "policy_metadata_capture_ms": 0.026042,
+      "report_queue_submit_ms": 12.544531
+    }
+  ],
+  "checks": {
+    "expected_stage": true,
+    "video_in_test": true,
+    "finite": true,
+    "render_ready": true,
+    "no_render_error": true,
+    "no_video_error": true,
+    "control_under_20ms": true,
+    "worker_under_20ms": false
+  },
+  "root_xyz_difference_m": {
+    "root_x": 0,
+    "root_y": 0,
+    "root_z": 0
+  },
+  "limits": [
+    "One 30s trial per version; temperature and CPU frequency uncontrolled",
+    "Queue-submit interval includes callback/task allocation, dispatcher admission and wake-up; this alone does not prove lock contention or distinguish GC/descheduling",
+    "HTTP served count does not prove browser display FPS or end-to-end latency",
+    "Video-off, lifecycle and long-duration thermal checks remain pending"
+  ]
+}

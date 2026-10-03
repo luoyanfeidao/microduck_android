@@ -20,7 +20,7 @@ public final class CapturedReportCheck {
         command[0]=-.3;
         if(writes.get()!=0) throw new AssertionError("Metadata JSON built on capture thread");
         CapturedReport completed=new CapturedReport("{\"sim_time\":30.02,\"mode\":\"realtime_render_test\",\"test_video_frames_published\":298}",
-            data->data.put("running",false).put("app_stage","M5.2"));
+            data->data.put("running",false).put("app_stage","M5.3"));
         ExecutorService report=Executors.newSingleThreadExecutor();
         try {
             Future<JSONObject> result=report.submit(first::materialize); JSONObject value=result.get();
@@ -34,8 +34,13 @@ public final class CapturedReportCheck {
             CapturedReport bad=new CapturedReport("broken",data->data.put("ignored",true));
             try { bad.materialize(); throw new AssertionError("Invalid native JSON accepted"); }
             catch(org.json.JSONException expected) { /* Failure occurs during reporting, not capture. */ }
+            AtomicReference<JSONObject> direct=new AtomicReference<>();
+            CapturedReport job=new CapturedReport("{\"sim_time\":2}",data->data.put("running",false),direct::set);
+            report.submit(job).get();
+            if(direct.get()==null || direct.get().getDouble("sim_time")!=2 || direct.get().getBoolean("running"))
+                throw new AssertionError("Direct captured job failed");
         } finally { report.shutdownNow(); }
         System.out.println("{\"captured_values_survive_deferred_parse\":true,\"completed_archive_fields_preserved\":true,\"invalid_native_json_rejected\":true,"
-            +"\"metadata_json_built_only_on_report_thread\":true,\"command_changes_do_not_change_captured_velocity\":true}");
+            +"\"metadata_json_built_only_on_report_thread\":true,\"command_changes_do_not_change_captured_velocity\":true,\"direct_job_writes_report\":true}");
     }
 }

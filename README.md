@@ -1,4 +1,4 @@
-# Android Studio 施工入口（M5.2：浏览器画面与元数据捕获优化）
+# Android Studio 施工入口（M5.3：浏览器画面与报告队列优化）
 
 在 Android Studio 中打开当前目录 `android-sim`，不要打开外层 Microduck 目录。由你完成 Sync、编译、安装和真机运行。
 
@@ -6,7 +6,9 @@
 
 当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。另一台Android浏览器可发站立/步行/暂停/复位命令并读状态；M5进一步提供当前3D视图的连续JPEG画面。控制见 [NETWORK.md](NETWORK.md)，视频原理及验收见 [VIDEO.md](VIDEO.md)。
 
-**当前先复测M5.2：** Studio编译运行 `0.5.2-m52` / versionCode=9，标题 `Microduck · Android M5.2`。开启局域网控制，浏览器连接并勾选“开启实时画面”，在仿真手机点“实时测试30s”。M5.2把周期性元数据JSONObject/JSONArray组装移到报告线程；仿真线程只复制标量/不可变视频状态，报告回调不访问模型/策略/渲染器的可变字段。同时把JPEG副本分配移出状态读取锁，新增应用/渲染/视频/策略捕获和队列提交的分项计时。检查见 [verification/m52-checks.json](verification/m52-checks.json)，实际预算改善待测。
+**当前先复测M5.3：** Studio编译运行 `0.5.3-m53` / versionCode=10，标题 `Microduck · Android M5.3`。开启局域网控制，浏览器连接并勾选“开启实时画面”，在仿真手机点“实时测试30s”。报告改用常驻线程、原子最新状态槽和完成测试队列，提交无需与报告线程共享monitor或每次启动Executor任务；直接提交已捕获的报告对象。新增提交准入、队列发布、唤醒以及提交区间线程CPU耗时，辅助区分计算与调度等待。检查见 [verification/m53-checks.json](verification/m53-checks.json)，实际预算改善待测。
+
+**M5.2复测结果：** 30秒发布297帧/9.90FPS、提供HTTP269帧、采集错误0，手机约30FPS；仍有1周期21.270ms。该周期应用/渲染/视频/策略捕获合计0.144ms，报告队列提交区间12.545ms。区间包含任务构造、队列提交及线程唤醒，不能仅凭它证明锁等待。证据 [verification/device-M52-video-acceptance.json](verification/device-M52-video-acceptance.json)。
 
 **M5.1复测结果：** 30秒发布298帧/9.93FPS，提供HTTP271帧，采集错误0、手机约30FPS。报告捕获平均1.312ms（前次M5为2.721ms），但工作线程仍有1周期22.613ms；配对记录为控制+快照4.533ms、原生状态0.162ms、元数据捕获/提交17.879ms。预算未全部通过，且该区间内部原因尚不能区分分配/调度/锁等待。证据 [verification/device-M51-video-acceptance.json](verification/device-M51-video-acceptance.json)。
 
@@ -32,7 +34,7 @@ CMake 会从源码构建 MuJoCo 和 JNI 库，不需要手动复制 `.so`。MuJo
 
 **保留的 M3 实时验收：**
 
-1. 在 Android Studio 重新 Sync、Build、Run；当前M5.1沿用已跑通的物理/策略/渲染及构建配置，本次没有新增Maven依赖。
+1. 在 Android Studio 重新 Sync、Build、Run；当前M5.3沿用已跑通的物理/策略/渲染及构建配置，本次没有新增Maven依赖。
 2. 上方应出现真实机器人 CAD 外观及地面网格。单指拖动旋转视角，双指缩放；“复位视角”恢复默认角度和距离。“跟随机器人”保持机器人在中心，取消后可以观察它在地面上的位移。
 3. 点击“策略站立”观察平衡；点击“前进 0.30m/s”观察脚步。橙线是最近约 512 个绘制快照的地面轨迹，红点是 MuJoCo 当前接触点，可以关闭接触点显示。
 4. 等 3D 正常显示后，点击“实时测试 30s”。从 HOME 重置，发送 vx=.30，按 50Hz 运行 30 秒墙钟，然后自动暂停。保持应用在前台且不再点击重置；告诉 Codex 完成，以便经 ADB 获取报告。
@@ -114,7 +116,7 @@ python3 scripts/check_source.py \
   --mujoco-dir ../Pollen/microduck_rl/.venv/lib/python3.12/site-packages/mujoco
 ```
 
-当前绘制视觉 mesh（group<3），不显示碰撞几何；采用模型材质颜色和简化光照。地面是与当前场景水平 floor 对齐的程序网格，不复制桌面纹理、阴影或完整材质。它是观察真实模型姿态的3D视图，尚不是桌面画面效果的完全移植。M5对该视图做PixelCopy/JPEG采集并提供浏览器画面，真机视频功能已验证；M5.1性能优化需复测。
+当前绘制视觉 mesh（group<3），不显示碰撞几何；采用模型材质颜色和简化光照。地面是与当前场景水平 floor 对齐的程序网格，不复制桌面纹理、阴影或完整材质。它是观察真实模型姿态的3D视图，尚不是桌面画面效果的完全移植。M5对该视图做PixelCopy/JPEG采集并提供浏览器画面，真机视频功能已验证；M5.3报告队列优化需复测。
 
 ## 61D / 14D 接线约定
 
@@ -235,7 +237,8 @@ flowchart TD
 - M4局域网浏览器控制源码/编译和Mac回环检查通过，见 `verification/m4-checks.json`。2026-10-04用户确认连接与按钮正常，随后补测断连与网络开启的30秒运行；日志确认心跳超时暂停，实时工作线程p99=16.618ms/max=19.129ms、超20ms及迟到周期0、约30FPS。报告及对比见 `verification/device-M4-realtime-acceptance.json`。该版本未包含视频。
 - M5源码检查通过后，用户已完成浏览器视频及30秒测试：576×480、298发布帧/9.93FPS、268帧提供给HTTP、采集错误0、手机约30FPS；最终位姿与M4一致。工作线程p99=11.911ms/max=22.422ms、超20ms周期3，完整预算未通过，见 `verification/device-M5-video-acceptance.json`。HTTP帧数不等于浏览器显示FPS。
 - M5.1移出周期性JSON解析/中间序列化后完成真机复测，平均报告捕获耗时下降，但仍有1周期超20ms/max=22.613ms，配对样本显示元数据捕获/提交17.879ms；见 `verification/device-M51-video-acceptance.json`。这不确定区间内部的具体原因，也不能用单次结果推断温度/频率影响。
-- M5.2进一步移出周期性元数据JSON组装，报告回调只读捕获的标量/不可变状态；JPEG副本分配不占状态锁，新增5个捕获/提交分项。源码、延后字段构造、快照及原协议检查见 `verification/m52-checks.json`。实际预算、video-off对照、生命周期和长期温升待测。
+- M5.2进一步移出周期性元数据JSON组装，JPEG副本分配不占状态锁；真机仍有1周期21.270ms，配对队列提交12.545ms，见 `verification/device-M52-video-acceptance.json`。视频和最终位姿正常，完整预算未通过。
+- M5.3报告队列改为常驻线程与原子状态槽，保留完成测试，关闭准入后已接受任务继续落盘。源码及空闲唤醒/并发关闭/错误恢复检查见 `verification/m53-checks.json`。实际预算、video-off对照、生命周期和长期温升待测。
 
 ONNX Java API 和资源关闭方式依据 [官方 Java 文档](https://onnxruntime.ai/docs/get-started/with-java.html)。
 GL context/绘制线程的生命周期依据 [Android GLSurfaceView 文档](https://developer.android.com/reference/android/opengl/GLSurfaceView)；场景桥依据 [MuJoCo 可视化文档](https://mujoco.readthedocs.io/en/stable/programming/visualization.html) 和固定的本地 3.10.0 源码。
