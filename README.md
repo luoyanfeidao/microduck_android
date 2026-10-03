@@ -79,7 +79,17 @@ M3.2 在工作线程上捕获原生状态、策略及渲染元数据后，交给
 
 M3.1 真机已完成一次开启 3D 的 30 秒测试，报告见 `verification/device-M31-realtime-render-test.json`：画面 30.05FPS、控制加快照 p99=16.252ms/max=18.083ms，位姿与原 M3 报告相同。新增完整工作线程计时 p99=25.791ms/max=28.381ms、超20ms 76周期；发布平均9.243ms/max=13.206ms。因此下一步是把报告格式化、文件及日志移出控制线程。原 M3 未测这项总耗时，不能把76周期解释为新引入的退化。
 
-以上瓶颈对应的 M3.2 代码已完成，源码检查见 `verification/m32-checks.json`；尚待用户重新构建并复测。报告线程仍与仿真共享手机 CPU，不能仅凭线程拆分宣称实时超时已经消除。验收重点是 `worker_tick_p99_ms` 和 `worker_over_20ms_ticks`，并保留3D关闭对照及后续持续运行测试。
+以上瓶颈对应的 M3.2 已由用户重新构建并完成一次开启3D的30秒测试，报告见 `verification/device-M32-realtime-render-test.json`，对比见 `verification/device-M32-comparison.json`；源码检查见 `verification/m32-checks.json`。
+
+| 指标 | M3.1 | M3.2 |
+| --- | ---: | ---: |
+| 工作线程 p99 | 25.791ms | 18.085ms |
+| 工作线程最大耗时 | 28.381ms | 19.923ms |
+| 工作线程超过20ms周期 | 76 | 0 |
+| 工作线程上的发布平均耗时 | 9.243ms | 3.254ms |
+| 测试绘制回调帧率 | 30.05FPS | 30.02FPS |
+
+M3.2 仿真30.02s/墙钟30.013s，调度迟到超过20ms为0，全部数值正常、无GL错误；最终位置/姿态与前两版报告相同。这次完整工作线程p99下降约29.88%，30秒控制预算验收通过，但最大周期距离20ms余量约0.077ms，且两次运行未控制温度和CPU频率，不能据此保证长期稳定。仍需3D关闭对照及后续持续运行测试。M3.2发布耗时只计控制线程的捕获/提交，异步报告I/O耗时不在其中。
 
 ## 源码检查（不打包或安装 APK）
 
@@ -205,7 +215,7 @@ flowchart TD
 - M3 后续手机实测：日志找回的 30 秒完整报告见 `verification/device-M3-realtime-render-test.json`。墙钟30.013s/仿真30.02s，绘制回调53.74FPS，控制+快照p99=16.616ms/max=19.442ms，超过20ms周期0、迟到超过20ms周期0。最终x=3.501m/y=-1.225m/z=.1198m，数值正常；GLES ready、38网格已加载且无GL错误。结果说明这次短实时运行可行，余量较小且侧向漂移明显；不代表长时间温升/姿态切换或视频链路已经通过。用户随后重建 Activity 导致普通 last-report 被覆盖，故新增独立归档。
 - 后续施工是手机 M3 验收、双设备命令通信和视频。当前 APK 尚不能替代桌面 `scripts/duck-sim up` 的完整系统。
 - M3.1 用户已编译并运行：索引网格和30FPS真机验证通过，完整工作线程的报告发布成本偏高，见 `verification/device-M31-realtime-render-test.json`。
-- M3.2 报告线程改造源码及队列测试通过，真机实时改善未验证。先复测控制预算，再推进双设备通信和视频。
+- M3.2 报告线程改造源码及队列测试通过；用户完成30秒开启3D的真机测试，工作线程p99=18.085ms/max=19.923ms，超20ms周期0，画面30.02FPS，位姿与之前一致。报告见 `verification/device-M32-realtime-render-test.json`。3D关闭对照、持续运行与生命周期尚未测，再推进双设备通信和视频。
 
 ONNX Java API 和资源关闭方式依据 [官方 Java 文档](https://onnxruntime.ai/docs/get-started/with-java.html)。
 GL context/绘制线程的生命周期依据 [Android GLSurfaceView 文档](https://developer.android.com/reference/android/opengl/GLSurfaceView)；场景桥依据 [MuJoCo 可视化文档](https://mujoco.readthedocs.io/en/stable/programming/visualization.html) 和固定的本地 3.10.0 源码。

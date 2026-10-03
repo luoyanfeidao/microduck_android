@@ -62,5 +62,7 @@
   },
   "baseline_device_report": "device-M3-realtime-render-test.json",
   "previous_device_report": "device-M31-realtime-render-test.json",
-  "device_status": "Pending user Android Studio build and 30s realtime tests with 3D on/off"
+  "device_status": "User Android Studio M3.2 build; 30s realtime test with 3D on passed; 3D-off and long-duration tests pending",
+  "device_report": "device-M32-realtime-render-test.json",
+  "device_comparison": "device-M32-comparison.json"
 }

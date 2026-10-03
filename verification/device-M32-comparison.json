@@ -1,0 +1,58 @@
+{
+  "baseline": "device-M31-realtime-render-test.json",
+  "candidate": "device-M32-realtime-render-test.json",
+  "measurements": {
+    "worker_tick_p99_ms": {
+      "M3.1": 25.790729,
+      "M3.2": 18.085261
+    },
+    "worker_tick_max_ms": {
+      "M3.1": 28.381198,
+      "M3.2": 19.922605
+    },
+    "worker_over_20ms_ticks": {
+      "M3.1": 76,
+      "M3.2": 0
+    },
+    "publish_mean_ms": {
+      "M3.1": 9.242546689655175,
+      "M3.2": 3.2538761465517236
+    },
+    "publish_max_ms": {
+      "M3.1": 13.205625,
+      "M3.2": 4.505156
+    },
+    "control_with_visual_p99_ms": {
+      "M3.1": 16.252448,
+      "M3.2": 15.851406
+    },
+    "test_render_fps": {
+      "M3.1": 30.052190808844642,
+      "M3.2": 30.020452850896532
+    },
+    "late_ticks": {
+      "M3.1": 0,
+      "M3.2": 0
+    }
+  },
+  "worker_p99_change_percent": -29.876891033208096,
+  "root_xyz_difference_m": {
+    "root_x": 0.0,
+    "root_y": 0.0,
+    "root_z": 0.0
+  },
+  "checks": {
+    "finite": true,
+    "foot_geoms_resolved": true,
+    "render_ready": true,
+    "render_error_empty": true,
+    "paced_ratio_near_one": true,
+    "worker_ticks_under_20ms": true
+  },
+  "limits": [
+    "One 30s foreground trial per version; no controlled thermal or CPU-clock comparison",
+    "3D-off comparison and long-duration/lifecycle behavior not yet measured",
+    "worker_tick excludes GPU completion and EGL swap",
+    "Publish timing in M3.2 measures control-thread capture/submit, not asynchronous report I/O"
+  ]
+}
