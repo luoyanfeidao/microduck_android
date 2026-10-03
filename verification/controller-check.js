@@ -11,7 +11,7 @@ async function main(){
   const context=vm.createContext({
     document:{hidden:false,getElementById:node,querySelectorAll:()=>buttons,addEventListener:(event,fn)=>events[event]=fn},
     location:{hash:'',pathname:'/'},history:{replaceState(){}},URLSearchParams,AbortController,
-    performance:{now:()=>now},Image:class{constructor(){this.naturalWidth=640;this.naturalHeight=480}async decode(){}},
+    performance:{now:()=>now},Image:class{constructor(){this.naturalWidth=640;this.naturalHeight=360}async decode(){}},
     URL:{createObjectURL(){const url='blob:test-'+(++urlId);created.add(url);return url},revokeObjectURL:url=>revoked.add(url)},
     setTimeout(fn,ms){const id=++timerId;timers.set(id,{fn,ms});return id},clearTimeout:id=>timers.delete(id),setInterval(){},
     fetch:async(url,options)=>{
@@ -25,7 +25,7 @@ async function main(){
         if(mode==='unauthorized')return response(401,{error:'token'});
         return response(200,null,{'Content-Type':'image/jpeg','X-Frame-Sequence':String(urlId+1),'X-Frame-Age-Ms':'12'});
       }
-      if(url==='/api/state')return response(200,{app_stage:'M5',running:false,finite:true});
+      if(url==='/api/state')return response(200,{app_stage:'M6',running:false,finite:true});
       return response(200,{op:JSON.parse(options.body).op});
     }
   });
@@ -36,7 +36,7 @@ async function main(){
   node('token').value='a'.repeat(32);await node('connect').onclick();await flush();
   assert(!node('videoToggle').disabled);assert(!requests.some(r=>r.url==='/api/frame'));
   node('videoToggle').checked=true;node('videoToggle').onchange();await flush();
-  assert(node('video').src.startsWith('blob:'));assert(node('videoStatus').textContent.includes('640×480'));
+  assert(node('video').src.startsWith('blob:'));assert(node('videoStatus').textContent.includes('机器人视角'));
   assert(requests.find(r=>r.url==='/api/frame').options.headers.Authorization==='Bearer '+'a'.repeat(32));
   // A held picture request cannot block a control command/heartbeat exchange.
   mode='held';node('videoToggle').onchange();await flush();

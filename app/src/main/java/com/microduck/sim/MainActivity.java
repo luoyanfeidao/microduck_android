@@ -91,7 +91,7 @@ public final class MainActivity extends Activity {
         column.setPadding(24, 32, 24, 24);
         column.setBackgroundColor(Color.rgb(237, 244, 247));
         TextView title = new TextView(this);
-        title.setText("Microduck · Android M5.4"); title.setTextSize(24);
+        title.setText("Microduck · Android M6"); title.setTextSize(24);
         title.setTextColor(Color.rgb(23, 52, 75)); column.addView(title);
         TextView scope = new TextView(this);
         scope.setText("3D 物理仿真 + ONNX 站立 / 步行\n单指旋转、双指缩放；橙色轨迹、红色接触点。");
@@ -362,7 +362,7 @@ public final class MainActivity extends Activity {
                 data.put("model","scene.xml → robot_groundcontact.xml");
                 data.put("stage",policy?"M2: ONNX + XML position servo":"M1: position servo only; no policy");
                 data.put("policy_enabled",policy); data.put("control_ms",control);
-                data.put("app_stage","M5.4"); data.put("render_enabled",render);
+                data.put("app_stage","M6"); data.put("render_enabled",render);
                 data.put("ready",loaded); data.put("running",running);
                 data.put("lan_enabled",lanEnabled); data.put("remote_control_active",remoteActive);
                 data.put("remote_commands_applied",commands); data.put("remote_stop_reason",stopReason);

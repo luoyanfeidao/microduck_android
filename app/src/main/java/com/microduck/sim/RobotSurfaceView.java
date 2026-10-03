@@ -37,8 +37,23 @@ final class RobotSurfaceView extends GLSurfaceView {
     void resetCamera() { scene.azimuth=-50; scene.elevation=25; scene.distance=.75f; requestRender(); }
     long frames() { return scene.totalFrames; }
     boolean ready() { return scene.ready; }
+    boolean headCameraReady() {
+        SceneFrame frame=scene.latest;
+        return scene.ready && frame!=null && frame.camera!=null;
+    }
+    void captureHeadCamera(ByteBuffer rgba,Consumer<String> completion) {
+        queueEvent(()->{
+            String failure=null;
+            try { scene.renderHeadCamera(rgba); }
+            catch(RuntimeException e) { failure=e.toString(); }
+            completion.accept(failure);
+        });
+    }
     CapturedReport.Fields captureReport() {
         boolean ready=scene.ready,follow=scene.follow;
+        SceneFrame frame=scene.latest;
+        boolean hasCamera=frame!=null && frame.camera!=null;
+        float fovy=hasCamera?frame.camera.fovy:0;
         String gpu=scene.gpu,version=scene.glVersion,error=scene.problem;
         long frames=scene.totalFrames,bytes=scene.meshBytes;
         double fps=scene.fps,cpuMs=scene.cpuMs,simTime=scene.simTime;
@@ -52,6 +67,7 @@ final class RobotSurfaceView extends GLSurfaceView {
             data.put("render_unique_vertices",vertices); data.put("render_mesh_bytes",bytes);
             data.put("render_mesh_format","indexed position-normal pairs / uint32");
             data.put("render_error",error); data.put("camera_follow",follow);
+            data.put("head_camera_available",hasCamera); data.put("head_camera_fovy_degrees",fovy);
         };
     }
     @Override public boolean onTouchEvent(MotionEvent event) {
@@ -81,6 +97,7 @@ final class RobotSurfaceView extends GLSurfaceView {
         private VisualMesh[] uploaded;
         private int[] buffers,indexBuffers,indexCounts;
         private int program,ground,points,lines,uModel,uVP,uColor,uMode,width=1,height=1;
+        private int cameraFramebuffer,cameraTexture,cameraDepth;
         private long fpsAt,fpsFrames,lastPacketNs;
         private final float[] projection=new float[16],view=new float[16],vp=new float[16],model=new float[16];
         private FloatBuffer contactVertices;
@@ -109,6 +126,7 @@ final class RobotSurfaceView extends GLSurfaceView {
 
         @Override public void onSurfaceCreated(GL10 ignored,EGLConfig config) {
             ready=false; uploaded=null; buffers=null; indexBuffers=null; problem="";
+            cameraFramebuffer=cameraTexture=cameraDepth=0; // A recreated EGL context owns new names.
             gpu=GLES30.glGetString(GLES30.GL_RENDERER); glVersion=GLES30.glGetString(GLES30.GL_VERSION);
             try {
                 program=GLES30.glCreateProgram(); int v=shader(GLES30.GL_VERTEX_SHADER,VERTEX),f=shader(GLES30.GL_FRAGMENT_SHADER,FRAGMENT);
@@ -156,16 +174,7 @@ final class RobotSurfaceView extends GLSurfaceView {
                 Matrix.perspectiveM(projection,0,45,(float)width/height,.01f,100);
                 Matrix.multiplyMM(vp,0,projection,0,view,0); GLES30.glUseProgram(program);
                 GLES30.glUniformMatrix4fv(uVP,1,false,vp,0);
-                Matrix.setIdentityM(model,0); model[14]=data[7];
-                draw(ground,6,GLES30.GL_TRIANGLES,model,.7f,.8f,.8f,1,1);
-                for(int g=0;g<frame.geoms;g++) {
-                    int at=SceneFrame.HEADER+g*SceneFrame.STRIDE,id=(int)data[at];
-                    if(id<0 || id>=buffers.length || data[at]!=id) throw new IllegalArgumentException("Invalid visual mesh id");
-                    frame.modelMatrix(g,model);
-                    bind(buffers[id],model,data[at+13],data[at+14],data[at+15],data[at+16],0);
-                    GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER,indexBuffers[id]);
-                    GLES30.glDrawElements(GLES30.GL_TRIANGLES,indexCounts[id],GLES30.GL_UNSIGNED_INT,0);
-                }
+                drawWorld(frame);
                 Matrix.setIdentityM(model,0); updateTrail(frame);
                 if(trailCount>1) {
                     trailVertices.clear(); trailVertices.put(trail,0,trailCount*6).flip();
@@ -191,6 +200,66 @@ final class RobotSurfaceView extends GLSurfaceView {
                     fps=(totalFrames-fpsFrames)*1e9/(now-fpsAt); fpsAt=now; fpsFrames=totalFrames;
                 }
             } catch(RuntimeException e) { failed(e); }
+        }
+        private void drawWorld(SceneFrame frame) {
+            float[] data=frame.values;
+            Matrix.setIdentityM(model,0); model[14]=data[7];
+            draw(ground,6,GLES30.GL_TRIANGLES,model,.7f,.8f,.8f,1,1);
+            for(int g=0;g<frame.geoms;g++) {
+                int at=SceneFrame.HEADER+g*SceneFrame.STRIDE,id=(int)data[at];
+                if(id<0 || id>=buffers.length || data[at]!=id) throw new IllegalArgumentException("Invalid visual mesh id");
+                frame.modelMatrix(g,model);
+                bind(buffers[id],model,data[at+13],data[at+14],data[at+15],data[at+16],0);
+                GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER,indexBuffers[id]);
+                GLES30.glDrawElements(GLES30.GL_TRIANGLES,indexCounts[id],GLES30.GL_UNSIGNED_INT,0);
+            }
+        }
+        void renderHeadCamera(ByteBuffer rgba) {
+            SceneFrame frame=latest;
+            if(!ready || uploaded!=source || frame==null || frame.camera==null)
+                throw new IllegalStateException("Head camera scene is not ready");
+            if(rgba.capacity()!=HeadCamera.WIDTH*HeadCamera.HEIGHT*4)
+                throw new IllegalArgumentException("Invalid head camera target");
+            try {
+                ensureCameraFramebuffer();
+                GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER,cameraFramebuffer);
+                GLES30.glViewport(0,0,HeadCamera.WIDTH,HeadCamera.HEIGHT);
+                GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT|GLES30.GL_DEPTH_BUFFER_BIT);
+                frame.camera.viewMatrix(view);
+                Matrix.perspectiveM(projection,0,frame.camera.fovy,(float)HeadCamera.WIDTH/HeadCamera.HEIGHT,frame.camera.near,frame.camera.far);
+                Matrix.multiplyMM(vp,0,projection,0,view,0); GLES30.glUseProgram(program);
+                GLES30.glUniformMatrix4fv(uVP,1,false,vp,0);
+                drawWorld(frame); // The sensor sees scene geometry, without trail/contact overlays.
+                rgba.clear(); GLES30.glPixelStorei(GLES30.GL_PACK_ALIGNMENT,4);
+                GLES30.glReadPixels(0,0,HeadCamera.WIDTH,HeadCamera.HEIGHT,GLES30.GL_RGBA,GLES30.GL_UNSIGNED_BYTE,rgba);
+                int glError=GLES30.glGetError();
+                if(glError!=GLES30.GL_NO_ERROR) throw new IllegalStateException("Head camera GLES error 0x"+Integer.toHexString(glError));
+            } finally {
+                GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER,0);
+                GLES30.glViewport(0,0,width,height);
+            }
+        }
+        private void ensureCameraFramebuffer() {
+            if(cameraFramebuffer==0) {
+                int[] id=new int[1];
+                GLES30.glGenTextures(1,id,0); cameraTexture=id[0];
+                GLES30.glBindTexture(GLES30.GL_TEXTURE_2D,cameraTexture);
+                GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D,GLES30.GL_TEXTURE_MIN_FILTER,GLES30.GL_LINEAR);
+                GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D,GLES30.GL_TEXTURE_MAG_FILTER,GLES30.GL_LINEAR);
+                GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D,GLES30.GL_TEXTURE_WRAP_S,GLES30.GL_CLAMP_TO_EDGE);
+                GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D,GLES30.GL_TEXTURE_WRAP_T,GLES30.GL_CLAMP_TO_EDGE);
+                GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D,0,GLES30.GL_RGBA8,HeadCamera.WIDTH,HeadCamera.HEIGHT,0,
+                    GLES30.GL_RGBA,GLES30.GL_UNSIGNED_BYTE,null);
+                GLES30.glGenRenderbuffers(1,id,0); cameraDepth=id[0];
+                GLES30.glBindRenderbuffer(GLES30.GL_RENDERBUFFER,cameraDepth);
+                GLES30.glRenderbufferStorage(GLES30.GL_RENDERBUFFER,GLES30.GL_DEPTH_COMPONENT24,HeadCamera.WIDTH,HeadCamera.HEIGHT);
+                GLES30.glGenFramebuffers(1,id,0); cameraFramebuffer=id[0];
+                GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER,cameraFramebuffer);
+                GLES30.glFramebufferTexture2D(GLES30.GL_FRAMEBUFFER,GLES30.GL_COLOR_ATTACHMENT0,GLES30.GL_TEXTURE_2D,cameraTexture,0);
+                GLES30.glFramebufferRenderbuffer(GLES30.GL_FRAMEBUFFER,GLES30.GL_DEPTH_ATTACHMENT,GLES30.GL_RENDERBUFFER,cameraDepth);
+            } else GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER,cameraFramebuffer);
+            if(GLES30.glCheckFramebufferStatus(GLES30.GL_FRAMEBUFFER)!=GLES30.GL_FRAMEBUFFER_COMPLETE)
+                throw new IllegalStateException("Incomplete head camera framebuffer");
         }
         private void updateTrail(SceneFrame frame) {
             if(lastPacketNs==frame.capturedNs) return; lastPacketNs=frame.capturedNs;

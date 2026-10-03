@@ -2,8 +2,8 @@ package com.microduck.sim;
 
 final class SceneFrameCheck {
     public static void main(String[] args) {
-        float[] packet=new float[SceneFrame.HEADER+SceneFrame.STRIDE+3];
-        packet[0]=1; packet[1]=1; packet[2]=1;
+        float[] packet=new float[SceneFrame.HEADER+SceneFrame.STRIDE+3+SceneFrame.CAMERA_TAIL];
+        packet[0]=2; packet[1]=1; packet[2]=1;
         int at=SceneFrame.HEADER;
         packet[at]=0; packet[at+1]=2; packet[at+2]=3; packet[at+3]=4;
         float[] rotation={0,-1,0,1,0,0,0,0,1}; System.arraycopy(rotation,0,packet,at+4,9);

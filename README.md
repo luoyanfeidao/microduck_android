@@ -1,16 +1,20 @@
-# Android Studio 施工入口（M5.4：浏览器画面与报告定时读取）
+# Android Studio 施工入口（M6：机器人头部摄像头）
 
 在 Android Studio 中打开当前目录 `android-sim`，不要打开外层 Microduck 目录。由你完成 Sync、编译、安装和真机运行。
 
 首次从 GitHub 获取时，先按 [DEPENDENCIES.md](DEPENDENCIES.md) 准备外部源码和已验证策略；固定提交及资源摘要见 [UPSTREAM.lock.json](UPSTREAM.lock.json)。
 
-当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。另一台Android浏览器可发站立/步行/暂停/复位命令并读状态；M5进一步提供当前3D视图的连续JPEG画面。控制见 [NETWORK.md](NETWORK.md)，视频原理及验收见 [VIDEO.md](VIDEO.md)。
+当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。另一台Android浏览器可发站立/步行/暂停/复位命令并读状态；当前M6视频来自模型的 `head_camera`，随机器人头部运动。手机保留外部观察视角。控制见 [NETWORK.md](NETWORK.md)，相机原理及使用见 [VIDEO.md](VIDEO.md)。
 
-**M5.4视频开启30秒验收通过：** 当前 `0.5.4-m54` / versionCode=11，标题 `Microduck · Android M5.4`。1501周期/6004物理步、墙钟30.007秒/仿真30.02秒，完整工作线程p99=10.648ms/max=19.772ms、超20ms周期0，调度迟到超过20ms周期0；手机30.03FPS、视频298发布帧/9.93FPS、265帧提供HTTP、采集错误0，数值及最终位姿与M5.3一致。报告捕获平均0.285ms/max=0.519ms，队列提交max=0.087ms。证据 [verification/device-M54-video-acceptance.json](verification/device-M54-video-acceptance.json)。单次最大预算余量0.228ms，温度/频率未控制，不代表长期或硬实时保证。
+**当前功能开发M6：** `0.6-m6` / versionCode=12，标题 `Microduck · Android M6`。在Studio编译运行，保持应用前台及“显示3D”开启，开启LAN服务，浏览器重新加载页面并连接，勾选“开启机器人摄像头”。以640×360原始相机帧、10FPS目标、JPEG质量70提供画面，网页按相机安装方向转90°；拖动手机观察视角不改变网页相机。相机使用模型世界位置/旋转/FOV及裁剪平面，沿用桌面相机局部X轴180°修正。GPU单独渲染相机帧，不复制手机窗口；JSON控制协议沿用现有版本，无新增Maven依赖。
+
+**检查边界：** [verification/m6-checks.json](verification/m6-checks.json)验证Java/Android JNI源码、三组相机姿态与桌面MuJoCo对照、像素通道/上下翻转、原物理和策略、网页/HTTP协议；相机对照最大误差约2.6e-8。尚未由代理打包/安装/运行APK，真实手机的FBO与网页显示待用户Studio运行确认。用户明确将性能、温升及前后台验收留到后面，不再以这些测试阻塞功能开发。下面M5/M5.4数据是外部观察窗口画面的历史结果，不是机器人摄像头性能证据。
+
+**历史M5.4视频开启30秒验收通过：** `0.5.4-m54` / versionCode=11。1501周期/6004物理步、墙钟30.007秒/仿真30.02秒，完整工作线程p99=10.648ms/max=19.772ms、超20ms周期0，调度迟到超过20ms周期0；手机30.03FPS、视频298发布帧/9.93FPS、265帧提供HTTP、采集错误0，数值及最终位姿与M5.3一致。报告捕获平均0.285ms/max=0.519ms，队列提交max=0.087ms。证据 [verification/device-M54-video-acceptance.json](verification/device-M54-video-acceptance.json)。单次最大预算余量0.228ms，温度/频率未控制，不代表长期或硬实时保证。
 
 **M5.4视频关闭对照也通过：** LAN及手机3D保持开启，30秒新增视频发布/HTTP帧均为0、观看需求和在途复制均为false。工作线程p99=15.587ms/max=19.699ms、超20ms周期0，手机29.99FPS，最终位置/四元数与视频开启时完全一致。证据 [verification/device-M54-video-off-acceptance.json](verification/device-M54-video-off-acceptance.json)。关闭后的p99较高，温度/CPU频率未控制，不能用这一对测试确定视频开关的成本。视频会话和累计计数不归零是正常行为。
 
-**下一步使用当前M5.4验证浏览器前后台：** 在控制端浏览器开启画面并点“前进”，确认机器人开始运动；把浏览器切到其他应用5秒，观察仿真手机暂停，再返回浏览器。画面应恢复，机器人应保持暂停，完成后让代理读取普通状态报告。随后单独验证仿真应用前后台/重新开启服务及持续运行/温升。源码检查见 [verification/m54-checks.json](verification/m54-checks.json)，详细步骤见 [VIDEO.md](VIDEO.md)。
+**性能和前后台验收已延期：** 用户2026-10-04要求继续功能开发，后续再测。M5.4源码检查 [verification/m54-checks.json](verification/m54-checks.json)和两份实测归档保留。
 
 **M5.3复测结果：** 30秒发布297帧/9.90FPS、提供HTTP263帧、采集错误0，手机30.03FPS；工作线程p99=12.557ms/max=20.369ms，2周期超20ms、迟到周期0。两个配对样本的唤醒墙钟11.348/14.834ms，提交区间线程CPU仅0.137/0.167ms，准入与队列发布各约0.01ms。说明提交区间CPU消耗很低，但不能区分系统调度、GC或内核等待；见 [verification/device-M53-video-acceptance.json](verification/device-M53-video-acceptance.json)。M5.4针对该唤醒路径改动。
 
@@ -40,7 +44,7 @@ CMake 会从源码构建 MuJoCo 和 JNI 库，不需要手动复制 `.so`。MuJo
 
 **保留的 M3 实时验收：**
 
-1. 在 Android Studio 重新 Sync、Build、Run；当前M5.4沿用已跑通的物理/策略/渲染及构建配置，本次没有新增Maven依赖。
+1. 在 Android Studio 重新 Sync、Build、Run；当前M6沿用已跑通的物理/策略/构建配置，本次没有新增Maven依赖。以下是保留的性能测试方法，用户已将其延期。
 2. 上方应出现真实机器人 CAD 外观及地面网格。单指拖动旋转视角，双指缩放；“复位视角”恢复默认角度和距离。“跟随机器人”保持机器人在中心，取消后可以观察它在地面上的位移。
 3. 点击“策略站立”观察平衡；点击“前进 0.30m/s”观察脚步。橙线是最近约 512 个绘制快照的地面轨迹，红点是 MuJoCo 当前接触点，可以关闭接触点显示。
 4. 等 3D 正常显示后，点击“实时测试 30s”。从 HOME 重置，发送 vx=.30，按 50Hz 运行 30 秒墙钟，然后自动暂停。保持应用在前台且不再点击重置；告诉 Codex 完成，以便经 ADB 获取报告。
@@ -122,7 +126,7 @@ python3 scripts/check_source.py \
   --mujoco-dir ../Pollen/microduck_rl/.venv/lib/python3.12/site-packages/mujoco
 ```
 
-当前绘制视觉 mesh（group<3），不显示碰撞几何；采用模型材质颜色和简化光照。地面是与当前场景水平 floor 对齐的程序网格，不复制桌面纹理、阴影或完整材质。它是观察真实模型姿态的3D视图，尚不是桌面画面效果的完全移植。M5对该视图做PixelCopy/JPEG采集并提供浏览器画面；M5.4视频开启和关闭的两次30秒控制预算均通过，生命周期和持续运行仍待测。
+当前绘制视觉 mesh（group<3），不显示碰撞几何；采用模型材质颜色和简化光照。地面是与当前场景水平 floor 对齐的程序网格，不复制桌面纹理、阴影或完整材质。M6在同一GLES线程另行渲染 `head_camera` 的640×360离屏帧，只绘制场景，不加入调试轨迹/接触点。该视角与手机观察视角独立，仍使用简化材质/地面，尚未完全复制桌面MuJoCo画面效果。原M5窗口PixelCopy链路已被相机FBO替换；M5.4两次30秒结果保留为历史基线。
 
 ## 61D / 14D 接线约定
 
@@ -206,6 +210,8 @@ flowchart TD
 | `app/src/main/java/com/microduck/sim/PolicyRunner.java` | CPU 单线程 ONNX、尺寸/校验/桌面对照、网络选择和 raw action 反馈 |
 | `app/src/main/java/com/microduck/sim/SceneFrame.java` | 快照校验与 MuJoCo/GLES 矩阵转换 |
 | `app/src/main/java/com/microduck/sim/RobotSurfaceView.java` | GLES3、相机手势、轨迹、接触点、GPU context 生命周期 |
+| `app/src/main/java/com/microduck/sim/HeadCamera.java` | 模型头部相机姿态、视场角、裁剪平面及视图矩阵 |
+| `app/src/main/java/com/microduck/sim/CameraPixels.java` | GLES RGBA读回到Android ARGB的上下翻转/通道转换 |
 | `app/src/main/java/com/microduck/sim/VisualMesh.java` | 索引网格包、长度/索引/有限数校验 |
 | `app/src/main/java/com/microduck/sim/VisualCadence.java` | 50Hz控制下的30Hz墙钟快照门限 |
 | `app/src/main/java/com/microduck/sim/ReportDispatcher.java` | 独立报告线程、状态合并、完成测试保留 |
@@ -246,6 +252,7 @@ flowchart TD
 - M5.2进一步移出周期性元数据JSON组装，JPEG副本分配不占状态锁；真机仍有1周期21.270ms，配对队列提交12.545ms，见 `verification/device-M52-video-acceptance.json`。视频和最终位姿正常，完整预算未通过。
 - M5.3报告队列改为常驻线程与原子状态槽，真机仍有2周期稍超20ms/max=20.369ms；配对记录显示唤醒墙钟很高而提交区间CPU很低，见 `verification/device-M53-video-acceptance.json`。数值、最终位姿及视频正常，完整预算未通过。
 - M5.4报告提交不再唤醒消费者，消费者空闲等待50ms后自行检查。源码检查见 `verification/m54-checks.json`；用户完成视频开启30秒真机测试，完整工作线程p99=10.648ms/max=19.772ms、超20ms周期0，视频9.93FPS/错误0、手机30.03FPS，报告捕获max=0.519ms，见 `verification/device-M54-video-acceptance.json`。同版本video-off对照也通过，工作线程p99=15.587ms/max=19.699ms、超20ms周期0，新增视频帧为0，见 `verification/device-M54-video-off-acceptance.json`。两次温度/频率未控制，不能用于判断视频开关的因果性能影响；生命周期和长期温升待测。
+- M6将视频源改为模型头部相机，沿用桌面相机方向修正/FOV/裁剪，在GLES离屏渲染后JPEG传输、浏览器按安装方向旋转；相机数值对照及源码检查见 `verification/m6-checks.json`。手机GL及网页显示待用户Studio运行确认，性能和前后台验收按用户要求延期。
 
 ONNX Java API 和资源关闭方式依据 [官方 Java 文档](https://onnxruntime.ai/docs/get-started/with-java.html)。
 GL context/绘制线程的生命周期依据 [Android GLSurfaceView 文档](https://developer.android.com/reference/android/opengl/GLSurfaceView)；场景桥依据 [MuJoCo 可视化文档](https://mujoco.readthedocs.io/en/stable/programming/visualization.html) 和固定的本地 3.10.0 源码。

@@ -26,8 +26,8 @@ def main():
     parser.add_argument("--ort-aar", type=pathlib.Path, required=True)
     parser.add_argument("--mujoco-dir", type=pathlib.Path, required=True,
                         help="Desktop MuJoCo 3.10.0 Python package with include/ and libmujoco")
-    parser.add_argument("--stage", default="M5.4")
-    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m54-checks.json")
+    parser.add_argument("--stage", default="M6")
+    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m6-checks.json")
     parser.add_argument("--host-json-jar", type=pathlib.Path,
                         help="Host-only org.json jar to execute LAN loopback tests; not an APK dependency")
     args = parser.parse_args()
@@ -48,11 +48,11 @@ def main():
             (out / "ort.jar").write_bytes(aar.read("classes.jar"))
         sources = sorted((ROOT / "app/src/main/java/com/microduck/sim").glob("*.java"))
         sources += [ROOT / "verification" / (test + ".java") for test in
-                    ("SceneFrameCheck", "RenderOptimizationCheck", "ReportDispatcherCheck", "NetworkControlCheck", "VideoFramesCheck", "CapturedReportCheck")]
+                    ("SceneFrameCheck", "HeadCameraCheck", "RenderOptimizationCheck", "ReportDispatcherCheck", "NetworkControlCheck", "VideoFramesCheck", "CapturedReportCheck")]
         run([java / "javac", "-Xlint:all", "-cp",
              f"{sdk / 'platforms/android-34/android.jar'}:{out / 'ort.jar'}", "-d", out, *sources])
         report["java_android34_ort120_jdk11_compile"] = "passed"
-        for test in ("SceneFrameCheck", "RenderOptimizationCheck", "ReportDispatcherCheck", "VideoFramesCheck"):
+        for test in ("SceneFrameCheck", "HeadCameraCheck", "RenderOptimizationCheck", "ReportDispatcherCheck", "VideoFramesCheck"):
             report[test] = json.loads(run([java / "java", "-cp", out, "com.microduck.sim." + test]))
         if args.host_json_jar:
             report["NetworkControlCheck"] = json.loads(run([java / "java", "-cp",
@@ -97,8 +97,8 @@ def main():
     report["source_sha256"] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                 for p in paths if p.is_file()}
     report["baseline_device_report"] = "device-M3-realtime-render-test.json"
-    report["previous_device_report"] = "device-M53-video-on-realtime-test.json"
-    report["device_status"] = "Pending user Android Studio " + args.stage + " build, browser video and video-on realtime budget check"
+    report["previous_device_report"] = "device-M54-video-on-realtime-test.json (external viewer capture, not head camera)"
+    report["device_status"] = "Pending user Android Studio " + args.stage + " build and head-camera viewpoint validation; performance/lifecycle checks deferred by user"
     target = args.report
     target.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))

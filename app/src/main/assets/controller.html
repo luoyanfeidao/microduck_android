@@ -11,17 +11,18 @@ button{background:#165d83;color:white;border:0;cursor:pointer;min-height:48px}bu
 label{display:block;margin:12px 0}label input{display:block;width:100%;margin-top:6px}
 #status{white-space:pre-wrap;font:14px ui-monospace,monospace;line-height:1.8}.note{font-size:14px;color:#56717f;line-height:1.6}
 #message{min-height:24px}#pair input{width:100%}
-#video{display:block;width:100%;min-height:160px;object-fit:contain;background:#1e3040;border-radius:9px}
+.camera-box{position:relative;aspect-ratio:360/640;max-width:360px;margin:auto;overflow:hidden;background:#1e3040;border-radius:9px}
+#video{position:absolute;top:50%;left:50%;width:177.7778%;height:56.25%;object-fit:contain;transform:translate(-50%,-50%) rotate(90deg)}
 #video:not([src]){display:none}#videoToggle{width:auto;display:inline;margin-right:8px}
 </style>
 <main>
 <h1>Microduck · 局域网控制</h1>
-<p class="note">仿真手机保持应用在前台并开启 3D。连接后可开启实时画面，边看边发送控制命令。</p>
+<p class="note">仿真手机保持应用在前台并开启 3D。实时画面来自机器人的头部摄像头，随头部运动；手机上可独立拖动外部观察视角。</p>
 <section id="pair"><label>仿真手机显示的访问码<input id="token" type="password" autocomplete="off" spellcheck="false" maxlength="32"></label>
 <button id="connect">连接</button></section>
 <section><div id="message" role="status">尚未连接</div><div id="status">等待手机状态…</div></section>
-<section><label><input id="videoToggle" type="checkbox">开启实时画面</label>
-<img id="video" alt="仿真手机当前 3D 视图"><p id="videoStatus" class="note" role="status">画面未开启</p></section>
+<section><label><input id="videoToggle" type="checkbox">开启机器人摄像头</label>
+<div class="camera-box"><img id="video" alt="机器人头部摄像头的仿真画面"></div><p id="videoStatus" class="note" role="status">摄像头未开启</p></section>
 <section id="controls">
 <div class="row"><button data-op="stand">策略站立</button><button data-op="forward">前进 0.30m/s</button></div>
 <button class="pause" data-op="pause" style="width:100%">暂停仿真</button>
@@ -70,7 +71,7 @@ async function videoLoop(epoch){
     if(epoch!==videoEpoch)return;
     $('video').src=url;if(activeUrl)URL.revokeObjectURL(activeUrl);activeUrl=url;url='';lastSequence=sequence;videoFrames++;
     const fps=videoFrames*1000/Math.max(1,performance.now()-videoAt);
-    $('videoStatus').textContent=`实时画面 ${probe.naturalWidth}×${probe.naturalHeight} · 接收 ${fps.toFixed(1)} FPS · 采集帧龄 ${response.headers.get('X-Frame-Age-Ms')||'—'} ms`;
+    $('videoStatus').textContent=`机器人视角 · 接收 ${fps.toFixed(1)} FPS · 采集帧龄 ${response.headers.get('X-Frame-Age-Ms')||'—'} ms`;
   }catch(e){if(epoch===videoEpoch){$('videoStatus').textContent=e.name==='AbortError'?'画面请求超时，正在重试':e.message;retry=500}}
   finally{
     clearTimeout(deadline);if(url)URL.revokeObjectURL(url);if(videoCancel===cancel)videoCancel=null;

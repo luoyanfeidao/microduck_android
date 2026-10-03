@@ -4,10 +4,10 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.view.PixelCopy;
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 
-/** UI schedules asynchronous SurfaceView copies; a separate thread owns JPEG compression. */
+/** UI schedules head-camera FBO renders; GLES reads pixels, a separate thread builds JPEGs. */
 final class VideoCapture implements AutoCloseable {
     static final int FPS=10;
     private final RobotSurfaceView source;
@@ -16,7 +16,9 @@ final class VideoCapture implements AutoCloseable {
     private final HandlerThread encoder=new HandlerThread("microduck-video-jpeg");
     private final Handler encode;
     private volatile boolean closed;
-    // Main-thread ownership; reused only after the preceding callback finished encoding.
+    // One GL read/encode owns these buffers until publish/failed clears the cache's busy flag.
+    private final ByteBuffer rgba=ByteBuffer.allocateDirect(HeadCamera.WIDTH*HeadCamera.HEIGHT*4);
+    private final int[] argb=new int[HeadCamera.WIDTH*HeadCamera.HEIGHT];
     private Bitmap bitmap;
     private final Runnable tick=this::capture;
     VideoCapture(RobotSurfaceView source) {
@@ -27,34 +29,37 @@ final class VideoCapture implements AutoCloseable {
     private void capture() {
         if(closed) return;
         main.postDelayed(tick,1000/FPS);
-        boolean available=source.isShown() && source.ready() && source.getWidth()>0 && source.getHeight()>0
+        boolean available=source.isShown() && source.headCameraReady() && source.getWidth()>0 && source.getHeight()>0
             && source.getHolder().getSurface().isValid();
         frames.available(available);
         long started=System.nanoTime();
         if(!frames.begin(started)) return;
         try {
-            float ratio=Math.min(1f,Math.min(640f/source.getWidth(),480f/source.getHeight()));
-            int width=Math.max(1,(int)(source.getWidth()*ratio)),height=Math.max(1,(int)(source.getHeight()*ratio));
-            if(bitmap==null || bitmap.getWidth()!=width || bitmap.getHeight()!=height) {
-                if(bitmap!=null) bitmap.recycle();
-                bitmap=Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888);
-            }
-            Bitmap target=bitmap;
-            PixelCopy.request(source,target,result->{
-                try {
-                    if(closed) { frames.failed("Video session closed"); return; }
-                    if(result!=PixelCopy.SUCCESS) { frames.failed("PixelCopy result "+result); return; }
-                    long copyDone=System.nanoTime(); ByteArrayOutputStream bytes=new ByteArrayOutputStream(64*1024);
-                    if(!target.compress(Bitmap.CompressFormat.JPEG,70,bytes)) { frames.failed("JPEG compression failed"); return; }
-                    frames.publish(bytes.toByteArray(),width,height,started,(copyDone-started)/1e6,(System.nanoTime()-copyDone)/1e6);
-                } catch(RuntimeException e) { frames.failed(e.getClass().getSimpleName()); }
-            },encode);
+            source.captureHeadCamera(rgba,error->{
+                long rendered=System.nanoTime();
+                if(!encode.post(()->{
+                    try {
+                        if(closed) { frames.failed("Video session closed"); return; }
+                        if(error!=null) { frames.failed(error); return; }
+                        long encodeStarted=System.nanoTime();
+                        CameraPixels.toArgb(rgba,HeadCamera.WIDTH,HeadCamera.HEIGHT,argb);
+                        if(bitmap==null) bitmap=Bitmap.createBitmap(HeadCamera.WIDTH,HeadCamera.HEIGHT,Bitmap.Config.ARGB_8888);
+                        bitmap.setPixels(argb,0,HeadCamera.WIDTH,0,0,HeadCamera.WIDTH,HeadCamera.HEIGHT);
+                        ByteArrayOutputStream bytes=new ByteArrayOutputStream(64*1024);
+                        if(!bitmap.compress(Bitmap.CompressFormat.JPEG,70,bytes)) { frames.failed("JPEG compression failed"); return; }
+                        frames.publish(bytes.toByteArray(),HeadCamera.WIDTH,HeadCamera.HEIGHT,started,(rendered-started)/1e6,
+                            (System.nanoTime()-encodeStarted)/1e6);
+                    } catch(RuntimeException e) { frames.failed(e.getClass().getSimpleName()); }
+                })) frames.failed("Video encoder stopped");
+            });
         } catch(RuntimeException e) { frames.failed(e.getClass().getSimpleName()); }
     }
     CapturedReport.Fields captureReport() {
         VideoFrames.Status s=status();
         return data->{
-            data.put("video_backend","PixelCopy / JPEG latest-frame HTTP"); data.put("video_target_fps",FPS);
+            data.put("video_backend","head_camera GLES framebuffer / JPEG latest-frame HTTP"); data.put("video_target_fps",FPS);
+            data.put("video_source","head_camera"); data.put("video_mount_rotate",HeadCamera.MOUNT_ROTATE);
+            data.put("video_orientation_correction","desktop local camera X 180 degrees; browser clockwise 90 degrees");
             data.put("video_enabled",s.enabled); data.put("video_demand_active",s.demand); data.put("video_copy_pending",s.busy);
             data.put("video_capture_attempts",s.attempts); data.put("video_frames_published",s.published);
             data.put("video_frames_served",s.served);
@@ -65,6 +70,6 @@ final class VideoCapture implements AutoCloseable {
     }
     @Override public void close() {
         closed=true; frames.close(); main.removeCallbacks(tick); encoder.quitSafely();
-        // Do not recycle a bitmap while PixelCopy still owns it. Session references are GC-owned.
+        // GL/encoder callbacks can still hold buffers; the closed session cannot publish them.
     }
 }

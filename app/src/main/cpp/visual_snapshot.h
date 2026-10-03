@@ -11,7 +11,7 @@
 // Pure CPU bridge. Called only by the simulation worker; no OpenGL or mjData
 // pointers leave it. Mesh vertices are already compiled into MuJoCo's mesh frame.
 namespace duck_visual {
-constexpr int kHeader = 9, kGeomStride = 17, kVersion = 1;
+constexpr int kHeader = 9, kGeomStride = 17, kCameraTail = 16, kVersion = 2;
 struct IndexedMesh {
     std::vector<float> vertices; // interleaved position + normal
     std::vector<int> indices;   // GLES GL_UNSIGNED_INT, in original face order
@@ -58,7 +58,7 @@ inline bool visible_mesh(const mjModel& m,int g) {
 }
 inline std::vector<float> snapshot(const mjModel& m,const mjData& d,int root_qpos,int floor) {
     int count=0; for(int g=0;g<m.ngeom;++g) if(visible_mesh(m,g)) ++count;
-    std::vector<float> out(kHeader+count*kGeomStride+3*d.ncon);
+    std::vector<float> out(kHeader+count*kGeomStride+3*d.ncon+kCameraTail);
     out[0]=kVersion; out[1]=count; out[2]=d.ncon; out[3]=d.time;
     for(int k=0;k<3;++k) out[4+k]=d.qpos[root_qpos+k];
     out[7]=floor>=0 ? d.geom_xpos[3*floor+2] : 0; out[8]=0; // reserved
@@ -74,6 +74,17 @@ inline std::vector<float> snapshot(const mjModel& m,const mjData& d,int root_qpo
         at+=kGeomStride;
     }
     for(int c=0;c<d.ncon;++c) for(int k=0;k<3;++k) out[at++]=d.contact[c].pos[k];
+    const int camera=mj_name2id(&m,mjOBJ_CAMERA,"head_camera");
+    if(camera>=0) {
+        out[at]=1; out[at+1]=m.cam_fovy[camera];
+        for(int k=0;k<3;++k) out[at+2+k]=d.cam_xpos[3*camera+k];
+        // Match sim/camera.py: local X half-turn, R_corrected = R_raw * diag(1,-1,-1).
+        // Snapshot only: never mutate the model or physics for the camera correction.
+        for(int row=0;row<3;++row) for(int col=0;col<3;++col)
+            out[at+5+row*3+col]=d.cam_xmat[9*camera+row*3+col]*(col==0?1:-1);
+        out[at+14]=m.vis.map.znear*m.stat.extent;
+        out[at+15]=m.vis.map.zfar*m.stat.extent;
+    }
     return out;
 }
 } // namespace duck_visual

@@ -15,10 +15,52 @@ int main(int argc,char** argv) {
     mj_forward(m.get(),d.get());
     int root=mj_name2id(m.get(),mjOBJ_JOINT,"trunk_base_freejoint"),floor=mj_name2id(m.get(),mjOBJ_GEOM,"floor");
     auto packet=duck_visual::snapshot(*m,*d,m->jnt_qposadr[root],floor);
-    if(packet.size()!=reference.size()) throw std::runtime_error("Scene size mismatch");
+    if(packet.size()!=reference.size()+duck_visual::kCameraTail || packet[0]!=2)
+        throw std::runtime_error("Scene size/version mismatch");
     double max_error=0;
-    for(std::size_t i=0;i<packet.size();++i) max_error=std::max(max_error,std::abs(double(packet[i])-reference[i]));
+    // The existing independently generated v1 fixture still checks all geom/contact values.
+    for(std::size_t i=1;i<reference.size();++i) max_error=std::max(max_error,std::abs(double(packet[i])-reference[i]));
     if(max_error>1e-6) throw std::runtime_error("Scene differs from MuJoCo mjv_updateScene");
+    int camera=mj_name2id(m.get(),mjOBJ_CAMERA,"head_camera");
+    int yaw=mj_name2id(m.get(),mjOBJ_JOINT,"head_yaw");
+    if(camera<0 || yaw<0) throw std::runtime_error("Head camera/joint missing");
+    std::unique_ptr<mjModel,decltype(&mj_deleteModel)> corrected(mj_copyModel(nullptr,m.get()),mj_deleteModel);
+    mjtNum turn[4]={0,1,0,0},fixed[4];
+    mju_mulQuat(fixed,corrected->cam_quat+4*camera,turn);
+    std::copy(fixed,fixed+4,corrected->cam_quat+4*camera);
+    std::unique_ptr<mjData,decltype(&mj_deleteData)> raw_data(mj_makeData(m.get()),mj_deleteData);
+    std::unique_ptr<mjData,decltype(&mj_deleteData)> corrected_data(mj_makeData(corrected.get()),mj_deleteData);
+    mjvScene camera_scene; mjv_defaultScene(&camera_scene); mjv_makeScene(corrected.get(),&camera_scene,1000);
+    mjvCamera view; mjv_defaultCamera(&view); view.type=mjCAMERA_FIXED; view.fixedcamid=camera;
+    mjvOption options; mjv_defaultOption(&options);
+    double camera_error=0;
+    for(int pose=0;pose<3;++pose) {
+        std::copy(d->qpos,d->qpos+m->nq,raw_data->qpos);
+        raw_data->qpos[m->jnt_qposadr[yaw]]+=pose*.25;
+        if(pose==2) { // Body yaw also affects the head pose, independently of the head joint.
+            mjtNum body_turn[4]={std::cos(.2),0,0,std::sin(.2)},body_quat[4];
+            mju_mulQuat(body_quat,raw_data->qpos+m->jnt_qposadr[root]+3,body_turn);
+            std::copy(body_quat,body_quat+4,raw_data->qpos+m->jnt_qposadr[root]+3);
+        }
+        std::copy(raw_data->qpos,raw_data->qpos+m->nq,corrected_data->qpos);
+        mj_forward(m.get(),raw_data.get()); mj_forward(corrected.get(),corrected_data.get());
+        auto captured=duck_visual::snapshot(*m,*raw_data,m->jnt_qposadr[root],floor);
+        const int at=static_cast<int>(captured.size())-duck_visual::kCameraTail;
+        if(captured[at]!=1 || captured[at+1]!=corrected->cam_fovy[camera]) throw std::runtime_error("Camera intrinsics mismatch");
+        mjv_updateScene(corrected.get(),corrected_data.get(),&options,nullptr,&view,mjCAT_ALL,&camera_scene);
+        camera_error=std::max(camera_error,std::abs(double(captured[at+14])-camera_scene.camera[0].frustum_near));
+        camera_error=std::max(camera_error,std::abs(double(captured[at+15])-camera_scene.camera[0].frustum_far));
+        for(int k=0;k<3;++k) {
+            const double position=(camera_scene.camera[0].pos[k]+camera_scene.camera[1].pos[k])*.5;
+            camera_error=std::max(camera_error,std::abs(double(captured[at+2+k])-position));
+            camera_error=std::max(camera_error,std::abs(double(captured[at+5+k*3+1])-camera_scene.camera[0].up[k]));
+            camera_error=std::max(camera_error,std::abs(double(captured[at+5+k*3+2])+camera_scene.camera[0].forward[k]));
+        }
+        for(int k=0;k<9;++k)
+            camera_error=std::max(camera_error,std::abs(double(captured[at+5+k])-corrected_data->cam_xmat[9*camera+k]));
+    }
+    mjv_freeScene(&camera_scene);
+    if(camera_error>1e-6) throw std::runtime_error("Camera differs from desktop corrected MuJoCo camera");
     std::size_t triangles=0,vertices=0,bytes=0;
     for(int mesh=0;mesh<m->nmesh;++mesh) {
         auto data=duck_visual::indexed_mesh(*m,mesh);
@@ -58,5 +100,7 @@ int main(int argc,char** argv) {
     std::cout<<"{\"mjv_scene_max_error\":"<<max_error<<",\"meshes\":"<<m->nmesh
              <<",\"unique_triangles\":"<<triangles<<",\"indexed_vertices\":"<<vertices<<",\"indexed_bytes\":"<<bytes
              <<",\"all_corners_position_normal_exact\":true,\"hard_edges_and_flat_fallback\":true"
-             <<",\"visual_geoms\":"<<packet[1]<<",\"contacts\":"<<packet[2]<<"}\n";
+             <<",\"visual_geoms\":"<<packet[1]<<",\"contacts\":"<<packet[2]
+             <<",\"snapshot_version\":2,\"camera_desktop_reference_max_error\":"<<camera_error
+             <<",\"camera_tracks_head_and_body\":true}\n";
 }

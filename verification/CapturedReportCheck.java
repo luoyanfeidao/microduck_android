@@ -20,7 +20,7 @@ public final class CapturedReportCheck {
         command[0]=-.3;
         if(writes.get()!=0) throw new AssertionError("Metadata JSON built on capture thread");
         CapturedReport completed=new CapturedReport("{\"sim_time\":30.02,\"mode\":\"realtime_render_test\",\"test_video_frames_published\":298}",
-            data->data.put("running",false).put("app_stage","M5.4"));
+            data->data.put("running",false).put("app_stage","M6"));
         ExecutorService report=Executors.newSingleThreadExecutor();
         try {
             Future<JSONObject> result=report.submit(first::materialize); JSONObject value=result.get();

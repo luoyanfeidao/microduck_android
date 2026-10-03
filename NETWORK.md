@@ -1,6 +1,6 @@
-# M5.4：一台 Android 仿真，另一台浏览器观看和控制
+# M6：一台 Android 仿真，另一台浏览器看机器人摄像头并控制
 
-当前源码版本为 `0.5.4-m54` / versionCode=11，手机标题 `Microduck · Android M5.4`，由用户在Android Studio构建/安装/运行。M5.4视频开启与关闭的两次30秒实测均通过，工作线程超20ms周期均为0；视频开启max=19.772ms、9.93FPS/错误0，关闭max=19.699ms、新增发布/HTTP帧均为0，LAN及3D保持开启，见 [视频开启实测](verification/device-M54-video-acceptance.json)、[视频关闭对照](verification/device-M54-video-off-acceptance.json)。报告线程空闲每50ms自行检查队列，状态显示增加名义0–50ms等待，命令确认不等待报告落盘；源码检查 [verification/m54-checks.json](verification/m54-checks.json)。余量较小、温度/频率未控制，生命周期及持续温升待测。使用及线程图见 [VIDEO.md](VIDEO.md)。
+当前源码 `0.6-m6` / versionCode=12，手机标题 `Microduck · Android M6`，由用户在Android Studio构建/安装/运行。视频已改为模型 `head_camera` 的机器人视角；手机保留独立外部观察视角。控制、访问码及JPEG HTTP路径沿用原协议，使用及结构图见 [VIDEO.md](VIDEO.md)。源码及桌面相机对照检查 [verification/m6-checks.json](verification/m6-checks.json)通过，手机显示待确认。旧M5.4两次30秒实测是窗口画面基线；性能/前后台验收按用户2026-10-04要求延期，不阻塞功能开发。
 
 真实CAD视图仍由仿真手机以约30FPS绘制；浏览器默认关闭画面，勾选“开启实时画面”后按需采集、传输，目标10FPS、最大640×480。模型、ONNX、动作过滤及50Hz物理/策略沿用原基线。
 
@@ -9,7 +9,7 @@
 1. 仿真手机用 Studio 运行新版，等模型、策略和3D加载完成。向下滚动，点击“开启局域网控制”。
 2. 两台设备连接同一个 Wi-Fi，或由其中一台提供热点。应用显示地址及访问码；优先使用 Wi-Fi / 热点接口对应的地址，通常接口名为 `wlan0`。路由器若开启了客户端隔离，两台设备可能无法互相访问。
 3. 控制手机浏览器打开显示的完整 `http://IP:8080/#token=...` 地址。复制包含片段的完整链接会自动填写访问码；只输入 `http://IP:8080/` 时，在页面粘贴仿真手机显示的访问码并点击连接。
-   升级后重新加载页面，连接后可勾选“开启实时画面”；视频开启不启动仿真。真机视频验收步骤见 [VIDEO.md](VIDEO.md)。
+   升级后重新加载页面，连接后可勾选“开启机器人摄像头”；开启画面不启动仿真。使用及视角确认见 [VIDEO.md](VIDEO.md)。
 4. 点击“策略站立”，应开始平衡；点击“前进0.30m/s”，应开始步行。网页每秒刷新仿真时间、位移、策略及控制耗时。状态来自最近发布的捕获对象，通常约250ms刷新一次。
 5. 点击“暂停仿真”，手机停止物理推进。点击复位SIT/STAND/INIT，会暂停、关闭策略并复位关键帧；重新站立/前进可再次运行。
 6. 浏览器切后台时尝试发送暂停；浏览器断开、Wi-Fi丢失或没有心跳超过3秒时，仿真手机自动暂停。网页恢复后需再次点击站立/前进，心跳本身不会启动仿真。
@@ -105,8 +105,8 @@ python3 scripts/check_source.py \
 - 已验证：用户确认浏览器连接及按钮功能正常；ADB报告显示M4、服务开启、已执行15条远程控制命令，应用日志包含远程运行及网页暂停；数值有限、GLES ready且无错误。报告 [device-M4-lan-state.json](verification/device-M4-lan-state.json)，验收来源及边界 [device-M4-lan-acceptance.json](verification/device-M4-lan-acceptance.json)。按钮为用户整体确认，未逐项保存独立断言；瞬时约29.84FPS不能替代30秒基准。
 - 断连补测已通过：用户完成关闭控制端Wi-Fi测试，应用日志记录 `remote_stop_reason=heartbeat_timeout`、`running=false`、`remote_control_active=false`。租期配置3秒，实际Wi-Fi断开至暂停的时间没有单独计时；记录见 [device-M4-realtime-acceptance.json](verification/device-M4-realtime-acceptance.json)。关闭网页可能先触发主动暂停，`remote_pause`不能证明超时路径通过。
 - 网络开启的30秒短实时测试已通过：[原始报告](verification/device-M4-realtime-render-test.json)为M4、LAN开启，墙钟30.006s/仿真30.02s、1501周期/6004步，约29.994FPS；控制+快照p99=15.186ms，完整工作线程p99=16.618ms/max=19.129ms，超20ms周期0、迟到周期0，最终位姿与M3.2完全一致。用户确认保持网页连接；报告未统计HTTP轮询次数。不同次测试未控制温度/频率，不能把耗时下降归因于网络改造。最大周期距20ms约0.871ms，本次结果不代表长期温升通过。
-- 尚待验证：仿真应用前后台/重启后的服务关闭及新会话。应用回前台后须手动重新开启服务、使用新访问码，网页心跳不能恢复仿真。
-- M5.4视频开启及同版本关闭的两次30秒完整工作线程预算均通过，见 [视频开启](verification/device-M54-video-acceptance.json)、[视频关闭](verification/device-M54-video-off-acceptance.json)。关闭画面后没有新增采集/HTTP帧；3D关闭对照、前后台会话、持续运行/温升待测。
+- 已按用户要求延期：仿真应用前后台/重启后的服务关闭及新会话验证。实现仍要求应用回前台后手动重新开启服务、使用新访问码，网页心跳不能恢复仿真。
+- 历史M5.4窗口画面开启及关闭的两次30秒预算均通过，见 [开启](verification/device-M54-video-acceptance.json)、[关闭](verification/device-M54-video-off-acceptance.json)。该结果不代表当前M6头部摄像头性能；3D关闭、前后台会话、持续运行/温升等验收延期。
 
 当前targetSdk=34，新增INTERNET正常权限即可使用普通局域网socket；Android16的局域网限制为选择启用的测试功能。本工程没有开启该限制，也没有升级targetSdk。[Android官方局域网权限说明](https://developer.android.com/privacy-and-security/local-network-permission)、[网络连接权限说明](https://developer.android.com/develop/connectivity/network-ops/connecting)。
 
@@ -125,4 +125,4 @@ python3 scripts/check_source.py \
 | `app/src/main/java/com/microduck/sim/RemoteLease.java:4` | 心跳/控制归属 |
 | `app/src/main/assets/controller.html:38` | 浏览器画面、状态和心跳 |
 | `verification/NetworkControlCheck.java:1` | 回环与协议检查 |
-| `verification/m54-checks.json:1` | 当前检查结果及源码摘要 |
+| `verification/m6-checks.json:1` | 当前检查结果及源码摘要 |
