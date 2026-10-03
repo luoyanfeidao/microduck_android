@@ -1,0 +1,81 @@
+{
+  "captured_at": "2026-10-03T22:55:35.965Z",
+  "user_confirmation": "已完成",
+  "source_commit": "efacb36",
+  "scope": "Read-only ADB video-on realtime archive",
+  "baseline": "device-M53-video-on-realtime-test.json",
+  "candidate": "device-M54-video-on-realtime-test.json",
+  "result": "M5.4 video-on 30s test passes measured control and full worker 20ms budget; long-duration acceptance remains pending",
+  "measurements": {
+    "publish_mean_ms": {
+      "M5.3": 1.6360497672413796,
+      "M5.4": 0.28461112931034493
+    },
+    "publish_max_ms": {
+      "M5.3": 15.14026,
+      "M5.4": 0.519479
+    },
+    "worker_tick_p99_ms": {
+      "M5.3": 12.55724,
+      "M5.4": 10.648281
+    },
+    "worker_tick_max_ms": {
+      "M5.3": 20.369479,
+      "M5.4": 19.772448
+    },
+    "worker_over_20ms_ticks": {
+      "M5.3": 2,
+      "M5.4": 0
+    },
+    "report_queue_submit_max_ms": {
+      "M5.3": 14.875781,
+      "M5.4": 0.087135
+    },
+    "test_render_fps": {
+      "M5.3": 30.028721015875288,
+      "M5.4": 30.02654906477569
+    },
+    "test_video_capture_fps": {
+      "M5.3": 9.898479624544906,
+      "M5.4": 9.931089479803724
+    },
+    "test_video_frames_published": {
+      "M5.3": 297,
+      "M5.4": 298
+    },
+    "test_video_frames_served": {
+      "M5.3": 263,
+      "M5.4": 265
+    }
+  },
+  "checks": {
+    "expected_stage": true,
+    "video_in_test": true,
+    "finite": true,
+    "foot_geoms_resolved": true,
+    "render_ready": true,
+    "no_render_error": true,
+    "no_video_error": true,
+    "control_under_20ms": true,
+    "worker_under_20ms": true,
+    "late_over_20ms_ticks_zero": true,
+    "paused_after_test": true,
+    "report_poll_interval_50ms": true
+  },
+  "worker_budget_margin_ms": 0.2275519999999993,
+  "slow_tick_samples": [],
+  "root_xyz_difference_m": {
+    "root_x": 0,
+    "root_y": 0,
+    "root_z": 0
+  },
+  "root_quaternion_max_difference": 0,
+  "limits": [
+    "One 30s trial per version; temperature and CPU frequency uncontrolled; comparison is not controlled proof of causality",
+    "Maximum measured worker margin is about 0.228ms; this does not establish long-duration or hard realtime guarantees",
+    "late_ticks counts scheduling lateness over 20ms, not all scheduling lateness; measured maximum lateness is 13.81775ms",
+    "HTTP served count does not prove browser display FPS or end-to-end latency",
+    "Report polling adds nominal 0–50ms idle wait; scheduling and I/O can take longer; status latency was not measured separately",
+    "Video-off, Activity/browser lifecycle and long-duration thermal checks remain pending"
+  ]
+}

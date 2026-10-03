@@ -2,9 +2,11 @@
 
 当前源码 `0.5.4-m54` / versionCode=11，手机标题 `Microduck · Android M5.4`。保留连续JPEG画面，报告线程定时自行取状态，控制周期里不再直接唤醒报告线程。用户通过Android Studio构建/安装/运行；源码检查不打包或安装APK。
 
-M5.3最新复测：30秒发布297帧/9.90FPS、HTTP提供263帧、错误0、手机30.03FPS。工作线程p99=12.557ms/max=20.369ms，2周期超20ms、迟到周期0。sample65/325的唤醒墙钟耗时11.348/14.834ms，提交区间线程CPU仅0.137/0.167ms；准入与发布约0.01ms。原始报告 [device-M53-video-on-realtime-test.json](verification/device-M53-video-on-realtime-test.json)，对比 [device-M53-video-acceptance.json](verification/device-M53-video-acceptance.json)。CPU和墙钟区间边界不同，不能相减当精确等待时长；记录无法区分抢占、GC或内核等待。
+**M5.4视频开启30秒验收通过：** 1501周期/6004步，墙钟30.007秒/仿真30.02秒；完整工作线程p99=10.648ms/max=19.772ms、超20ms周期0，调度迟到超过20ms周期0（最大迟到13.818ms）。手机30.03FPS、视频298发布帧/9.93FPS、265帧提供HTTP、576×480、采集错误0；最终位姿与M5.3一致。报告捕获平均0.285ms/max=0.519ms，队列提交max=0.087ms。原始报告 [device-M54-video-on-realtime-test.json](verification/device-M54-video-on-realtime-test.json)，对比 [device-M54-video-acceptance.json](verification/device-M54-video-acceptance.json)。单次最大余量0.228ms、温度/频率未控制，不证明长期或硬实时保证。视频开启归档已保存，下一步执行下列第6项同版本video-off对照。
 
-M5.4移除submit里的unpark，消费者空闲时parkNanos等待50ms再检查队列；任务到达时不通知消费者。状态显示增加名义0–50ms等待，调度和I/O仍可能更久；每秒空闲检查约20次，不忙等。正常报告捕获约4次/秒。命令确认仍由仿真线程生成，不等待报告线程；物理、策略和视频实现未改。关闭仍会unpark以尽快排空；若关闭时存在已准入但未发布的生产者，定时检查可在发布后继续处理。最新状态合并、完成测试保留和错误恢复契约继续生效，真机效果待测。
+M5.3复测：30秒发布297帧/9.90FPS、HTTP提供263帧、错误0、手机30.03FPS。工作线程p99=12.557ms/max=20.369ms，2周期超20ms、迟到周期0。sample65/325的唤醒墙钟耗时11.348/14.834ms，提交区间线程CPU仅0.137/0.167ms；准入与发布约0.01ms。原始报告 [device-M53-video-on-realtime-test.json](verification/device-M53-video-on-realtime-test.json)，对比 [device-M53-video-acceptance.json](verification/device-M53-video-acceptance.json)。CPU和墙钟区间边界不同，不能相减当精确等待时长；记录无法区分抢占、GC或内核等待。
+
+M5.4移除submit里的unpark，消费者空闲时parkNanos等待50ms再检查队列；任务到达时不通知消费者。状态显示增加名义0–50ms等待，调度和I/O仍可能更久；每秒空闲检查约20次，不忙等。正常报告捕获约4次/秒。命令确认仍由仿真线程生成，不等待报告线程；物理、策略和视频实现未改。关闭仍会unpark以尽快排空；若关闭时存在已准入但未发布的生产者，定时检查可在发布后继续处理。最新状态合并、完成测试保留和错误恢复契约继续生效，真机30秒结果见上文。
 
 M5.2复测：30秒发布297帧/9.90FPS、HTTP提供269帧、错误0、手机约30FPS。完整工作线程p99=13.130ms/max=21.270ms、超20ms周期1；配对sample1365的控制+快照8.404ms、原生状态0.152ms、四项元数据捕获合计0.144ms，队列提交区间12.545ms。原始报告 [device-M52-video-on-realtime-test.json](verification/device-M52-video-on-realtime-test.json)，对比 [device-M52-video-acceptance.json](verification/device-M52-video-acceptance.json)。区间包含对象构造、提交及唤醒，仍不足以证明锁等待或GC/调度的具体原因。
 
@@ -16,7 +18,7 @@ M5.2将应用、渲染、视频、策略元数据的JSONObject/JSONArray构造�
 
 M5已在真机采集并由用户完成浏览器画面/按钮测试：576×480、30秒发布298帧/9.93FPS、提供给HTTP268帧，采集错误0、手机30FPS。完整工作线程仍有3周期超过20ms、max=22.422ms，报告捕获max=16.246ms；两个最大值没有配对，不能确定同周期或直接归因。原始证据 [device-M5-video-on-realtime-test.json](verification/device-M5-video-on-realtime-test.json)，对比 [device-M5-video-acceptance.json](verification/device-M5-video-acceptance.json)。
 
-代码检查发现原周期性报告在控制线程解析原生JSON、转字符串后再解析；M5.1保留原生JSON字符串，单独捕获独占元数据，在报告线程解析/合并。原生state调用仍在仿真线程，报告线程不访问模型、策略或工作线程可变字段。完成测试显式进入保留队列。M5.1实际复测见上文；本次队列改动的性能效果须复测。
+代码检查发现原周期性报告在控制线程解析原生JSON、转字符串后再解析；M5.1保留原生JSON字符串，单独捕获独占元数据，在报告线程解析/合并。原生state调用仍在仿真线程，报告线程不访问模型、策略或工作线程可变字段。完成测试显式进入保留队列。以上版本记录保留用于比较，M5.4当前30秒结果见开头。
 
 ## 使用及真机验收
 
@@ -25,7 +27,7 @@ M5已在真机采集并由用户完成浏览器画面/按钮测试：576×480、
 3. 浏览器勾选“开启实时画面”。首次可能短暂显示等待，随后显示仿真手机的3D视图及尺寸、接收FPS、采集帧龄。目标10FPS，最大640×480，JPEG质量70。它显示机器人、地面、轨迹和接触点，跟随仿真手机的当前相机视角。
 4. 在网页点站立、前进、暂停，确认控制及时、画面方向正确且不黑屏。暂停时机器人不动，画面仍可更新相机视角；开启画面本身不会启动仿真。
 5. 保持网页画面开启，在仿真手机点“实时测试30s”，等自动暂停后告诉代理读取报告。测试期间不要操作相机/速度/复位。核对M5.4、LAN开启、`test_video_frames_published`和`test_video_frames_served`均大于0、控制周期与完整工作线程预算。没有视频帧的测试不能算视频开启测试。
-6. 取消画面开关，确认停止请求；保留网页连接，再做一次30秒对照。先保存开启画面的归档，第二次会覆盖同一文件。
+6. 当前下一项：取消画面开关并等待至少3秒，让2秒观看需求及在途采集结束；保持网页连接、仿真手机应用在前台、“显示3D”开启，再做一次30秒对照。开启画面的归档已保存，第二次会覆盖手机同一文件。关闭测试应新增发布帧/HTTP帧均为0；累计视频帧数不会归零。
 7. 验证浏览器切后台后暂停、回前台后画面恢复但仿真不自行运行；仿真手机离开应用后关闭服务，回前台需手动开启并使用新访问码。
 
 ```bash
@@ -91,11 +93,11 @@ flowchart LR
 
 网页“接收FPS”统计本次开启以来成功解码的新序列；“采集帧龄”是服务器响应时距采集发起的时间，不是端到端显示延迟。手机30FPS渲染、10FPS采集目标和浏览器实际接收FPS是不同指标。
 
-M4无视频基线：工作线程p99=16.618ms/max=19.129ms、30秒超20ms周期0；见 [device-M4-realtime-acceptance.json](verification/device-M4-realtime-acceptance.json)。不同次运行受频率/温度影响。M5/M5.1/M5.2/M5.3分别有3/1/1/2个工作线程周期超预算；M5.4须重新测量，短实时测试不能替代长期温升和网络中断验证。
+M4无视频基线：工作线程p99=16.618ms/max=19.129ms、30秒超20ms周期0；见 [device-M4-realtime-acceptance.json](verification/device-M4-realtime-acceptance.json)。不同次运行受频率/温度影响。M5/M5.1/M5.2/M5.3/M5.4分别有3/1/1/2/0个工作线程周期超预算；当前M5.4的video-off对照待测，短实时测试不能替代长期温升和网络中断验证。
 
 ## 检查与代码入口
 
-[verification/m54-checks.json](verification/m54-checks.json)包含Java对Android34/ORT的JDK11编译、Android ARM64 JNI语法、原物理观测/动作及渲染桥、视频缓存/会话、HTTP图片与心跳并发、网页模拟DOM/网络检查；报告测试验证阻塞I/O不阻塞提交/关闭、状态合并、完成测试保留、错误恢复、无提交信号仍能交付报告、并发关闭保留已接收任务、直接提交报告对象。延后字段检查验证JSON组装发生在报告线程、捕获后命令改变不影响报告速度及非法JSON拒绝。HTTP夹具JPEG不解码图像，网页夹具不是真实浏览器。M5至M5.3实际采集已完成，但完整预算尚未通过；M5.4效果、长期温升及生命周期待测。
+[verification/m54-checks.json](verification/m54-checks.json)包含Java对Android34/ORT的JDK11编译、Android ARM64 JNI语法、原物理观测/动作及渲染桥、视频缓存/会话、HTTP图片与心跳并发、网页模拟DOM/网络检查；报告测试验证阻塞I/O不阻塞提交/关闭、状态合并、完成测试保留、错误恢复、无提交信号仍能交付报告、并发关闭保留已接收任务、直接提交报告对象。延后字段检查验证JSON组装发生在报告线程、捕获后命令改变不影响报告速度及非法JSON拒绝。HTTP夹具JPEG不解码图像，网页夹具不是真实浏览器。M5.4实际视频采集及30秒完整预算已通过；video-off、长期温升、状态延迟及生命周期待测。
 
 | file:line | 作用 |
 | --- | --- |
