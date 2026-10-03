@@ -30,6 +30,10 @@ import java.util.concurrent.TimeUnit;
 public final class MainActivity extends Activity {
     private final Handler main = new Handler(Looper.getMainLooper());
     private final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
+    private final ReportDispatcher reports=new ReportDispatcher(error->{
+        Log.e("MicroduckM1","Report write failed",error);
+        enqueue(()->failed(new IllegalStateException("Cannot save simulation report",error)));
+    });
     private TextView status, report;
     private volatile boolean destroyed;
     // Every native call, including deletion, runs on worker. No UI/render access to mjData.
@@ -63,7 +67,7 @@ public final class MainActivity extends Activity {
         column.setPadding(24, 32, 24, 24);
         column.setBackgroundColor(Color.rgb(237, 244, 247));
         TextView title = new TextView(this);
-        title.setText("Microduck · Android M3.1"); title.setTextSize(24);
+        title.setText("Microduck · Android M3.2"); title.setTextSize(24);
         title.setTextColor(Color.rgb(23, 52, 75)); column.addView(title);
         TextView scope = new TextView(this);
         scope.setText("3D 物理仿真 + ONNX 站立 / 步行\n单指旋转、双指缩放；橙色轨迹、红色接触点。");
@@ -278,7 +282,9 @@ public final class MainActivity extends Activity {
             data.put("model","scene.xml → robot_groundcontact.xml");
             data.put("stage",policyEnabled?"M2: ONNX + XML position servo":"M1: position servo only; no policy");
             data.put("policy_enabled",policyEnabled); data.put("control_ms",controlMs);
-            data.put("app_stage","M3.1"); data.put("render_enabled",renderEnabled);
+            data.put("app_stage","M3.2"); data.put("render_enabled",renderEnabled);
+            data.put("report_pipeline","separate thread; latest pending status; completed tests retained");
+            data.put("report_coalesced_statuses",reports.coalesced());
             data.put("visual_target_fps",VisualCadence.FPS);
             data.put("policy_tick_ms",policyTickMs); data.put("physics_advance_ms",physicsMs);
             data.put("visual_snapshot_ms",snapshotMs); data.put("control_with_visual_ms",controlWithVisualMs);
@@ -287,44 +293,53 @@ public final class MainActivity extends Activity {
             data.put("device",android.os.Build.MODEL);
             data.put("android_api",android.os.Build.VERSION.SDK_INT);
             data.put("keyframe_requested",keyframe);
-            byte[] reportBytes=data.toString(2).getBytes(StandardCharsets.UTF_8);
-            Files.write(new File(getFilesDir(),"last-report.json").toPath(),reportBytes);
-            // Preserve completed tests across pose resets and Activity recreation.
-            String archive="realtime_render_test".equals(data.optString("mode")) ? "last-realtime-test.json"
-                : data.has("policy_control_ticks") ? "last-policy-benchmark.json"
-                : data.has("benchmark_steps") ? "last-physics-benchmark.json" : null;
-            if(archive!=null) Files.write(new File(getFilesDir(),archive).toPath(),reportBytes);
-            Log.i("MicroduckM1",data.toString());
-            String text=String.format(Locale.ROOT,
-                "MuJoCo %s / %s\nbody=%d  nq=%d  nv=%d  actuator=%d\nmesh=%d  dt=%.3f s\n仿真时间 %.3f s / %d 步\n躯干高度 %.4f m\n位移 x %.3f / y %.3f m\n接触 %d / 左脚 %d / 右脚 %d\n有限数值 %s / 脚底匹配 %s\n最近批次 %.3f ms / 20ms 预算",
-                data.getString("mujoco"),data.getString("keyframe"),
-                data.getInt("nbody"),data.getInt("nq"),data.getInt("nv"),data.getInt("nu"),
-                data.getInt("nmesh"),data.getDouble("timestep"),data.getDouble("sim_time"),data.getLong("steps"),
-                data.getDouble("trunk_z"),data.getDouble("root_x"),data.getDouble("root_y"),data.getInt("contacts"),data.getInt("left_contacts"),data.getInt("right_contacts"),
-                data.getBoolean("finite"),data.getBoolean("foot_geoms_resolved"),data.getDouble("last_batch_ms"));
-            String details=data.has("benchmark_steps") ? String.format(Locale.ROOT,
-                "\n基准 %d 步（另暖机 100 步）\n墙钟 %.3f s / 物理实时倍率 %.2f×\n单步平均 %.2f μs\np50 %.2f / p95 %.2f / p99 %.2f μs\n最大单步 %.2f μs\n这是物理基准；不含 ONNX、渲染或视频。",
-                data.getInt("benchmark_steps"),data.getDouble("wall_seconds"),data.getDouble("realtime_factor"),
-                data.getDouble("step_mean_us"),data.getDouble("step_p50_us"),data.getDouble("step_p95_us"),
-                data.getDouble("step_p99_us"),data.getDouble("step_max_us")) : "";
-            if(policies!=null) details+=String.format(Locale.ROOT,
-                "\n策略 %s / 启用 %s\nONNX %.3f ms / 控制周期 %.3f ms\n推理对照最大误差 %.7f\n%s",
-                data.getString("policy"),policyEnabled,data.getDouble("inference_ms"),controlMs,
-                data.getDouble("policy_smoke_max_abs_error"),data.getString("action_filter"));
-            if(data.has("policy_control_ticks")) details+=String.format(Locale.ROOT,
-                "\n策略 500 周期 / %.3f s / %.2f×\n控制 p95 %.3f / p99 %.3f / max %.3f ms",
-                data.getDouble("policy_wall_seconds"),data.getDouble("policy_realtime_factor"),
-                data.getDouble("control_p95_ms"),data.getDouble("control_p99_ms"),data.getDouble("control_max_ms"));
-            details+=String.format(Locale.ROOT,"\n3D %s / %.1f FPS / CPU提交 %.3f ms\n快照 %.3f ms / GPU %s",
-                data.getBoolean("render_ready"),data.getDouble("render_fps"),data.getDouble("render_cpu_ms"),snapshotMs,data.getString("gl_renderer"));
-            if(data.has("realtime_wall_seconds")) details+=String.format(Locale.ROOT,
-                "\n实时测试：墙钟 %.2fs / 仿真 %.2fs\n画面 %.1f FPS / 控制p99 %.3f ms\n超20ms周期 %d / 调度迟到 %d\n工作线程p99 %.3f ms / 超20ms %d",
-                data.getDouble("realtime_wall_seconds"),data.getDouble("sim_time"),data.getDouble("test_render_fps"),
-                data.optDouble("control_with_visual_p99_ms",0),data.getInt("control_over_20ms_ticks"),data.getLong("late_ticks"),
-                data.optDouble("worker_tick_p99_ms",0),data.optInt("worker_over_20ms_ticks",0));
-            final String shownDetails=details;
-            main.post(()->{ if(!destroyed) { status.setText(text); report.setText(shownDetails); } });
-        } catch(Exception e) { throw new IllegalStateException("Cannot publish simulation state",e); }
+            // Data owns captured values. The report thread never reads native/policy/worker state.
+            boolean completedTest="realtime_render_test".equals(data.optString("mode"))
+                || data.has("policy_control_ticks") || data.has("benchmark_steps");
+            reports.submit(()->{
+                try { writeReport(data); }
+                catch(Exception e) { throw new IllegalStateException("Cannot write captured report",e); }
+            },completedTest);
+        } catch(Exception e) { throw new IllegalStateException("Cannot capture simulation state",e); }
+    }
+    private void writeReport(JSONObject data) throws Exception {
+        byte[] reportBytes=data.toString(2).getBytes(StandardCharsets.UTF_8);
+        Files.write(new File(getFilesDir(),"last-report.json").toPath(),reportBytes);
+        // Preserve completed tests across pose resets and Activity recreation.
+        String archive="realtime_render_test".equals(data.optString("mode")) ? "last-realtime-test.json"
+            : data.has("policy_control_ticks") ? "last-policy-benchmark.json"
+            : data.has("benchmark_steps") ? "last-physics-benchmark.json" : null;
+        if(archive!=null) Files.write(new File(getFilesDir(),archive).toPath(),reportBytes);
+        Log.i("MicroduckM1",data.toString());
+        String text=String.format(Locale.ROOT,
+            "MuJoCo %s / %s\nbody=%d  nq=%d  nv=%d  actuator=%d\nmesh=%d  dt=%.3f s\n仿真时间 %.3f s / %d 步\n躯干高度 %.4f m\n位移 x %.3f / y %.3f m\n接触 %d / 左脚 %d / 右脚 %d\n有限数值 %s / 脚底匹配 %s\n最近批次 %.3f ms / 20ms 预算",
+            data.getString("mujoco"),data.getString("keyframe"),
+            data.getInt("nbody"),data.getInt("nq"),data.getInt("nv"),data.getInt("nu"),
+            data.getInt("nmesh"),data.getDouble("timestep"),data.getDouble("sim_time"),data.getLong("steps"),
+            data.getDouble("trunk_z"),data.getDouble("root_x"),data.getDouble("root_y"),data.getInt("contacts"),data.getInt("left_contacts"),data.getInt("right_contacts"),
+            data.getBoolean("finite"),data.getBoolean("foot_geoms_resolved"),data.getDouble("last_batch_ms"));
+        String details=data.has("benchmark_steps") ? String.format(Locale.ROOT,
+            "\n基准 %d 步（另暖机 100 步）\n墙钟 %.3f s / 物理实时倍率 %.2f×\n单步平均 %.2f μs\np50 %.2f / p95 %.2f / p99 %.2f μs\n最大单步 %.2f μs\n这是物理基准；不含 ONNX、渲染或视频。",
+            data.getInt("benchmark_steps"),data.getDouble("wall_seconds"),data.getDouble("realtime_factor"),
+            data.getDouble("step_mean_us"),data.getDouble("step_p50_us"),data.getDouble("step_p95_us"),
+            data.getDouble("step_p99_us"),data.getDouble("step_max_us")) : "";
+        if(data.has("policy")) details+=String.format(Locale.ROOT,
+            "\n策略 %s / 启用 %s\nONNX %.3f ms / 控制周期 %.3f ms\n推理对照最大误差 %.7f\n%s",
+            data.getString("policy"),data.getBoolean("policy_enabled"),data.getDouble("inference_ms"),data.getDouble("control_ms"),
+            data.getDouble("policy_smoke_max_abs_error"),data.getString("action_filter"));
+        if(data.has("policy_control_ticks")) details+=String.format(Locale.ROOT,
+            "\n策略 500 周期 / %.3f s / %.2f×\n控制 p95 %.3f / p99 %.3f / max %.3f ms",
+            data.getDouble("policy_wall_seconds"),data.getDouble("policy_realtime_factor"),
+            data.getDouble("control_p95_ms"),data.getDouble("control_p99_ms"),data.getDouble("control_max_ms"));
+        details+=String.format(Locale.ROOT,"\n3D %s / %.1f FPS / CPU提交 %.3f ms\n快照 %.3f ms / GPU %s",
+            data.getBoolean("render_ready"),data.getDouble("render_fps"),data.getDouble("render_cpu_ms"),data.getDouble("visual_snapshot_ms"),data.getString("gl_renderer"));
+        if(data.has("realtime_wall_seconds")) details+=String.format(Locale.ROOT,
+            "\n实时测试：墙钟 %.2fs / 仿真 %.2fs\n画面 %.1f FPS / 控制p99 %.3f ms\n超20ms周期 %d / 调度迟到 %d\n工作线程p99 %.3f ms / 超20ms %d",
+            data.getDouble("realtime_wall_seconds"),data.getDouble("sim_time"),data.getDouble("test_render_fps"),
+            data.optDouble("control_with_visual_p99_ms",0),data.getInt("control_over_20ms_ticks"),data.getLong("late_ticks"),
+            data.optDouble("worker_tick_p99_ms",0),data.optInt("worker_over_20ms_ticks",0));
+        final String shownDetails=details;
+        main.post(()->{ if(!destroyed) { status.setText(text); report.setText(shownDetails); } });
     }
     private void failed(Throwable e) {
         pause(); policyEnabled=false; Log.e("MicroduckM1","Simulation error",e);
@@ -339,7 +354,7 @@ public final class MainActivity extends Activity {
     @Override protected void onPause() { if(preview!=null) preview.onPause(); super.onPause(); }
     @Override protected void onDestroy() {
         destroyed=true;
-        worker.execute(()->{ pause(); if(policies!=null) policies.close(); if(handle!=0) { NativeSim.close(handle); handle=0; } });
+        worker.execute(()->{ pause(); if(policies!=null) policies.close(); if(handle!=0) { NativeSim.close(handle); handle=0; } reports.close(); });
         worker.shutdown(); super.onDestroy();
     }
 }

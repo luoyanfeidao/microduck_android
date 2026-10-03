@@ -25,27 +25,31 @@ def main():
     parser.add_argument("--ort-aar", type=pathlib.Path, required=True)
     parser.add_argument("--mujoco-dir", type=pathlib.Path, required=True,
                         help="Desktop MuJoCo 3.10.0 Python package with include/ and libmujoco")
+    parser.add_argument("--stage", default="M3.2")
+    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m32-checks.json")
     args = parser.parse_args()
     if sys.platform != "darwin":
         parser.error("This host check currently uses the macOS MuJoCo dylib")
-    java = args.java_home.resolve() / "bin"
+    args.java_home = args.java_home.resolve()
+    java = args.java_home / "bin"
     sdk = args.android_sdk.resolve()
     mujoco = args.mujoco_dir.resolve()
     if not run([java / "javac", "-version"]).startswith("javac 11"):
         parser.error("Use JDK 11 to check the unchanged Android Studio build chain")
     report = {"date": datetime.datetime.now().astimezone().isoformat(),
-              "stage": "M3.1 indexed rendering and paced snapshot source checks",
+              "stage": args.stage + " source checks",
               "scope": "Host source checks only; no Gradle/APK/device execution"}
-    with tempfile.TemporaryDirectory(prefix="microduck-m31-check-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="microduck-source-check-") as tmp:
         out = pathlib.Path(tmp)
         with zipfile.ZipFile(args.ort_aar) as aar:
             (out / "ort.jar").write_bytes(aar.read("classes.jar"))
         sources = sorted((ROOT / "app/src/main/java/com/microduck/sim").glob("*.java"))
-        sources += [ROOT / "verification/SceneFrameCheck.java", ROOT / "verification/RenderOptimizationCheck.java"]
+        sources += [ROOT / "verification" / (test + ".java") for test in
+                    ("SceneFrameCheck", "RenderOptimizationCheck", "ReportDispatcherCheck")]
         run([java / "javac", "-Xlint:all", "-cp",
              f"{sdk / 'platforms/android-34/android.jar'}:{out / 'ort.jar'}", "-d", out, *sources])
         report["java_android34_ort120_jdk11_compile"] = "passed"
-        for test in ("SceneFrameCheck", "RenderOptimizationCheck"):
+        for test in ("SceneFrameCheck", "RenderOptimizationCheck", "ReportDispatcherCheck"):
             report[test] = json.loads(run([java / "java", "-cp", out, "com.microduck.sim." + test]))
         ndk = sdk / "ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++"
         run([ndk, "--target=aarch64-linux-android28", "-std=c++20", "-fsyntax-only",
@@ -71,8 +75,9 @@ def main():
     report["source_sha256"] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                 for p in paths if p.is_file()}
     report["baseline_device_report"] = "device-M3-realtime-render-test.json"
-    report["device_m31_status"] = "Pending user Android Studio build and 30s realtime tests with 3D on/off"
-    target = ROOT / "verification/m31-checks.json"
+    report["previous_device_report"] = "device-M31-realtime-render-test.json"
+    report["device_status"] = "Pending user Android Studio build and 30s realtime tests with 3D on/off"
+    target = args.report
     target.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

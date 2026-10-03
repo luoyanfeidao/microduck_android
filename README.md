@@ -1,4 +1,4 @@
-# Android Studio 施工入口（M3.1：3D + 物理 + ONNX）
+# Android Studio 施工入口（M3.2：3D + 物理 + ONNX）
 
 在 Android Studio 中打开当前目录 `android-sim`，不要打开外层 Microduck 目录。由你完成 Sync、编译、安装和真机运行。
 
@@ -22,9 +22,9 @@ CMake 会从源码构建 MuJoCo 和 JNI 库，不需要手动复制 `.so`。MuJo
 
 ## 手机上怎么验收
 
-**当前验收 M3.1：**
+**当前验收 M3.2：**
 
-1. 在 Android Studio 重新 Sync、Build、Run，确认标题为 `Microduck · Android M3.1`（versionName `0.3.1-m3`）。本次没有新增 Maven 渲染依赖，JDK/NDK/CMake 配置沿用已跑通的版本。
+1. 在 Android Studio 重新 Sync、Build、Run，确认标题为 `Microduck · Android M3.2`（versionName `0.3.2-m3`，versionCode=5）。本次没有新增 Maven 渲染依赖，JDK/NDK/CMake 配置沿用已跑通的版本。
 2. 上方应出现真实机器人 CAD 外观及地面网格。单指拖动旋转视角，双指缩放；“复位视角”恢复默认角度和距离。“跟随机器人”保持机器人在中心，取消后可以观察它在地面上的位移。
 3. 点击“策略站立”观察平衡；点击“前进 0.30m/s”观察脚步。橙线是最近约 512 个绘制快照的地面轨迹，红点是 MuJoCo 当前接触点，可以关闭接触点显示。
 4. 等 3D 正常显示后，点击“实时测试 30s”。从 HOME 重置，发送 vx=.30，按 50Hz 运行 30 秒墙钟，然后自动暂停。保持应用在前台且不再点击重置；告诉 Codex 完成，以便经 ADB 获取报告。
@@ -33,8 +33,8 @@ CMake 会从源码构建 MuJoCo 和 JNI 库，不需要手动复制 `.so`。MuJo
 
 ```bash
 # 开启 3D 的测试结束后，先执行第一条；关闭 3D 再测后，执行第二条。
-adb shell run-as com.microduck.sim cat files/last-realtime-test.json > /tmp/microduck-m31-3d-on.json
-adb shell run-as com.microduck.sim cat files/last-realtime-test.json > /tmp/microduck-m31-3d-off.json
+adb shell run-as com.microduck.sim cat files/last-realtime-test.json > /tmp/microduck-m32-3d-on.json
+adb shell run-as com.microduck.sim cat files/last-realtime-test.json > /tmp/microduck-m32-3d-off.json
 ```
 
 保留默认动作过滤设置，关注数值有限、高度、最终位移，以及 `control_with_visual_p99_ms`、`worker_tick_p99_ms`、`worker_over_20ms_ticks`、`late_ticks`。原 M3 实测参考为 p99=16.616ms/max=19.442ms，最终 x=3.501m/y=-1.225m/z=.1198m；优化后真机结果尚未取得，不能用静态数据量降幅推算手机提速。
@@ -65,7 +65,7 @@ adb shell run-as com.microduck.sim cat files/last-realtime-test.json > /tmp/micr
 
 M3 的 `control_with_visual_ms` 及实时测试分位数包含额外的场景快照构造/JNI 拷贝/请求绘制。GPU 在独立 GL 线程工作，不在该计时范围；`render_cpu_ms` 是 GL 回调内的 CPU 提交时间，既不含之后的 EGL swap，也不是 GPU 完成耗时。`test_render_fps` 是实际执行的绘制回调数量/测试墙钟时间，不等于屏幕面板刷新率。
 
-M3.1 增加各项 p95/p99/max：`policy_tick_*`（观测→推理→动作）、`physics_advance_*`（4 步及 forward）、`visual_snapshot_*`（未取快照的周期为零）、`worker_tick_*`（整个工作线程回调，包含当次 JSON、文件写入、日志和 UI 投递）。`publish_mean_ms / publish_max_ms` 单独记录发布成本。原 `control_over_20ms_ticks` 不包含发布成本，新的 `worker_over_20ms_ticks` 包含；两者均不包含 GPU 完成、EGL swap 或 UI 实际绘制。
+M3.1 起增加各项 p95/p99/max：`policy_tick_*`（观测→推理→动作）、`physics_advance_*`（4 步及 forward）、`visual_snapshot_*`（未取快照的周期为零）、`worker_tick_*`（整个工作线程回调）。M3.1 的 `worker_tick_*` 包含当次文件、日志和 UI 准备；M3.2 把这些移到报告线程，仅包含状态捕获和队列提交。`publish_mean_ms / publish_max_ms` 也改为捕获/提交成本。原 `control_over_20ms_ticks` 不包含发布成本，新的 `worker_over_20ms_ticks` 包含当版在控制线程上的发布成本；两者均不包含 GPU 完成、EGL swap 或 UI 实际绘制。
 
 ## M3 渲染机制
 
@@ -73,13 +73,17 @@ MuJoCo 传统渲染器调用桌面 OpenGL 的兼容接口，Android 提供 OpenG
 
 所有 `mjModel/mjData` 访问仍在仿真工作线程；物理/策略保持 50Hz，通过墙钟门限平均 30Hz 拷贝 geom 的世界位置、旋转、颜色和接触点。50Hz 控制周期下相邻快照通常间隔 20ms 或 40ms，未做姿态插值；相机操作、重置、测试完成仍可主动刷新。GL 线程只读不可变快照，没有原生仿真句柄。仅保留最新快照并按需绘制，慢画面不会积累无界队列；场景导出与画面线程都不推进物理。
 
-连续控制使用 `NativeSim.advance`，保留原四步 `mj_step`、数值检查及最终 `mj_forward`，每约 250ms 生成一次状态 JSON。定期发布复用已有画面，不再重复取快照；单步、重置及完成测试即时发布。文件写入仍在工作线程，新增计时用于判断它是否还占用控制预算。
+连续控制使用 `NativeSim.advance`，保留原四步 `mj_step`、数值检查及最终 `mj_forward`，每约 250ms 捕获一次状态 JSON。定期发布复用已有画面，不再重复取快照；单步、重置及完成测试提交新状态。
+
+M3.2 在工作线程上捕获原生状态、策略及渲染元数据后，交给独立 `ReportDispatcher` 线程进行 JSON 格式化、文件写入、日志和 UI 文案准备。报告线程只读这份独占的捕获对象，不访问 `mjModel/mjData`、策略 session 或工作线程的可变字段。普通状态只保留最新一份待处理任务，完成的测试按序保存，销毁 Activity 时排空已接受任务；UI 投递仍检查 Activity 是否已销毁。若报告保存失败，错误被送回控制线程暂停仿真。
 
 M3.1 真机已完成一次开启 3D 的 30 秒测试，报告见 `verification/device-M31-realtime-render-test.json`：画面 30.05FPS、控制加快照 p99=16.252ms/max=18.083ms，位姿与原 M3 报告相同。新增完整工作线程计时 p99=25.791ms/max=28.381ms、超20ms 76周期；发布平均9.243ms/max=13.206ms。因此下一步是把报告格式化、文件及日志移出控制线程。原 M3 未测这项总耗时，不能把76周期解释为新引入的退化。
 
+以上瓶颈对应的 M3.2 代码已完成，源码检查见 `verification/m32-checks.json`；尚待用户重新构建并复测。报告线程仍与仿真共享手机 CPU，不能仅凭线程拆分宣称实时超时已经消除。验收重点是 `worker_tick_p99_ms` 和 `worker_over_20ms_ticks`，并保留3D关闭对照及后续持续运行测试。
+
 ## 源码检查（不打包或安装 APK）
 
-已验证的检查见 `verification/m31-checks.json`：Java/JNI 编译检查、全部三角形展开后的位置和法线一致、棱角/平面法线保留、500周期物理推进与旧流程完全一致、30FPS门限在50Hz及抖动时钟下无累计漂移或补帧队列。
+已验证的检查见 `verification/m31-checks.json` 和当前 `verification/m32-checks.json`：Java/JNI 编译检查、全部三角形展开后的位置和法线一致、棱角/平面法线保留、500周期物理推进与旧流程完全一致、30FPS门限在50Hz及抖动时钟下无累计漂移或补帧队列。M3.2 增加慢报告不阻塞提交、普通状态合并、测试归档不丢、关闭排空和错误后继续处理的队列测试。
 
 Mac 上可重复执行；下面路径对应本机环境，其他机器按实际位置修改。ORT AAR 可使用 Gradle 已下载的1.20.0文件；MuJoCo目录是桌面Python包，不是Android源码缓存。
 
@@ -153,7 +157,9 @@ flowchart TD
   Files --> JNI
   JNI --> Physics[MuJoCo CPU mj_step / dt 5ms]
   Physics --> Contact[状态 / 接触点 / 性能]
-  Contact --> UI
+  Contact --> Capture[工作线程捕获状态与元数据]
+  Capture --> Reports[报告线程 / 格式化与落盘]
+  Reports --> UI
   Worker --> Snapshot[世界变换 / 接触点快照]
   Snapshot --> Latest[仅保留最新快照]
   Latest --> GL[独立 GLES3 线程]
@@ -174,6 +180,10 @@ flowchart TD
 | `app/src/main/java/com/microduck/sim/PolicyRunner.java` | CPU 单线程 ONNX、尺寸/校验/桌面对照、网络选择和 raw action 反馈 |
 | `app/src/main/java/com/microduck/sim/SceneFrame.java` | 快照校验与 MuJoCo/GLES 矩阵转换 |
 | `app/src/main/java/com/microduck/sim/RobotSurfaceView.java` | GLES3、相机手势、轨迹、接触点、GPU context 生命周期 |
+| `app/src/main/java/com/microduck/sim/VisualMesh.java` | 索引网格包、长度/索引/有限数校验 |
+| `app/src/main/java/com/microduck/sim/VisualCadence.java` | 50Hz控制下的30Hz墙钟快照门限 |
+| `app/src/main/java/com/microduck/sim/ReportDispatcher.java` | 独立报告线程、状态合并、完成测试保留 |
+| `scripts/check_source.py` | Mac源码检查及带摘要的报告；不运行Gradle或安装APK |
 | `scripts/host_baseline.py` | 桌面物理基线，结果见 `verification/host-baseline.json` |
 | `scripts/policy_rehearsal.py` | ONNX 对照、观测夹具、过滤开关与速度命令的闭环预演 |
 | `verification/native-contract-check.cpp` | 直接测试 Android JNI 调用的 C++ 观测/动作函数 |
@@ -194,6 +204,8 @@ flowchart TD
 - M3 尚未由代理打包、安装或运行：用户用 Studio 构建；手机上的 GLES 着色器、外观、帧率、30秒控制节拍、GPU/温升与生命周期需要验收。没有把 M2 的速度当作 M3 的性能证据。
 - M3 后续手机实测：日志找回的 30 秒完整报告见 `verification/device-M3-realtime-render-test.json`。墙钟30.013s/仿真30.02s，绘制回调53.74FPS，控制+快照p99=16.616ms/max=19.442ms，超过20ms周期0、迟到超过20ms周期0。最终x=3.501m/y=-1.225m/z=.1198m，数值正常；GLES ready、38网格已加载且无GL错误。结果说明这次短实时运行可行，余量较小且侧向漂移明显；不代表长时间温升/姿态切换或视频链路已经通过。用户随后重建 Activity 导致普通 last-report 被覆盖，故新增独立归档。
 - 后续施工是手机 M3 验收、双设备命令通信和视频。当前 APK 尚不能替代桌面 `scripts/duck-sim up` 的完整系统。
+- M3.1 用户已编译并运行：索引网格和30FPS真机验证通过，完整工作线程的报告发布成本偏高，见 `verification/device-M31-realtime-render-test.json`。
+- M3.2 报告线程改造源码及队列测试通过，真机实时改善未验证。先复测控制预算，再推进双设备通信和视频。
 
 ONNX Java API 和资源关闭方式依据 [官方 Java 文档](https://onnxruntime.ai/docs/get-started/with-java.html)。
 GL context/绘制线程的生命周期依据 [Android GLSurfaceView 文档](https://developer.android.com/reference/android/opengl/GLSurfaceView)；场景桥依据 [MuJoCo 可视化文档](https://mujoco.readthedocs.io/en/stable/programming/visualization.html) 和固定的本地 3.10.0 源码。
