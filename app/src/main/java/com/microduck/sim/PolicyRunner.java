@@ -82,12 +82,17 @@ final class PolicyRunner implements AutoCloseable {
         NativeSim.applyAction(handle,action,standing,filter);
         System.arraycopy(action,0,previous,0,14); // Feedback remains raw, before scale/filter.
     }
-    void annotate(JSONObject data) throws JSONException {
-        data.put("policy",active); data.put("onnx_runtime",env.getVersion());
-        data.put("policy_smoke_max_abs_error",smokeMaxError); data.put("inference_ms",inferenceMs);
-        data.put("action_filter",filter?"runtime defaults: head .5 / legs .7":"disabled");
-        data.put("velocity_command",new JSONArray(new double[]{command[0],command[1],command[2]}));
-        if(hashes.containsKey(active)) data.put("policy_sha256",hashes.get(active));
+    CapturedReport.Fields captureReport() {
+        String policy=active,version=env.getVersion(),hash=hashes.get(active);
+        double smoke=smokeMaxError,inference=inferenceMs,vx=command[0],vy=command[1],yaw=command[2];
+        boolean filtered=filter;
+        return data->{
+            data.put("policy",policy); data.put("onnx_runtime",version);
+            data.put("policy_smoke_max_abs_error",smoke); data.put("inference_ms",inference);
+            data.put("action_filter",filtered?"runtime defaults: head .5 / legs .7":"disabled");
+            data.put("velocity_command",new JSONArray(new double[]{vx,vy,yaw}));
+            if(hash!=null) data.put("policy_sha256",hash);
+        };
     }
     @Override public void close() {
         for(OrtSession s:sessions.values()) try { s.close(); } catch(OrtException ignored) {}

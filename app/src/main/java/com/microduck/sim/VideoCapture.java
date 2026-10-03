@@ -6,7 +6,6 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.view.PixelCopy;
 import java.io.ByteArrayOutputStream;
-import org.json.JSONObject;
 
 /** UI schedules asynchronous SurfaceView copies; a separate thread owns JPEG compression. */
 final class VideoCapture implements AutoCloseable {
@@ -52,15 +51,17 @@ final class VideoCapture implements AutoCloseable {
             },encode);
         } catch(RuntimeException e) { frames.failed(e.getClass().getSimpleName()); }
     }
-    void annotate(JSONObject data) throws Exception {
+    CapturedReport.Fields captureReport() {
         VideoFrames.Status s=status();
-        data.put("video_backend","PixelCopy / JPEG latest-frame HTTP"); data.put("video_target_fps",FPS);
-        data.put("video_enabled",s.enabled); data.put("video_demand_active",s.demand); data.put("video_copy_pending",s.busy);
-        data.put("video_capture_attempts",s.attempts); data.put("video_frames_published",s.published);
-        data.put("video_frames_served",s.served);
-        data.put("video_capture_failures",s.failures); data.put("video_width",s.width); data.put("video_height",s.height);
-        data.put("video_jpeg_bytes",s.bytes); data.put("video_copy_ms",s.copyMs); data.put("video_encode_ms",s.encodeMs);
-        data.put("video_frame_age_ms",s.ageMs); data.put("video_error",s.error);
+        return data->{
+            data.put("video_backend","PixelCopy / JPEG latest-frame HTTP"); data.put("video_target_fps",FPS);
+            data.put("video_enabled",s.enabled); data.put("video_demand_active",s.demand); data.put("video_copy_pending",s.busy);
+            data.put("video_capture_attempts",s.attempts); data.put("video_frames_published",s.published);
+            data.put("video_frames_served",s.served);
+            data.put("video_capture_failures",s.failures); data.put("video_width",s.width); data.put("video_height",s.height);
+            data.put("video_jpeg_bytes",s.bytes); data.put("video_copy_ms",s.copyMs); data.put("video_encode_ms",s.encodeMs);
+            data.put("video_frame_age_ms",s.ageMs); data.put("video_error",s.error);
+        };
     }
     @Override public void close() {
         closed=true; frames.close(); main.removeCallbacks(tick); encoder.quitSafely();

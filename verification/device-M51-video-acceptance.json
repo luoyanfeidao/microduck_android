@@ -1,0 +1,87 @@
+{
+  "captured_at": "2026-10-03T22:16:04.622Z",
+  "scope": "Read-only ADB video-on realtime archive following user test completion",
+  "user_confirmation": "已完成",
+  "source_commit": "9dd9ee8",
+  "baseline": "device-M5-video-on-realtime-test.json",
+  "candidate": "device-M51-video-on-realtime-test.json",
+  "result": "Video function maintained; full worker 20ms budget still not passed",
+  "measurements": {
+    "publish_mean_ms": {
+      "M5": 2.7209568017241366,
+      "M5.1": 1.3118340862068962
+    },
+    "publish_max_ms": {
+      "M5": 16.245625,
+      "M5.1": 18.047708
+    },
+    "worker_tick_p99_ms": {
+      "M5": 11.910885,
+      "M5.1": 12.068438
+    },
+    "worker_tick_max_ms": {
+      "M5": 22.422396,
+      "M5.1": 22.6125
+    },
+    "worker_over_20ms_ticks": {
+      "M5": 3,
+      "M5.1": 1
+    },
+    "control_with_visual_p99_ms": {
+      "M5": 9.384114,
+      "M5.1": 11.214011
+    },
+    "control_with_visual_max_ms": {
+      "M5": 14.735573,
+      "M5.1": 17.750052
+    },
+    "test_render_fps": {
+      "M5": 29.996702977385098,
+      "M5.1": 29.99463336719669
+    },
+    "test_video_capture_fps": {
+      "M5": 9.932241652511955,
+      "M5.1": 9.931556381582904
+    },
+    "test_video_frames_served": {
+      "M5": 268,
+      "M5.1": 271
+    },
+    "late_ticks": {
+      "M5": 0,
+      "M5.1": 0
+    }
+  },
+  "slow_tick_samples": [
+    {
+      "sample_index": 1053,
+      "worker_tick_ms": 22.6125,
+      "control_with_visual_ms": 4.532917,
+      "native_state_capture_ms": 0.162239,
+      "report_metadata_submit_ms": 17.879167
+    }
+  ],
+  "publish_mean_change_percent": -51.78776504736674,
+  "checks": {
+    "expected_stage": true,
+    "video_in_test": true,
+    "finite": true,
+    "render_ready": true,
+    "render_error_empty": true,
+    "video_error_empty": true,
+    "control_ticks_under_20ms": true,
+    "worker_ticks_under_20ms": false
+  },
+  "root_xyz_difference_m": {
+    "root_x": 0,
+    "root_y": 0,
+    "root_z": 0
+  },
+  "limits": [
+    "One 30s trial per version; CPU frequency and temperature not controlled",
+    "Slow-tick interval identifies metadata capture/submit, not its internal cause (allocation, lock wait, scheduling, GC)",
+    "HTTP served count is not browser display FPS or end-to-end latency",
+    "Video-off, session lifecycle and long-duration thermal comparison remain pending",
+    "Installed APK source hash unavailable; source_commit identifies implementation revision"
+  ]
+}

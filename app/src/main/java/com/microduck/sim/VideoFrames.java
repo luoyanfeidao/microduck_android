@@ -51,16 +51,26 @@ final class VideoFrames {
         busy=true; attempts++; return true;
     }
     synchronized void available(boolean value) { available=value; if(!value) latest=null; }
-    synchronized void publish(byte[] jpeg,int width,int height,long capturedNs,double copyMs,double encodeMs) {
-        if(!busy) throw new IllegalStateException("Video has no pending copy");
-        busy=false;
-        if(closed || !available) return;
+    void publish(byte[] jpeg,int width,int height,long capturedNs,double copyMs,double encodeMs) {
+        long sequence;
+        synchronized(this) {
+            if(!busy) throw new IllegalStateException("Video has no pending copy");
+            if(closed || !available) { busy=false; return; }
+            sequence=published+1;
+        }
         if(jpeg.length<4 || jpeg.length>MAX_BYTES || width<1 || width>640 || height<1 || height>480
             || (jpeg[0]&255)!=255 || (jpeg[1]&255)!=216 || (jpeg[jpeg.length-2]&255)!=255 || (jpeg[jpeg.length-1]&255)!=217) {
-            failures++; latest=null; error="Invalid or oversized JPEG"; return;
+            failed("Invalid or oversized JPEG"); return;
         }
-        latest=new Frame(jpeg,++published,capturedNs,width,height);
-        this.copyMs=copyMs; this.encodeMs=encodeMs; error="";
+        // Copy/allocate on the encoder thread without holding the status-reader lock.
+        // busy remains true, so no second copy/encode can enter this interval.
+        Frame next=new Frame(jpeg,sequence,capturedNs,width,height);
+        synchronized(this) {
+            busy=false;
+            if(closed || !available) return;
+            latest=next; published=sequence;
+            this.copyMs=copyMs; this.encodeMs=encodeMs; error="";
+        }
     }
     synchronized void failed(String message) { busy=false; failures++; latest=null; error=message; }
     synchronized Status status(long now) {

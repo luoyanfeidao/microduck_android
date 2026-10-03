@@ -6,7 +6,6 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import org.json.JSONObject;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -38,15 +37,22 @@ final class RobotSurfaceView extends GLSurfaceView {
     void resetCamera() { scene.azimuth=-50; scene.elevation=25; scene.distance=.75f; requestRender(); }
     long frames() { return scene.totalFrames; }
     boolean ready() { return scene.ready; }
-    void annotate(JSONObject data) throws Exception {
-        data.put("render_backend","OpenGL ES 3 custom mesh renderer"); data.put("render_ready",scene.ready);
-        data.put("gl_renderer",scene.gpu); data.put("gl_version",scene.glVersion);
-        data.put("render_frames",scene.totalFrames); data.put("render_fps",scene.fps);
-        data.put("render_cpu_ms",scene.cpuMs); data.put("rendered_sim_time",scene.simTime);
-        data.put("render_meshes",scene.meshCount); data.put("render_unique_triangles",scene.triangles);
-        data.put("render_unique_vertices",scene.uniqueVertices); data.put("render_mesh_bytes",scene.meshBytes);
-        data.put("render_mesh_format","indexed position-normal pairs / uint32");
-        data.put("render_error",scene.problem); data.put("camera_follow",scene.follow);
+    CapturedReport.Fields captureReport() {
+        boolean ready=scene.ready,follow=scene.follow;
+        String gpu=scene.gpu,version=scene.glVersion,error=scene.problem;
+        long frames=scene.totalFrames,bytes=scene.meshBytes;
+        double fps=scene.fps,cpuMs=scene.cpuMs,simTime=scene.simTime;
+        int meshes=scene.meshCount,triangles=scene.triangles,vertices=scene.uniqueVertices;
+        return data->{
+            data.put("render_backend","OpenGL ES 3 custom mesh renderer"); data.put("render_ready",ready);
+            data.put("gl_renderer",gpu); data.put("gl_version",version);
+            data.put("render_frames",frames); data.put("render_fps",fps);
+            data.put("render_cpu_ms",cpuMs); data.put("rendered_sim_time",simTime);
+            data.put("render_meshes",meshes); data.put("render_unique_triangles",triangles);
+            data.put("render_unique_vertices",vertices); data.put("render_mesh_bytes",bytes);
+            data.put("render_mesh_format","indexed position-normal pairs / uint32");
+            data.put("render_error",error); data.put("camera_follow",follow);
+        };
     }
     @Override public boolean onTouchEvent(MotionEvent event) {
         getParent().requestDisallowInterceptTouchEvent(true); scale.onTouchEvent(event);

@@ -1,4 +1,4 @@
-# Android Studio 施工入口（M5.1：浏览器画面与报告开销优化）
+# Android Studio 施工入口（M5.2：浏览器画面与元数据捕获优化）
 
 在 Android Studio 中打开当前目录 `android-sim`，不要打开外层 Microduck 目录。由你完成 Sync、编译、安装和真机运行。
 
@@ -6,7 +6,9 @@
 
 当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。另一台Android浏览器可发站立/步行/暂停/复位命令并读状态；M5进一步提供当前3D视图的连续JPEG画面。控制见 [NETWORK.md](NETWORK.md)，视频原理及验收见 [VIDEO.md](VIDEO.md)。
 
-**当前先复测M5.1：** Studio编译运行 `0.5.1-m51` / versionCode=8，标题 `Microduck · Android M5.1`。开启局域网控制，控制端浏览器连接并勾选“开启实时画面”，保持画面开启，在仿真手机点“实时测试30s”。M5.1把周期性原生JSON的解析/合并移入报告线程，去掉控制线程上的两次解析及中间序列化；新增原生状态捕获/元数据提交分项和最多16个超预算周期的配对记录。源码/报告/协议检查见 [verification/m51-checks.json](verification/m51-checks.json)，实际预算改善待测。
+**当前先复测M5.2：** Studio编译运行 `0.5.2-m52` / versionCode=9，标题 `Microduck · Android M5.2`。开启局域网控制，浏览器连接并勾选“开启实时画面”，在仿真手机点“实时测试30s”。M5.2把周期性元数据JSONObject/JSONArray组装移到报告线程；仿真线程只复制标量/不可变视频状态，报告回调不访问模型/策略/渲染器的可变字段。同时把JPEG副本分配移出状态读取锁，新增应用/渲染/视频/策略捕获和队列提交的分项计时。检查见 [verification/m52-checks.json](verification/m52-checks.json)，实际预算改善待测。
+
+**M5.1复测结果：** 30秒发布298帧/9.93FPS，提供HTTP271帧，采集错误0、手机约30FPS。报告捕获平均1.312ms（前次M5为2.721ms），但工作线程仍有1周期22.613ms；配对记录为控制+快照4.533ms、原生状态0.162ms、元数据捕获/提交17.879ms。预算未全部通过，且该区间内部原因尚不能区分分配/调度/锁等待。证据 [verification/device-M51-video-acceptance.json](verification/device-M51-video-acceptance.json)。
 
 **M5视频功能已验证，完整工作线程预算未通过：** 用户完成浏览器视频/按钮和30秒测试；手机576×480采集、发布298帧/9.93FPS、提供给HTTP发送器268帧、采集错误0，手机渲染约30FPS。控制+快照max=14.736ms，但完整工作线程max=22.422ms、超20ms周期3；不能判定全部周期达标。原始报告 [verification/device-M5-video-on-realtime-test.json](verification/device-M5-video-on-realtime-test.json)，对比 [verification/device-M5-video-acceptance.json](verification/device-M5-video-acceptance.json)。不同次温度/频率未控制，不能据p99下降归因于视频改造。
 
@@ -232,7 +234,8 @@ flowchart TD
 - M3.2 报告线程改造源码及队列测试通过；用户完成30秒开启3D的真机测试，工作线程p99=18.085ms/max=19.923ms，超20ms周期0，画面30.02FPS，位姿与之前一致。报告见 `verification/device-M32-realtime-render-test.json`。3D关闭对照、持续运行与生命周期尚未测，再推进双设备通信和视频。
 - M4局域网浏览器控制源码/编译和Mac回环检查通过，见 `verification/m4-checks.json`。2026-10-04用户确认连接与按钮正常，随后补测断连与网络开启的30秒运行；日志确认心跳超时暂停，实时工作线程p99=16.618ms/max=19.129ms、超20ms及迟到周期0、约30FPS。报告及对比见 `verification/device-M4-realtime-acceptance.json`。该版本未包含视频。
 - M5源码检查通过后，用户已完成浏览器视频及30秒测试：576×480、298发布帧/9.93FPS、268帧提供给HTTP、采集错误0、手机约30FPS；最终位姿与M4一致。工作线程p99=11.911ms/max=22.422ms、超20ms周期3，完整预算未通过，见 `verification/device-M5-video-acceptance.json`。HTTP帧数不等于浏览器显示FPS。
-- M5.1移出周期性JSON解析/中间序列化，显式保留完成测试归档，新增报告路径分项及超预算配对记录；源码/字段/队列/HTTP/浏览器检查通过，见 `verification/m51-checks.json`。真实预算改善、video-off对照、前后台会话及长期温升待测。
+- M5.1移出周期性JSON解析/中间序列化后完成真机复测，平均报告捕获耗时下降，但仍有1周期超20ms/max=22.613ms，配对样本显示元数据捕获/提交17.879ms；见 `verification/device-M51-video-acceptance.json`。这不确定区间内部的具体原因，也不能用单次结果推断温度/频率影响。
+- M5.2进一步移出周期性元数据JSON组装，报告回调只读捕获的标量/不可变状态；JPEG副本分配不占状态锁，新增5个捕获/提交分项。源码、延后字段构造、快照及原协议检查见 `verification/m52-checks.json`。实际预算、video-off对照、生命周期和长期温升待测。
 
 ONNX Java API 和资源关闭方式依据 [官方 Java 文档](https://onnxruntime.ai/docs/get-started/with-java.html)。
 GL context/绘制线程的生命周期依据 [Android GLSurfaceView 文档](https://developer.android.com/reference/android/opengl/GLSurfaceView)；场景桥依据 [MuJoCo 可视化文档](https://mujoco.readthedocs.io/en/stable/programming/visualization.html) 和固定的本地 3.10.0 源码。

@@ -111,5 +111,7 @@
   },
   "baseline_device_report": "device-M3-realtime-render-test.json",
   "previous_device_report": "device-M5-video-on-realtime-test.json",
-  "device_status": "Pending user Android Studio M5.1 build, browser video and video-on realtime budget check"
+  "device_status": "M5.1 video-on 30s test completed; 298 frames published at 9.93 FPS, zero capture errors. Full worker budget still FAILED: 1 tick at 22.6125ms; paired metadata capture/submit interval 17.879167ms. M5.2 optimization pending retest.",
+  "device_status_updated_at": "2026-10-03T22:24:02.343Z",
+  "device_evidence": "device-M51-video-acceptance.json"
 }

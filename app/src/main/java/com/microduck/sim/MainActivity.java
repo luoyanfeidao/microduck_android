@@ -70,9 +70,11 @@ public final class MainActivity extends Activity {
     private long videoPublishedAtStart,videoServedAtStart;
     private int realtimeSampleCount,realtimeOverBudget;
     private final double[] realtimeSamples=new double[2500];
-    private final double[][] componentSamples=new double[6][2500];
-    private final String[] componentNames={"policy_tick","physics_advance","visual_snapshot","worker_tick","native_state_capture","report_metadata_submit"};
-    private final double[][] overBudgetSamples=new double[16][5];
+    private final double[][] componentSamples=new double[11][2500];
+    private final String[] componentNames={"policy_tick","physics_advance","visual_snapshot","worker_tick","native_state_capture","report_metadata_submit",
+        "app_metadata_capture","render_metadata_capture","video_metadata_capture","policy_metadata_capture","report_queue_submit"};
+    private final double[] metadataCaptureMs=new double[5];
+    private final double[][] overBudgetSamples=new double[16][10];
     private int overBudgetSampleCount;
     private int workerOverBudget,publishSamples;
     private double publishMaxMs,publishTotalMs;
@@ -85,7 +87,7 @@ public final class MainActivity extends Activity {
         column.setPadding(24, 32, 24, 24);
         column.setBackgroundColor(Color.rgb(237, 244, 247));
         TextView title = new TextView(this);
-        title.setText("Microduck · Android M5.1"); title.setTextSize(24);
+        title.setText("Microduck · Android M5.2"); title.setTextSize(24);
         title.setTextColor(Color.rgb(23, 52, 75)); column.addView(title);
         TextView scope = new TextView(this);
         scope.setText("3D 物理仿真 + ONNX 站立 / 步行\n单指旋转、双指缩放；橙色轨迹、红色接触点。");
@@ -188,6 +190,7 @@ public final class MainActivity extends Activity {
                 if(now-expectedTick > 20_000_000L) lateTicks++;
                 expectedTick+=20_000_000L;
                 controlStep(true);
+                Arrays.fill(metadataCaptureMs,0);
                 double nativeStateMs=0,reportSubmitMs=0;
                 if(now-lastLog >= 250_000_000L) {
                     long publishBegin=System.nanoTime();
@@ -208,6 +211,7 @@ public final class MainActivity extends Activity {
                         componentSamples[0][i]=policyTickMs; componentSamples[1][i]=physicsMs;
                         componentSamples[2][i]=snapshotMs; componentSamples[3][i]=tickMs;
                         componentSamples[4][i]=nativeStateMs; componentSamples[5][i]=reportSubmitMs;
+                        for(int part=0;part<metadataCaptureMs.length;part++) componentSamples[6+part][i]=metadataCaptureMs[part];
                     }
                     if(controlWithVisualMs>20) realtimeOverBudget++;
                     if(tickMs>20) {
@@ -216,6 +220,7 @@ public final class MainActivity extends Activity {
                             double[] row=overBudgetSamples[overBudgetSampleCount++];
                             row[0]=realtimeSampleCount-1; row[1]=tickMs; row[2]=controlWithVisualMs;
                             row[3]=nativeStateMs; row[4]=reportSubmitMs;
+                            System.arraycopy(metadataCaptureMs,0,row,5,metadataCaptureMs.length);
                         }
                     }
                 }
@@ -295,8 +300,10 @@ public final class MainActivity extends Activity {
             JSONArray slowTicks=new JSONArray();
             for(int i=0;i<overBudgetSampleCount;i++) {
                 double[] row=overBudgetSamples[i];
-                slowTicks.put(new JSONObject().put("sample_index",(long)row[0]).put("worker_tick_ms",row[1])
-                    .put("control_with_visual_ms",row[2]).put("native_state_capture_ms",row[3]).put("report_metadata_submit_ms",row[4]));
+                JSONObject slow=new JSONObject().put("sample_index",(long)row[0]).put("worker_tick_ms",row[1])
+                    .put("control_with_visual_ms",row[2]).put("native_state_capture_ms",row[3]).put("report_metadata_submit_ms",row[4]);
+                for(int part=0;part<metadataCaptureMs.length;part++) slow.put(componentNames[6+part]+"_ms",row[5+part]);
+                slowTicks.put(slow);
             }
             data.put("worker_over_budget_samples",slowTicks);
             data.put("worker_over_budget_samples_truncated",workerOverBudget>overBudgetSamples.length);
@@ -337,34 +344,48 @@ public final class MainActivity extends Activity {
     private void publish(String raw,boolean refreshVisual,boolean completedTest,double wallRun,long capturedLateTicks) {
         try {
             if(refreshVisual) pushVisual();
-            JSONObject data=new JSONObject();
-            if(wallRun>=0) {
-                data.put("wall_run_seconds",wallRun); data.put("late_ticks",capturedLateTicks); data.put("mode","running");
-            }
-            data.put("model","scene.xml → robot_groundcontact.xml");
-            data.put("stage",policyEnabled?"M2: ONNX + XML position servo":"M1: position servo only; no policy");
-            data.put("policy_enabled",policyEnabled); data.put("control_ms",controlMs);
-            data.put("app_stage","M5.1"); data.put("render_enabled",renderEnabled);
-            data.put("ready",ready); data.put("running",ticker!=null);
-            data.put("lan_enabled",lan!=null); data.put("remote_control_active",remoteLease.active());
-            data.put("remote_commands_applied",remoteCommandsApplied); data.put("remote_stop_reason",remoteStopReason);
-            data.put("report_pipeline","separate thread parses/merges native JSON; captured metadata; completed tests retained");
-            data.put("report_coalesced_statuses",reports.coalesced());
-            data.put("visual_target_fps",VisualCadence.FPS);
-            data.put("policy_tick_ms",policyTickMs); data.put("physics_advance_ms",physicsMs);
-            data.put("visual_snapshot_ms",snapshotMs); data.put("control_with_visual_ms",controlWithVisualMs);
-            preview.annotate(data);
-            if(video!=null) video.annotate(data);
-            if(policies!=null) policies.annotate(data);
-            data.put("device",android.os.Build.MODEL);
-            data.put("android_api",android.os.Build.VERSION.SDK_INT);
-            data.put("keyframe_requested",keyframe);
-            // Transfer metadata ownership. No caller retains/mutates data after submission.
-            CapturedReport captured=new CapturedReport(raw,data);
+            long begin=System.nanoTime();
+            boolean policy=policyEnabled,render=renderEnabled,loaded=ready,running=ticker!=null;
+            boolean lanEnabled=lan!=null,remoteActive=remoteLease.active();
+            double control=controlMs,inference=policyTickMs,physics=physicsMs,snapshot=snapshotMs,withVisual=controlWithVisualMs;
+            long commands=remoteCommandsApplied,coalesced=reports.coalesced();
+            String stopReason=remoteStopReason,pose=keyframe,device=android.os.Build.MODEL;
+            int api=android.os.Build.VERSION.SDK_INT;
+            CapturedReport.Fields app=data->{
+                if(wallRun>=0) {
+                    data.put("wall_run_seconds",wallRun); data.put("late_ticks",capturedLateTicks); data.put("mode","running");
+                }
+                data.put("model","scene.xml → robot_groundcontact.xml");
+                data.put("stage",policy?"M2: ONNX + XML position servo":"M1: position servo only; no policy");
+                data.put("policy_enabled",policy); data.put("control_ms",control);
+                data.put("app_stage","M5.2"); data.put("render_enabled",render);
+                data.put("ready",loaded); data.put("running",running);
+                data.put("lan_enabled",lanEnabled); data.put("remote_control_active",remoteActive);
+                data.put("remote_commands_applied",commands); data.put("remote_stop_reason",stopReason);
+                data.put("report_pipeline","report thread parses native JSON and builds metadata JSON; captured scalar values only");
+                data.put("report_coalesced_statuses",coalesced); data.put("visual_target_fps",VisualCadence.FPS);
+                data.put("policy_tick_ms",inference); data.put("physics_advance_ms",physics);
+                data.put("visual_snapshot_ms",snapshot); data.put("control_with_visual_ms",withVisual);
+                data.put("device",device); data.put("android_api",api); data.put("keyframe_requested",pose);
+            };
+            long appDone=System.nanoTime(); metadataCaptureMs[0]=(appDone-begin)/1e6;
+            CapturedReport.Fields visual=preview.captureReport();
+            long visualDone=System.nanoTime(); metadataCaptureMs[1]=(visualDone-appDone)/1e6;
+            CapturedReport.Fields videoFields=video==null?null:video.captureReport();
+            long videoDone=System.nanoTime(); metadataCaptureMs[2]=(videoDone-visualDone)/1e6;
+            CapturedReport.Fields policyFields=policies==null?null:policies.captureReport();
+            long policyDone=System.nanoTime(); metadataCaptureMs[3]=(policyDone-videoDone)/1e6;
+            // These callbacks own only scalar copies, strings and an immutable video status.
+            CapturedReport captured=new CapturedReport(raw,data->{
+                app.putInto(data); visual.putInto(data);
+                if(videoFields!=null) videoFields.putInto(data);
+                if(policyFields!=null) policyFields.putInto(data);
+            });
             reports.submit(()->{
                 try { writeReport(captured.materialize()); }
                 catch(Exception e) { throw new IllegalStateException("Cannot write captured report",e); }
             },completedTest);
+            metadataCaptureMs[4]=(System.nanoTime()-policyDone)/1e6;
         } catch(Exception e) { throw new IllegalStateException("Cannot capture simulation state",e); }
     }
     private void writeReport(JSONObject data) throws Exception {

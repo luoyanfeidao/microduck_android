@@ -1,6 +1,6 @@
-# M5.1：一台 Android 仿真，另一台浏览器观看和控制
+# M5.2：一台 Android 仿真，另一台浏览器观看和控制
 
-当前源码版本为 `0.5.1-m51` / versionCode=8，手机标题 `Microduck · Android M5.1`，由用户在Android Studio构建/安装/运行。M5视频/浏览器功能已验证，但完整工作线程超20ms周期3、max=22.422ms；M5.1把周期性JSON解析/合并移入报告线程并增加分项诊断，源码检查见 [verification/m51-checks.json](verification/m51-checks.json)，预算改善待复测。使用及视频线程图见 [VIDEO.md](VIDEO.md)。
+当前源码版本为 `0.5.2-m52` / versionCode=9，手机标题 `Microduck · Android M5.2`，由用户在Android Studio构建/安装/运行。M5/M5.1视频功能已验证，但M5.1仍有1个22.613ms周期，配对记录落在元数据捕获/提交区间；见 [M5.1实测](verification/device-M51-video-acceptance.json)。M5.2把周期性元数据JSON组装移入报告线程、JPEG副本分配移出状态锁，并增加5段计时，检查 [verification/m52-checks.json](verification/m52-checks.json)，性能效果待测。使用及线程图见 [VIDEO.md](VIDEO.md)。
 
 真实CAD视图仍由仿真手机以约30FPS绘制；浏览器默认关闭画面，勾选“开启实时画面”后按需采集、传输，目标10FPS、最大640×480。模型、ONNX、动作过滤及50Hz物理/策略沿用原基线。
 
@@ -114,10 +114,10 @@ python3 scripts/check_source.py \
 
 | file:line | 作用 |
 | --- | --- |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:409` | 开启服务、显示地址 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:439` | 仿真线程执行命令及会话检查 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:177` | 控制周期及心跳检查 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:472` | 退出前台时关闭 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:430` | 开启服务、显示地址 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:460` | 仿真线程执行命令及会话检查 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:179` | 控制周期及心跳检查 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:493` | 退出前台时关闭 |
 | `app/src/main/java/com/microduck/sim/LanControlServer.java:28` | Socket、线程与请求边界 |
 | `app/src/main/java/com/microduck/sim/LanControlServer.java:87` | HTTP路径、授权和命令路由 |
 | `app/src/main/java/com/microduck/sim/RemoteCommand.java:7` | 命令验证 |
@@ -125,4 +125,4 @@ python3 scripts/check_source.py \
 | `app/src/main/java/com/microduck/sim/RemoteLease.java:4` | 心跳/控制归属 |
 | `app/src/main/assets/controller.html:38` | 浏览器画面、状态和心跳 |
 | `verification/NetworkControlCheck.java:1` | 回环与协议检查 |
-| `verification/m51-checks.json:1` | 当前检查结果及源码摘要 |
+| `verification/m52-checks.json:1` | 当前检查结果及源码摘要 |
