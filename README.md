@@ -6,7 +6,7 @@
 
 当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。M4增加局域网浏览器控制，另一台Android可发站立/步行/暂停/复位命令并读状态；操作和架构见 [NETWORK.md](NETWORK.md)。当前3D显示在仿真手机，视频链路后续接入。
 
-**当前先验收M4：** Studio重新编译运行，确认标题为 `Microduck · Android M4`（versionName `0.4-m4` / versionCode=6），然后点“开启局域网控制”。第二台手机连接同一Wi-Fi，浏览器打开应用显示的完整地址。检查站立、前进、暂停和断开3秒后暂停，再做网络开启时的30秒实时测试。源码/回环已通过，真机网络尚待验证。
+**M4浏览器连接及按钮已实测通过：** 用户已用Studio构建运行 `0.4-m4` / versionCode=6，并确认浏览器连接和按钮正常；ADB读取到15条远程控制命令、远程运行和网页暂停，数值及渲染正常。证据见 [verification/device-M4-lan-acceptance.json](verification/device-M4-lan-acceptance.json)。下一步补测控制端Wi-Fi断开3秒自动暂停、应用前后台关闭服务，以及保持网页连接时的“实时测试30s”；当前独立实时归档仍为M3.2。操作见 [NETWORK.md](NETWORK.md)。
 
 ## 在 Android Studio 编译
 
@@ -223,7 +223,7 @@ flowchart TD
 - 后续施工是手机 M3 验收、双设备命令通信和视频。当前 APK 尚不能替代桌面 `scripts/duck-sim up` 的完整系统。
 - M3.1 用户已编译并运行：索引网格和30FPS真机验证通过，完整工作线程的报告发布成本偏高，见 `verification/device-M31-realtime-render-test.json`。
 - M3.2 报告线程改造源码及队列测试通过；用户完成30秒开启3D的真机测试，工作线程p99=18.085ms/max=19.923ms，超20ms周期0，画面30.02FPS，位姿与之前一致。报告见 `verification/device-M32-realtime-render-test.json`。3D关闭对照、持续运行与生命周期尚未测，再推进双设备通信和视频。
-- M4局域网浏览器控制源码/编译和Mac回环检查通过，见 `verification/m4-checks.json`；下一步由用户Studio构建、开启服务，验收真实两设备、浏览器、断连与网络开启的控制预算。操作见 `NETWORK.md`。
+- M4局域网浏览器控制源码/编译和Mac回环检查通过，见 `verification/m4-checks.json`。2026-10-04用户确认浏览器连接与按钮功能正常，ADB核对版本及远程运行/暂停，见 `verification/device-M4-lan-acceptance.json`；断连、生命周期与网络开启后的30秒预算待补测。操作见 `NETWORK.md`。
 
 ONNX Java API 和资源关闭方式依据 [官方 Java 文档](https://onnxruntime.ai/docs/get-started/with-java.html)。
 GL context/绘制线程的生命周期依据 [Android GLSurfaceView 文档](https://developer.android.com/reference/android/opengl/GLSurfaceView)；场景桥依据 [MuJoCo 可视化文档](https://mujoco.readthedocs.io/en/stable/programming/visualization.html) 和固定的本地 3.10.0 源码。

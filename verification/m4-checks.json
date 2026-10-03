@@ -80,5 +80,7 @@
   },
   "baseline_device_report": "device-M3-realtime-render-test.json",
   "previous_device_report": "device-M32-realtime-render-test.json",
-  "device_status": "Pending user Android Studio M4 build, LAN command/lifecycle tests and realtime budget check"
+  "device_status": "M4 installed; browser connection and buttons user-confirmed; ADB remote running/pause evidence captured. Disconnect/lifecycle and LAN-on realtime budget remain pending.",
+  "device_status_updated_at": "2026-10-04T05:34:44.821572+08:00",
+  "device_evidence": "device-M4-lan-acceptance.json"
 }
