@@ -1,0 +1,115 @@
+{
+  "date": "2026-10-04T06:07:27.000255+08:00",
+  "stage": "M5.1 source checks",
+  "scope": "Host source checks only; no Gradle/APK/device execution",
+  "java_android34_ort120_jdk11_compile": "passed",
+  "SceneFrameCheck": {
+    "matrix_mapping": "passed",
+    "nan_and_truncation_rejection": "passed"
+  },
+  "RenderOptimizationCheck": {
+    "snapshots_per_30s_at_50hz": 900,
+    "jitter_frames": 900,
+    "no_catchup_bursts": true,
+    "mesh_validation": true
+  },
+  "ReportDispatcherCheck": {
+    "blocked_io_does_not_block_submit_or_close": true,
+    "ordinary_status_coalesced": true,
+    "completed_tests_preserved": true,
+    "accepted_tasks_drain_on_close": true,
+    "error_recovery": true
+  },
+  "VideoFramesCheck": {
+    "no_capture_without_viewer": true,
+    "one_inflight_capture": true,
+    "immutable_latest_frame": true,
+    "stale_oversized_and_hidden_rejection": true,
+    "late_publish_after_close_rejected": true
+  },
+  "NetworkControlCheck": {
+    "http_page_state_commands": true,
+    "token_required": true,
+    "invalid_requests_never_apply": true,
+    "http_size_duplicate_transfer_and_timeout_checks": true,
+    "velocity_pose_validation": true,
+    "heartbeat_and_local_takeover": true,
+    "mailbox_timeout_cancels_queued_command": true,
+    "mailbox_pending_limit": true,
+    "jpeg_auth_bytes_headers_and_unavailable": true,
+    "concurrent_frames_and_heartbeats": true
+  },
+  "CapturedReportCheck": {
+    "captured_values_survive_deferred_parse": true,
+    "completed_archive_fields_preserved": true,
+    "invalid_native_json_rejected": true
+  },
+  "controller_javascript_syntax": "passed",
+  "controller_behavior": {
+    "video_opt_in": true,
+    "bearer_header": true,
+    "slow_video_does_not_block_controls": true,
+    "stop_and_hidden_cancel_requests": true,
+    "late_frame_does_not_revive_view": true,
+    "background_pause": true,
+    "unavailable_retries": true,
+    "expired_token_disconnects": true,
+    "blob_urls_released": true
+  },
+  "android_arm64_jni_syntax_Werror": "passed",
+  "visual-bridge-check": {
+    "mjv_scene_max_error": 0,
+    "meshes": 38,
+    "unique_triangles": 431802,
+    "indexed_vertices": 215317,
+    "indexed_bytes": 10349232,
+    "all_corners_position_normal_exact": true,
+    "hard_edges_and_flat_fallback": true,
+    "visual_geoms": 70,
+    "contacts": 1
+  },
+  "native-contract-check": {
+    "observation_max_error": 0,
+    "action_scale_filter_gain": "passed",
+    "nan_rejection": "passed",
+    "advance_baseline_500_ticks_exact": true,
+    "invalid_step_rejection": true
+  },
+  "source_sha256": {
+    "app/build.gradle": "4a46955a2ea0dadb9d2efe2d20cabaf9efff2de6ab8b88e722d4affc6c691ea5",
+    "app/src/main/AndroidManifest.xml": "b09e265f5df41077a0fa2cde93f7911c5871da243c9033622925b2b5d4f90089",
+    "app/src/main/assets/controller.html": "0cdcc0916cab57b11d77e646c7bd07a43dcf57b9ea58c4282b48ed10d7a242a3",
+    "scripts/check_source.py": "8dde2b6a8a34f5128bb350b041888af3ae393c59ec158556aca2b83787c20398",
+    "app/src/main/cpp/CMakeLists.txt": "8ec7bae504cea1158da67ff0e5b6ac1b5215a53bb4d2caeefc84288e12d3ba1c",
+    "app/src/main/cpp/native_sim.cpp": "ddc91749307e294292fa152b7660a48d30ee637990c9ddd73cde0c54821e3945",
+    "app/src/main/cpp/visual_snapshot.h": "c25775598b3863d9bb6862478f7d92e6a1aa378d39199ccbf158ef17ca2a061c",
+    "app/src/main/java/com/microduck/sim/CapturedReport.java": "2275e4455ffc9d2b3f09d1353f4d2f7b91036326643de5ee5005d7b38794c34b",
+    "app/src/main/java/com/microduck/sim/LanControlServer.java": "e4aa3e62f9b05c43b96542ef30892e1fc27593bbd76019e54bfbafafebee3b26",
+    "app/src/main/java/com/microduck/sim/MainActivity.java": "c4b4a42171597cf96c394c4897fac24816062da45c66702bec6b5e0f5e33fb2a",
+    "app/src/main/java/com/microduck/sim/ModelAssets.java": "9e977c6c40e74f0ee97fdd3bc2d26150b8f19dd7d667857a70a6f5ba30a44d5c",
+    "app/src/main/java/com/microduck/sim/NativeSim.java": "d1fc0642a344b48e90945d484ea3f77d17c6d869a4ac8b8909b5042c71b59e9f",
+    "app/src/main/java/com/microduck/sim/PolicyRunner.java": "50f0c8720f2d5580f11454cb73457ffb11fa47a1a6059e6f07993fe6cc4b7880",
+    "app/src/main/java/com/microduck/sim/RemoteCommand.java": "7aaba6b9a3dc9adf1e3fd637f13b937528bdd55fc24d2e9dfcb58fd960c7216a",
+    "app/src/main/java/com/microduck/sim/RemoteLease.java": "686825184b06adfd4d521991d116fec9c0356c040faaedfe4e26b91d8257fb4e",
+    "app/src/main/java/com/microduck/sim/RemoteMailbox.java": "693b251c721c23aba6a68e3028c2c350bc54da40c403851af87e705495c157c1",
+    "app/src/main/java/com/microduck/sim/ReportDispatcher.java": "db90fd7a153a0e51ff3d1a89a9231ca1eb1941e8c653aeb9b6e80c0a0579e655",
+    "app/src/main/java/com/microduck/sim/RobotSurfaceView.java": "d2c4780a9c8a0cdd83b8083f71cf1276b2fda785785066698fd955b720a83eaa",
+    "app/src/main/java/com/microduck/sim/SceneFrame.java": "57b65bb73f3b7b353fadd20e70cf50943fa2b66b68fe77b0a3a90e24978dfa1c",
+    "app/src/main/java/com/microduck/sim/VideoCapture.java": "4726510c219347fe87bb5d552567c925d2850d689bc32fe4166ec981257c7acb",
+    "app/src/main/java/com/microduck/sim/VideoFrames.java": "fa0c85b0656a14eb456b3d7504007e9ae593e36f6a54fb0ebdd9c9755cc333ed",
+    "app/src/main/java/com/microduck/sim/VisualCadence.java": "9e179a64528c4f30aee7e965ed7e2342862d4b402b2396b7ea400f25016efd19",
+    "app/src/main/java/com/microduck/sim/VisualMesh.java": "0246172a7fdce6f82eef79f8bedad1c6f8ae5c910923a4f6ba3f215918ce5c62",
+    "verification/SceneFrameCheck.java": "0dfb839cb3b2b7c3d3312d76bd5f3fe4203305432a9ec88bc9a411843dddc46f",
+    "verification/RenderOptimizationCheck.java": "7a11daa6d7270bfa04f8252f2f46c053a3df7417036326b1623005a667d6c386",
+    "verification/ReportDispatcherCheck.java": "9ddbbfd1ce27ea8f60242e6203ba7db248c3104c26a362dd6ef1b119f20a0829",
+    "verification/NetworkControlCheck.java": "09a3af7ca4c787d5442a7bcdea7c0219b28bd7eebb613dfc3dec0294aba18479",
+    "verification/VideoFramesCheck.java": "c311f4ab9b1200fea29ae603ecd4ffef10f7d8ccc2420068aef97796e5ce4757",
+    "verification/CapturedReportCheck.java": "8c816fc42e7ddf804d1dc36981d74a32dd5499f3c16a62987b039767e343ae07",
+    "verification/visual-bridge-check.cpp": "6a4351aaf3a947e3de7c0e3c95764f5ab3905646939f31ffea7932b1df4563cc",
+    "verification/native-contract-check.cpp": "8260427f742f1089b982afe62d7fbd3f20902564a9ddb7f772a2fce6096b8a18",
+    "verification/controller-check.js": "1c096ee2fad7b76774ed43c7c73aca095330a16a893949116b007f5053544bc2"
+  },
+  "baseline_device_report": "device-M3-realtime-render-test.json",
+  "previous_device_report": "device-M5-video-on-realtime-test.json",
+  "device_status": "Pending user Android Studio M5.1 build, browser video and video-on realtime budget check"
+}

@@ -1,6 +1,6 @@
-# M5：一台 Android 仿真，另一台浏览器观看和控制
+# M5.1：一台 Android 仿真，另一台浏览器观看和控制
 
-当前源码版本为 `0.5-m5` / versionCode=7，手机标题 `Microduck · Android M5`，由用户在Android Studio构建/安装/运行。M5在M4控制基础上增加当前3D视图的连续JPEG画面，源码检查见 [verification/m5-checks.json](verification/m5-checks.json)，使用及视频线程图见 [VIDEO.md](VIDEO.md)。M4的浏览器按钮、断连暂停和网络开启的30秒预算已经真机通过；M5视频采集及视频开启预算尚待实测。
+当前源码版本为 `0.5.1-m51` / versionCode=8，手机标题 `Microduck · Android M5.1`，由用户在Android Studio构建/安装/运行。M5视频/浏览器功能已验证，但完整工作线程超20ms周期3、max=22.422ms；M5.1把周期性JSON解析/合并移入报告线程并增加分项诊断，源码检查见 [verification/m51-checks.json](verification/m51-checks.json)，预算改善待复测。使用及视频线程图见 [VIDEO.md](VIDEO.md)。
 
 真实CAD视图仍由仿真手机以约30FPS绘制；浏览器默认关闭画面，勾选“开启实时画面”后按需采集、传输，目标10FPS、最大640×480。模型、ONNX、动作过滤及50Hz物理/策略沿用原基线。
 
@@ -106,7 +106,7 @@ python3 scripts/check_source.py \
 - 断连补测已通过：用户完成关闭控制端Wi-Fi测试，应用日志记录 `remote_stop_reason=heartbeat_timeout`、`running=false`、`remote_control_active=false`。租期配置3秒，实际Wi-Fi断开至暂停的时间没有单独计时；记录见 [device-M4-realtime-acceptance.json](verification/device-M4-realtime-acceptance.json)。关闭网页可能先触发主动暂停，`remote_pause`不能证明超时路径通过。
 - 网络开启的30秒短实时测试已通过：[原始报告](verification/device-M4-realtime-render-test.json)为M4、LAN开启，墙钟30.006s/仿真30.02s、1501周期/6004步，约29.994FPS；控制+快照p99=15.186ms，完整工作线程p99=16.618ms/max=19.129ms，超20ms周期0、迟到周期0，最终位姿与M3.2完全一致。用户确认保持网页连接；报告未统计HTTP轮询次数。不同次测试未控制温度/频率，不能把耗时下降归因于网络改造。最大周期距20ms约0.871ms，本次结果不代表长期温升通过。
 - 尚待验证：仿真应用前后台/重启后的服务关闭及新会话。应用回前台后须手动重新开启服务、使用新访问码，网页心跳不能恢复仿真。
-- M5视频的Android采集、网页显示和视频开启预算需按 [VIDEO.md](VIDEO.md) 验收。仍待补3D关闭对照、持续运行/温升；M4无视频的测试不能替代M5。
+- M5视频已采到576×480画面、30秒298发布帧/9.93FPS、268帧提供HTTP、错误0；完整工作线程预算未通过，见 [device-M5-video-acceptance.json](verification/device-M5-video-acceptance.json)。M5.1报告优化后须按 [VIDEO.md](VIDEO.md) 重测，仍待video-off/3D关闭对照、持续运行/温升。
 
 当前targetSdk=34，新增INTERNET正常权限即可使用普通局域网socket；Android16的局域网限制为选择启用的测试功能。本工程没有开启该限制，也没有升级targetSdk。[Android官方局域网权限说明](https://developer.android.com/privacy-and-security/local-network-permission)、[网络连接权限说明](https://developer.android.com/develop/connectivity/network-ops/connecting)。
 
@@ -114,10 +114,10 @@ python3 scripts/check_source.py \
 
 | file:line | 作用 |
 | --- | --- |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:383` | 开启服务、显示地址 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:413` | 仿真线程执行命令及会话检查 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:174` | 控制周期及心跳检查 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:446` | 退出前台时关闭 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:409` | 开启服务、显示地址 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:439` | 仿真线程执行命令及会话检查 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:177` | 控制周期及心跳检查 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:472` | 退出前台时关闭 |
 | `app/src/main/java/com/microduck/sim/LanControlServer.java:28` | Socket、线程与请求边界 |
 | `app/src/main/java/com/microduck/sim/LanControlServer.java:87` | HTTP路径、授权和命令路由 |
 | `app/src/main/java/com/microduck/sim/RemoteCommand.java:7` | 命令验证 |
@@ -125,4 +125,4 @@ python3 scripts/check_source.py \
 | `app/src/main/java/com/microduck/sim/RemoteLease.java:4` | 心跳/控制归属 |
 | `app/src/main/assets/controller.html:38` | 浏览器画面、状态和心跳 |
 | `verification/NetworkControlCheck.java:1` | 回环与协议检查 |
-| `verification/m5-checks.json:1` | 当前检查结果及源码摘要 |
+| `verification/m51-checks.json:1` | 当前检查结果及源码摘要 |

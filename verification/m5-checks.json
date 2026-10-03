@@ -104,5 +104,7 @@
   },
   "baseline_device_report": "device-M3-realtime-render-test.json",
   "previous_device_report": "device-M4-realtime-render-test.json",
-  "device_status": "Pending user Android Studio M5 build, browser video and video-on realtime budget check"
+  "device_status": "M5 browser video/control completed by user; ADB shows 298 published frames at 9.93 FPS and zero capture errors. Full worker budget FAILED: 3 ticks over 20ms, max 22.422ms. M5.1 optimization pending device retest.",
+  "device_status_updated_at": "2026-10-03T22:10:55.748Z",
+  "device_evidence": "device-M5-video-acceptance.json"
 }

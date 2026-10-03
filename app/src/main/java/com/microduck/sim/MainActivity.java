@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import java.io.File;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
@@ -69,8 +70,10 @@ public final class MainActivity extends Activity {
     private long videoPublishedAtStart,videoServedAtStart;
     private int realtimeSampleCount,realtimeOverBudget;
     private final double[] realtimeSamples=new double[2500];
-    private final double[][] componentSamples=new double[4][2500];
-    private final String[] componentNames={"policy_tick","physics_advance","visual_snapshot","worker_tick"};
+    private final double[][] componentSamples=new double[6][2500];
+    private final String[] componentNames={"policy_tick","physics_advance","visual_snapshot","worker_tick","native_state_capture","report_metadata_submit"};
+    private final double[][] overBudgetSamples=new double[16][5];
+    private int overBudgetSampleCount;
     private int workerOverBudget,publishSamples;
     private double publishMaxMs,publishTotalMs;
 
@@ -82,7 +85,7 @@ public final class MainActivity extends Activity {
         column.setPadding(24, 32, 24, 24);
         column.setBackgroundColor(Color.rgb(237, 244, 247));
         TextView title = new TextView(this);
-        title.setText("Microduck · Android M5"); title.setTextSize(24);
+        title.setText("Microduck · Android M5.1"); title.setTextSize(24);
         title.setTextColor(Color.rgb(23, 52, 75)); column.addView(title);
         TextView scope = new TextView(this);
         scope.setText("3D 物理仿真 + ONNX 站立 / 步行\n单指旋转、双指缩放；橙色轨迹、红色接触点。");
@@ -185,12 +188,13 @@ public final class MainActivity extends Activity {
                 if(now-expectedTick > 20_000_000L) lateTicks++;
                 expectedTick+=20_000_000L;
                 controlStep(true);
+                double nativeStateMs=0,reportSubmitMs=0;
                 if(now-lastLog >= 250_000_000L) {
                     long publishBegin=System.nanoTime();
-                    JSONObject data=new JSONObject(NativeSim.state(handle));
-                    data.put("wall_run_seconds",(now-startedAt)/1e9);
-                    data.put("late_ticks",lateTicks); data.put("mode","running");
-                    publish(data.toString(),false); lastLog=now;
+                    String raw=NativeSim.state(handle); long nativeDone=System.nanoTime();
+                    nativeStateMs=(nativeDone-publishBegin)/1e6;
+                    publish(raw,false,false,(now-startedAt)/1e9,lateTicks); lastLog=now;
+                    reportSubmitMs=(System.nanoTime()-nativeDone)/1e6;
                     if(realtimeTesting) {
                         double cost=(System.nanoTime()-publishBegin)/1e6;
                         publishSamples++; publishTotalMs+=cost; publishMaxMs=Math.max(publishMaxMs,cost);
@@ -203,9 +207,17 @@ public final class MainActivity extends Activity {
                         realtimeSamples[i]=controlWithVisualMs;
                         componentSamples[0][i]=policyTickMs; componentSamples[1][i]=physicsMs;
                         componentSamples[2][i]=snapshotMs; componentSamples[3][i]=tickMs;
+                        componentSamples[4][i]=nativeStateMs; componentSamples[5][i]=reportSubmitMs;
                     }
                     if(controlWithVisualMs>20) realtimeOverBudget++;
-                    if(tickMs>20) workerOverBudget++;
+                    if(tickMs>20) {
+                        workerOverBudget++;
+                        if(overBudgetSampleCount<overBudgetSamples.length) {
+                            double[] row=overBudgetSamples[overBudgetSampleCount++];
+                            row[0]=realtimeSampleCount-1; row[1]=tickMs; row[2]=controlWithVisualMs;
+                            row[3]=nativeStateMs; row[4]=reportSubmitMs;
+                        }
+                    }
                 }
             } catch(Throwable e) { failed(e); }
         },0,20,TimeUnit.MILLISECONDS);
@@ -221,7 +233,7 @@ public final class MainActivity extends Activity {
         pause(); main.post(()->status.setText("基准测试中…"));
         policyEnabled=false;
         if("HOME".equals(keyframe)) { keyframe="SIT"; NativeSim.reset(handle,keyframe); }
-        publish(NativeSim.benchmark(handle,count));
+        publishTest(NativeSim.benchmark(handle,count));
     }
     private void enablePolicy(float vx) {
         if(policies==null) throw new IllegalStateException("ONNX 未加载，请检查策略加载错误");
@@ -254,6 +266,7 @@ public final class MainActivity extends Activity {
         pause(); policyEnabled=false; enablePolicy(.30f);
         realtimeSampleCount=0; realtimeOverBudget=0; realtimeStarted=System.nanoTime();
         workerOverBudget=0; publishSamples=0; publishMaxMs=0; publishTotalMs=0;
+        overBudgetSampleCount=0;
         realtimeFramesAtStart=preview.frames(); maxLatenessMs=0; realtimeTesting=true; start();
         VideoFrames.Status videoStart=video==null?null:video.status();
         videoPublishedAtStart=videoStart==null?0:videoStart.published;
@@ -279,6 +292,14 @@ public final class MainActivity extends Activity {
             data.put("test_video_frames_published",videoPublished);
             data.put("test_video_capture_fps",videoPublished/wall);
             data.put("test_video_frames_served",videoEnd==null?0:videoEnd.served-videoServedAtStart);
+            JSONArray slowTicks=new JSONArray();
+            for(int i=0;i<overBudgetSampleCount;i++) {
+                double[] row=overBudgetSamples[i];
+                slowTicks.put(new JSONObject().put("sample_index",(long)row[0]).put("worker_tick_ms",row[1])
+                    .put("control_with_visual_ms",row[2]).put("native_state_capture_ms",row[3]).put("report_metadata_submit_ms",row[4]));
+            }
+            data.put("worker_over_budget_samples",slowTicks);
+            data.put("worker_over_budget_samples_truncated",workerOverBudget>overBudgetSamples.length);
             if(samples>0) {
                 data.put("control_with_visual_p95_ms",sorted[(int)((samples-1)*.95)]);
                 data.put("control_with_visual_p99_ms",sorted[(int)((samples-1)*.99)]);
@@ -290,7 +311,7 @@ public final class MainActivity extends Activity {
                     data.put(componentNames[c]+"_max_ms",values[samples-1]);
                 }
             }
-            publish(data.toString());
+            publishTest(data.toString());
         } catch(Exception e) { failed(e); }
     }
     private void policyBenchmark() {
@@ -304,24 +325,30 @@ public final class MainActivity extends Activity {
             data.put("policy_control_ticks",500); data.put("policy_wall_seconds",wall);
             data.put("policy_realtime_factor",10/wall); data.put("control_p50_ms",ms[249]);
             data.put("control_p95_ms",ms[474]); data.put("control_p99_ms",ms[494]);
-            data.put("control_max_ms",ms[499]); publish(data.toString());
+            data.put("control_max_ms",ms[499]); publishTest(data.toString());
         } catch(Exception e) { throw new IllegalStateException(e); }
     }
     private void publish(String raw) {
-        publish(raw,true);
+        publish(raw,true,false,-1,0);
     }
-    private void publish(String raw,boolean refreshVisual) {
+    private void publishTest(String raw) {
+        publish(raw,true,true,-1,0);
+    }
+    private void publish(String raw,boolean refreshVisual,boolean completedTest,double wallRun,long capturedLateTicks) {
         try {
             if(refreshVisual) pushVisual();
-            JSONObject data=new JSONObject(raw);
+            JSONObject data=new JSONObject();
+            if(wallRun>=0) {
+                data.put("wall_run_seconds",wallRun); data.put("late_ticks",capturedLateTicks); data.put("mode","running");
+            }
             data.put("model","scene.xml → robot_groundcontact.xml");
             data.put("stage",policyEnabled?"M2: ONNX + XML position servo":"M1: position servo only; no policy");
             data.put("policy_enabled",policyEnabled); data.put("control_ms",controlMs);
-            data.put("app_stage","M5"); data.put("render_enabled",renderEnabled);
+            data.put("app_stage","M5.1"); data.put("render_enabled",renderEnabled);
             data.put("ready",ready); data.put("running",ticker!=null);
             data.put("lan_enabled",lan!=null); data.put("remote_control_active",remoteLease.active());
             data.put("remote_commands_applied",remoteCommandsApplied); data.put("remote_stop_reason",remoteStopReason);
-            data.put("report_pipeline","separate thread; latest pending status; completed tests retained");
+            data.put("report_pipeline","separate thread parses/merges native JSON; captured metadata; completed tests retained");
             data.put("report_coalesced_statuses",reports.coalesced());
             data.put("visual_target_fps",VisualCadence.FPS);
             data.put("policy_tick_ms",policyTickMs); data.put("physics_advance_ms",physicsMs);
@@ -332,11 +359,10 @@ public final class MainActivity extends Activity {
             data.put("device",android.os.Build.MODEL);
             data.put("android_api",android.os.Build.VERSION.SDK_INT);
             data.put("keyframe_requested",keyframe);
-            // Data owns captured values. The report thread never reads native/policy/worker state.
-            boolean completedTest="realtime_render_test".equals(data.optString("mode"))
-                || data.has("policy_control_ticks") || data.has("benchmark_steps");
+            // Transfer metadata ownership. No caller retains/mutates data after submission.
+            CapturedReport captured=new CapturedReport(raw,data);
             reports.submit(()->{
-                try { writeReport(data); }
+                try { writeReport(captured.materialize()); }
                 catch(Exception e) { throw new IllegalStateException("Cannot write captured report",e); }
             },completedTest);
         } catch(Exception e) { throw new IllegalStateException("Cannot capture simulation state",e); }

@@ -1,0 +1,89 @@
+{
+  "captured_at": "2026-10-03T22:05:39.350Z",
+  "scope": "Read-only ADB archive after user completed M5 browser video/control and video-on 30s test",
+  "user_confirmation": "已完成",
+  "app_version": {
+    "versionCode": 7,
+    "versionName": "0.5-m5"
+  },
+  "source_commit": "caca6aa",
+  "baseline": "device-M4-realtime-render-test.json",
+  "candidate": "device-M5-video-on-realtime-test.json",
+  "result": "Video function verified; full-worker 20ms budget not passed",
+  "measurements": {
+    "test_render_fps": {
+      "M4": 29.993704978187218,
+      "M5": 29.996702977385098
+    },
+    "worker_tick_p99_ms": {
+      "M4": 16.61823,
+      "M5": 11.910885
+    },
+    "worker_tick_max_ms": {
+      "M4": 19.128542,
+      "M5": 22.422396
+    },
+    "worker_over_20ms_ticks": {
+      "M4": 0,
+      "M5": 3
+    },
+    "control_with_visual_p99_ms": {
+      "M4": 15.185521,
+      "M5": 9.384114
+    },
+    "control_with_visual_max_ms": {
+      "M4": 18.207865,
+      "M5": 14.735573
+    },
+    "control_over_20ms_ticks": {
+      "M4": 0,
+      "M5": 0
+    },
+    "late_ticks": {
+      "M4": 0,
+      "M5": 0
+    },
+    "publish_mean_ms": {
+      "M4": 2.0471183448275867,
+      "M5": 2.7209568017241366
+    },
+    "publish_max_ms": {
+      "M4": 9.651458,
+      "M5": 16.245625
+    }
+  },
+  "video": {
+    "width": 576,
+    "height": 480,
+    "published_during_test": 298,
+    "provided_to_http_during_test": 268,
+    "capture_fps": 9.932241652511955,
+    "cumulative_capture_failures": 0,
+    "error": ""
+  },
+  "checks": {
+    "m5_report": true,
+    "lan_enabled": true,
+    "video_demand_active": true,
+    "video_in_test": true,
+    "finite": true,
+    "render_ready": true,
+    "no_gl_error": true,
+    "no_video_error": true,
+    "control_ticks_under_20ms": true,
+    "worker_ticks_under_20ms": false
+  },
+  "root_xyz_difference_m": {
+    "root_x": 0,
+    "root_y": 0,
+    "root_z": 0
+  },
+  "root_quaternion_exact_match": true,
+  "limits": [
+    "One 30s trial with no controlled thermal/CPU-clock comparison; lower p99 does not establish a causal speed improvement",
+    "HTTP provided-frame count does not measure browser display FPS or end-to-end latency",
+    "Publish maximum and worker maximum are not paired per-tick measurements; causal attribution is not established",
+    "M5 video-off comparison, session lifecycle, and long-duration thermal behavior remain pending",
+    "Installed APK source hash is unavailable; source_commit identifies the M5 implementation"
+  ]
+}
