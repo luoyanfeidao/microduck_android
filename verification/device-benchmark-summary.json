@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-02",
+  "device": "V2185A",
+  "scope": "M1 position-servo physics only; no ONNX/render/video",
+  "results": [
+    {
+      "keyframe": "SIT",
+      "wall_seconds": 0.422445624,
+      "realtime_factor": 23.6716856132,
+      "step_mean_us": 211.222812,
+      "step_p99_us": 259.792,
+      "trunk_z": 0.0633983693094,
+      "trunk_z_difference_from_host": 8.895661984809067e-15,
+      "contacts_equal_host": true
+    },
+    {
+      "keyframe": "STAND",
+      "wall_seconds": 0.449038906,
+      "realtime_factor": 22.2697852377,
+      "step_mean_us": 224.519453,
+      "step_p99_us": 317.24,
+      "trunk_z": 0.0316284019009,
+      "trunk_z_difference_from_host": 1.0151601781416275e-14,
+      "contacts_equal_host": true
+    },
+    {
+      "keyframe": "INIT",
+      "wall_seconds": 0.440527447,
+      "realtime_factor": 22.7000611837,
+      "step_mean_us": 220.2637235,
+      "step_p99_us": 282.865,
+      "trunk_z": 0.0348827125505,
+      "trunk_z_difference_from_host": 4.063416270128073e-14,
+      "contacts_equal_host": true
+    }
+  ],
+  "limits": "Single short benchmark per keyframe; matching height/contact count does not establish full trajectory equivalence or sustained real-time performance."
+}

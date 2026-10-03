@@ -1,0 +1,10 @@
+{
+  "mujoco": "3.10.0",
+  "reference": "CPU mjv_updateScene, tilted/moving robot",
+  "meshes": 38,
+  "unique_triangles": 431802,
+  "visual_mesh_geoms": 70,
+  "contact_points": 1,
+  "snapshot_floats": 1202,
+  "unindexed_mesh_bytes": 31089744
+}

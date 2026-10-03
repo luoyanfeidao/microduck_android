@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-02",
+  "report": "device-M2-policy-benchmark.json",
+  "device_root_xyz": [
+    1.20719245551,
+    -0.230285818432,
+    0.119332773223
+  ],
+  "host_root_xyz": [
+    1.2045214801350037,
+    -0.22144205945988918,
+    0.1201743668815479
+  ],
+  "difference_xyz": [
+    0.002670975374996276,
+    -0.008843758972110816,
+    -0.0008415936585478984
+  ],
+  "scope": "One unpaced 10s simulation benchmark; not sustained wall-clock real-time, rendering or video validation"
+}

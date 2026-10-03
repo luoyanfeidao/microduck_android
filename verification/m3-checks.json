@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-02",
+  "stage": "M3 real mesh GLES renderer + 30s paced test prepared",
+  "java_full_source_compile_against_android34_ort120": "passed",
+  "android_arm64_cpp_syntax_Werror": "passed",
+  "visual_bridge_check": {
+    "mjv_scene_max_abs_error": 0,
+    "reference": "MuJoCo CPU mjv_updateScene on a tilted moving state",
+    "meshes": 38,
+    "unique_triangles": 431802,
+    "visual_geoms": 70,
+    "finite_mesh_data": "passed"
+  },
+  "java_frame_checks": {
+    "matrix_mapping": "passed",
+    "nan_and_truncation_rejection": "passed"
+  },
+  "model_reference": {
+    "mujoco": "3.10.0",
+    "reference": "CPU mjv_updateScene, tilted/moving robot",
+    "meshes": 38,
+    "unique_triangles": 431802,
+    "visual_mesh_geoms": 70,
+    "contact_points": 1,
+    "snapshot_floats": 1202,
+    "unindexed_mesh_bytes": 31089744
+  },
+  "source_sha256": {
+    "app/src/main/cpp/visual_snapshot.h": "c72137dacbe0b6ce8242e33d20e691279e62ed08f1f04733a013795ddef58ee8",
+    "app/src/main/cpp/native_sim.cpp": "f4d5266356f27cf855793ad494be3957f90d8ed0dccbeea0d1b6d5017726a1bd",
+    "app/src/main/java/com/microduck/sim/SceneFrame.java": "57b65bb73f3b7b353fadd20e70cf50943fa2b66b68fe77b0a3a90e24978dfa1c",
+    "app/src/main/java/com/microduck/sim/RobotSurfaceView.java": "538919351d87acf93cd4bcb4a2c81b5a2fcdcc29fb2a11aafc8b8829b5911760",
+    "app/src/main/java/com/microduck/sim/MainActivity.java": "9337e1fc649e418e54483cd0b1aace99dcf1f457eb545b3a9d1f0303b8355d93"
+  },
+  "architecture": "Simulation worker owns mjModel/mjData; GLES thread receives immutable arrays and latest-only snapshots",
+  "m3_gradle_apk_build": "User built/ran M3 in Android Studio; completed report recovered from app logcat",
+  "m3_device_rendering": {
+    "date": "2026-10-02",
+    "device": "V2185A",
+    "gpu": "Adreno (TM) 730",
+    "report": "device-M3-realtime-render-test.json",
+    "report_source": "app logcat, completion 21:11:49.751; last-report subsequently overwritten by Activity initialization",
+    "render_ready": true,
+    "render_error": "",
+    "test_render_fps": 53.74370039983811,
+    "control_p99_ms": 16.615781,
+    "control_max_ms": 19.441562,
+    "over_20ms_ticks": 0,
+    "late_ticks": 0
+  },
+  "pending": [
+    "Human confirmation of CAD appearance and camera gestures",
+    "Lifecycle/long-duration thermal behavior",
+    "Rendering/control margin optimization",
+    "Network/video"
+  ],
+  "limits": [
+    "Horizontal floor + visual mesh subset for current plain model",
+    "Simplified lighting; no MuJoCo textures/shadows",
+    "Render CPU timing excludes GPU completion and EGL swap",
+    "No video or network transport"
+  ],
+  "report_archive_fix": "Dedicated completed-test JSON files added; Java check passed; not installed yet"
+}

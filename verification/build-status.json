@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-02",
+  "stage": "M1/M2 short benchmarks and M3 30s paced render/control test verified on phone",
+  "assets_verified": 40,
+  "asset_bytes": 21628546,
+  "host_keyframes_verified": [
+    "SIT",
+    "STAND",
+    "INIT"
+  ],
+  "native_prior_build_elf_verified": [
+    {
+      "file": ".native-build/libmicroduck_m1.so",
+      "sha256": "8a564f3d177a2f898f2662b20633ecf1254635787371724239cd6585ff9e0f45",
+      "architecture": "AArch64",
+      "load_segment_alignment": 16384
+    },
+    {
+      "file": ".native-build/lib/libmujoco.so",
+      "sha256": "5908f89512980129d6e6bd115861e7be21b77e4e9a313b0d00f5deb0216364b1",
+      "architecture": "AArch64",
+      "load_segment_alignment": 16384
+    }
+  ],
+  "latest_android_studio_integration": "M3 user build ran successfully; small completed-report archival fix pending next user build",
+  "on_device_runtime": {
+    "verified": "2026-10-02",
+    "device": "V2185A",
+    "android_api": 36,
+    "keyframe": "INIT",
+    "finite": true,
+    "foot_geoms_resolved": true,
+    "benchmark_steps": 2000,
+    "realtime_factor": 22.7000611837,
+    "report": "device-last-report.json"
+  },
+  "onnx_render_network_video": "ONNX/physics/GLES 30s paced run verified; long-duration/lifecycle/network/video remain unverified or not implemented",
+  "m2_checks": "m2-checks.json",
+  "m2_on_device_runtime": "device-M2-policy-benchmark.json",
+  "m3_checks": "m3-checks.json",
+  "m3_on_device_runtime": "device-M3-realtime-render-test.json"
+}

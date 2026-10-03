@@ -1,0 +1,13 @@
+diff --git a/src/xml/xml.cc b/src/xml/xml.cc
+index 654d0a5..4d50bf7 100644
+--- a/src/xml/xml.cc
++++ b/src/xml/xml.cc
+@@ -360,7 +360,7 @@ mjSpec* ParseXML(const char* filename, const mjVFS* vfs, char* error,
+   mju_getResourceDir(resource, &dir, &ndir);
+   std::string_view directory(dir, ndir);
+ 
+-  mjSpec* spec = SpecFromXML({xml, xml + buffer_size}, directory,
++  mjSpec* spec = SpecFromXML(std::string_view(xml, buffer_size), directory,
+                              filename, vfs, error, nerror);
+ 
+   mju_closeResource(resource);
