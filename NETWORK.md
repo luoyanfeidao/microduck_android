@@ -1,6 +1,6 @@
 # M5.4：一台 Android 仿真，另一台浏览器观看和控制
 
-当前源码版本为 `0.5.4-m54` / versionCode=11，手机标题 `Microduck · Android M5.4`，由用户在Android Studio构建/安装/运行。M5.4视频开启30秒实测通过：工作线程p99=10.648ms/max=19.772ms、超20ms周期0，视频9.93FPS/错误0、手机30.03FPS，见 [M5.4实测](verification/device-M54-video-acceptance.json)。报告线程空闲每50ms自行检查队列，控制线程提交不再直接唤醒；源码检查 [verification/m54-checks.json](verification/m54-checks.json)。报告状态显示增加名义0–50ms等待，命令确认不等待报告落盘。单次余量较小，video-off、生命周期及持续温升待测。使用及线程图见 [VIDEO.md](VIDEO.md)。
+当前源码版本为 `0.5.4-m54` / versionCode=11，手机标题 `Microduck · Android M5.4`，由用户在Android Studio构建/安装/运行。M5.4视频开启与关闭的两次30秒实测均通过，工作线程超20ms周期均为0；视频开启max=19.772ms、9.93FPS/错误0，关闭max=19.699ms、新增发布/HTTP帧均为0，LAN及3D保持开启，见 [视频开启实测](verification/device-M54-video-acceptance.json)、[视频关闭对照](verification/device-M54-video-off-acceptance.json)。报告线程空闲每50ms自行检查队列，状态显示增加名义0–50ms等待，命令确认不等待报告落盘；源码检查 [verification/m54-checks.json](verification/m54-checks.json)。余量较小、温度/频率未控制，生命周期及持续温升待测。使用及线程图见 [VIDEO.md](VIDEO.md)。
 
 真实CAD视图仍由仿真手机以约30FPS绘制；浏览器默认关闭画面，勾选“开启实时画面”后按需采集、传输，目标10FPS、最大640×480。模型、ONNX、动作过滤及50Hz物理/策略沿用原基线。
 
@@ -106,7 +106,7 @@ python3 scripts/check_source.py \
 - 断连补测已通过：用户完成关闭控制端Wi-Fi测试，应用日志记录 `remote_stop_reason=heartbeat_timeout`、`running=false`、`remote_control_active=false`。租期配置3秒，实际Wi-Fi断开至暂停的时间没有单独计时；记录见 [device-M4-realtime-acceptance.json](verification/device-M4-realtime-acceptance.json)。关闭网页可能先触发主动暂停，`remote_pause`不能证明超时路径通过。
 - 网络开启的30秒短实时测试已通过：[原始报告](verification/device-M4-realtime-render-test.json)为M4、LAN开启，墙钟30.006s/仿真30.02s、1501周期/6004步，约29.994FPS；控制+快照p99=15.186ms，完整工作线程p99=16.618ms/max=19.129ms，超20ms周期0、迟到周期0，最终位姿与M3.2完全一致。用户确认保持网页连接；报告未统计HTTP轮询次数。不同次测试未控制温度/频率，不能把耗时下降归因于网络改造。最大周期距20ms约0.871ms，本次结果不代表长期温升通过。
 - 尚待验证：仿真应用前后台/重启后的服务关闭及新会话。应用回前台后须手动重新开启服务、使用新访问码，网页心跳不能恢复仿真。
-- M5.4视频开启30秒的完整工作线程预算已通过，见 [device-M54-video-acceptance.json](verification/device-M54-video-acceptance.json)。按 [VIDEO.md](VIDEO.md) 继续同版本video-off对照；3D关闭对照、前后台会话、持续运行/温升待测。
+- M5.4视频开启及同版本关闭的两次30秒完整工作线程预算均通过，见 [视频开启](verification/device-M54-video-acceptance.json)、[视频关闭](verification/device-M54-video-off-acceptance.json)。关闭画面后没有新增采集/HTTP帧；3D关闭对照、前后台会话、持续运行/温升待测。
 
 当前targetSdk=34，新增INTERNET正常权限即可使用普通局域网socket；Android16的局域网限制为选择启用的测试功能。本工程没有开启该限制，也没有升级targetSdk。[Android官方局域网权限说明](https://developer.android.com/privacy-and-security/local-network-permission)、[网络连接权限说明](https://developer.android.com/develop/connectivity/network-ops/connecting)。
 

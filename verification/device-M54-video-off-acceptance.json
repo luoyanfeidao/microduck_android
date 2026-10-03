@@ -1,0 +1,90 @@
+{
+  "captured_at": "2026-10-03T23:13:33.936Z",
+  "user_confirmation": "结束了",
+  "source_commit": "efacb36",
+  "scope": "Read-only ADB same-version video-off 30s comparison",
+  "baseline": "device-M54-video-on-realtime-test.json",
+  "candidate": "device-M54-video-off-realtime-test.json",
+  "result": "Both M5.4 video-on and video-off 30s tests pass measured control and full worker 20ms budget; demand-driven video stops without disabling LAN or 3D",
+  "measurements": {
+    "worker_tick_p99_ms": {
+      "video_on": 10.648281,
+      "video_off": 15.586615
+    },
+    "worker_tick_max_ms": {
+      "video_on": 19.772448,
+      "video_off": 19.699427
+    },
+    "worker_over_20ms_ticks": {
+      "video_on": 0,
+      "video_off": 0
+    },
+    "late_ticks": {
+      "video_on": 0,
+      "video_off": 0
+    },
+    "scheduler_max_lateness_ms": {
+      "video_on": 13.81775,
+      "video_off": 4.101971
+    },
+    "publish_mean_ms": {
+      "video_on": 0.28461112931034493,
+      "video_off": 0.44011845689655166
+    },
+    "publish_max_ms": {
+      "video_on": 0.519479,
+      "video_off": 1.011875
+    },
+    "physics_advance_p99_ms": {
+      "video_on": 7.086667,
+      "video_off": 12.817656
+    },
+    "test_render_fps": {
+      "video_on": 30.02654906477569,
+      "video_off": 29.99426402592302
+    },
+    "test_video_frames_published": {
+      "video_on": 298,
+      "video_off": 0
+    },
+    "test_video_frames_served": {
+      "video_on": 265,
+      "video_off": 0
+    }
+  },
+  "checks": {
+    "expected_stage": true,
+    "complete_30s_test": true,
+    "lan_kept_enabled": true,
+    "render_kept_enabled": true,
+    "video_session_kept_enabled": true,
+    "video_demand_inactive": true,
+    "no_pending_copy": true,
+    "no_video_frames_published_in_test": true,
+    "no_video_frames_served_in_test": true,
+    "finite": true,
+    "foot_geoms_resolved": true,
+    "render_ready": true,
+    "no_render_error": true,
+    "no_video_error": true,
+    "control_under_20ms": true,
+    "worker_under_20ms": true,
+    "late_over_20ms_ticks_zero": true,
+    "paused_after_test": true
+  },
+  "worker_budget_margin_ms": 0.300573,
+  "root_xyz_difference_m": {
+    "root_x": 0,
+    "root_y": 0,
+    "root_z": 0
+  },
+  "root_quaternion_max_difference": 0,
+  "limits": [
+    "One 30s trial per condition; temperature and CPU frequency uncontrolled",
+    "Video-off worker p99 is higher than video-on; this comparison does not isolate video cost or prove a thermal/frequency cause",
+    "Both measured worker maxima remain close to the 20ms budget; no long-duration or hard realtime guarantee",
+    "Zero test deltas demonstrate no new video publishing/HTTP delivery during the test; lifetime session counters intentionally stay nonzero",
+    "video_enabled denotes an available session, not active copying; inactive demand and an old cached frame are expected while video is off",
+    "Activity/browser lifecycle, long-duration thermal behavior, 3D-off comparison and end-to-end latency remain pending"
+  ]
+}

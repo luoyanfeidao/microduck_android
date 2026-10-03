@@ -116,5 +116,5 @@
   },
   "baseline_device_report": "device-M3-realtime-render-test.json",
   "previous_device_report": "device-M53-video-on-realtime-test.json",
-  "device_status": "User completed M5.4 video-on 30s test: video works, 0 worker ticks over 20ms (max 19.772448ms); see device-M54-video-acceptance.json. Video-off, lifecycle and long-duration checks remain pending"
+  "device_status": "User completed M5.4 video-on and video-off 30s tests: both have 0 worker ticks over 20ms (max on 19.772448ms/off 19.699427ms); video-off has zero test publishing/HTTP frame deltas. See device-M54-video-acceptance.json and device-M54-video-off-acceptance.json. Lifecycle and long-duration checks remain pending"
 }

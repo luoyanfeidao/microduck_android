@@ -8,7 +8,9 @@
 
 **M5.4视频开启30秒验收通过：** 当前 `0.5.4-m54` / versionCode=11，标题 `Microduck · Android M5.4`。1501周期/6004物理步、墙钟30.007秒/仿真30.02秒，完整工作线程p99=10.648ms/max=19.772ms、超20ms周期0，调度迟到超过20ms周期0；手机30.03FPS、视频298发布帧/9.93FPS、265帧提供HTTP、采集错误0，数值及最终位姿与M5.3一致。报告捕获平均0.285ms/max=0.519ms，队列提交max=0.087ms。证据 [verification/device-M54-video-acceptance.json](verification/device-M54-video-acceptance.json)。单次最大预算余量0.228ms，温度/频率未控制，不代表长期或硬实时保证。
 
-**下一步使用当前M5.4做video-off对照：** 网页取消“开启实时画面”，等至少3秒，保持浏览器连接、仿真手机应用在前台和“显示3D”开启，再点“实时测试30s”。视频开启归档已保存，关闭测试应新增发布帧/HTTP帧均为0；之后再验证前后台会话及持续运行/温升。报告线程每50ms自行检查队列，状态显示增加名义0–50ms等待，调度/I/O可能更久；命令确认不等待报告落盘。源码检查见 [verification/m54-checks.json](verification/m54-checks.json)。
+**M5.4视频关闭对照也通过：** LAN及手机3D保持开启，30秒新增视频发布/HTTP帧均为0、观看需求和在途复制均为false。工作线程p99=15.587ms/max=19.699ms、超20ms周期0，手机29.99FPS，最终位置/四元数与视频开启时完全一致。证据 [verification/device-M54-video-off-acceptance.json](verification/device-M54-video-off-acceptance.json)。关闭后的p99较高，温度/CPU频率未控制，不能用这一对测试确定视频开关的成本。视频会话和累计计数不归零是正常行为。
+
+**下一步使用当前M5.4验证浏览器前后台：** 在控制端浏览器开启画面并点“前进”，确认机器人开始运动；把浏览器切到其他应用5秒，观察仿真手机暂停，再返回浏览器。画面应恢复，机器人应保持暂停，完成后让代理读取普通状态报告。随后单独验证仿真应用前后台/重新开启服务及持续运行/温升。源码检查见 [verification/m54-checks.json](verification/m54-checks.json)，详细步骤见 [VIDEO.md](VIDEO.md)。
 
 **M5.3复测结果：** 30秒发布297帧/9.90FPS、提供HTTP263帧、采集错误0，手机30.03FPS；工作线程p99=12.557ms/max=20.369ms，2周期超20ms、迟到周期0。两个配对样本的唤醒墙钟11.348/14.834ms，提交区间线程CPU仅0.137/0.167ms，准入与队列发布各约0.01ms。说明提交区间CPU消耗很低，但不能区分系统调度、GC或内核等待；见 [verification/device-M53-video-acceptance.json](verification/device-M53-video-acceptance.json)。M5.4针对该唤醒路径改动。
 
@@ -120,7 +122,7 @@ python3 scripts/check_source.py \
   --mujoco-dir ../Pollen/microduck_rl/.venv/lib/python3.12/site-packages/mujoco
 ```
 
-当前绘制视觉 mesh（group<3），不显示碰撞几何；采用模型材质颜色和简化光照。地面是与当前场景水平 floor 对齐的程序网格，不复制桌面纹理、阴影或完整材质。它是观察真实模型姿态的3D视图，尚不是桌面画面效果的完全移植。M5对该视图做PixelCopy/JPEG采集并提供浏览器画面；M5.4视频开启30秒的控制预算已通过，video-off、生命周期和持续运行仍待测。
+当前绘制视觉 mesh（group<3），不显示碰撞几何；采用模型材质颜色和简化光照。地面是与当前场景水平 floor 对齐的程序网格，不复制桌面纹理、阴影或完整材质。它是观察真实模型姿态的3D视图，尚不是桌面画面效果的完全移植。M5对该视图做PixelCopy/JPEG采集并提供浏览器画面；M5.4视频开启和关闭的两次30秒控制预算均通过，生命周期和持续运行仍待测。
 
 ## 61D / 14D 接线约定
 
@@ -243,7 +245,7 @@ flowchart TD
 - M5.1移出周期性JSON解析/中间序列化后完成真机复测，平均报告捕获耗时下降，但仍有1周期超20ms/max=22.613ms，配对样本显示元数据捕获/提交17.879ms；见 `verification/device-M51-video-acceptance.json`。这不确定区间内部的具体原因，也不能用单次结果推断温度/频率影响。
 - M5.2进一步移出周期性元数据JSON组装，JPEG副本分配不占状态锁；真机仍有1周期21.270ms，配对队列提交12.545ms，见 `verification/device-M52-video-acceptance.json`。视频和最终位姿正常，完整预算未通过。
 - M5.3报告队列改为常驻线程与原子状态槽，真机仍有2周期稍超20ms/max=20.369ms；配对记录显示唤醒墙钟很高而提交区间CPU很低，见 `verification/device-M53-video-acceptance.json`。数值、最终位姿及视频正常，完整预算未通过。
-- M5.4报告提交不再唤醒消费者，消费者空闲等待50ms后自行检查。源码检查见 `verification/m54-checks.json`；用户完成视频开启30秒真机测试，完整工作线程p99=10.648ms/max=19.772ms、超20ms周期0，视频9.93FPS/错误0、手机30.03FPS，报告捕获max=0.519ms，见 `verification/device-M54-video-acceptance.json`。单次预算通过，video-off对照、生命周期和长期温升待测。
+- M5.4报告提交不再唤醒消费者，消费者空闲等待50ms后自行检查。源码检查见 `verification/m54-checks.json`；用户完成视频开启30秒真机测试，完整工作线程p99=10.648ms/max=19.772ms、超20ms周期0，视频9.93FPS/错误0、手机30.03FPS，报告捕获max=0.519ms，见 `verification/device-M54-video-acceptance.json`。同版本video-off对照也通过，工作线程p99=15.587ms/max=19.699ms、超20ms周期0，新增视频帧为0，见 `verification/device-M54-video-off-acceptance.json`。两次温度/频率未控制，不能用于判断视频开关的因果性能影响；生命周期和长期温升待测。
 
 ONNX Java API 和资源关闭方式依据 [官方 Java 文档](https://onnxruntime.ai/docs/get-started/with-java.html)。
 GL context/绘制线程的生命周期依据 [Android GLSurfaceView 文档](https://developer.android.com/reference/android/opengl/GLSurfaceView)；场景桥依据 [MuJoCo 可视化文档](https://mujoco.readthedocs.io/en/stable/programming/visualization.html) 和固定的本地 3.10.0 源码。
