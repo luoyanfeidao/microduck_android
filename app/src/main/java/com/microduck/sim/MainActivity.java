@@ -46,6 +46,8 @@ public final class MainActivity extends Activity {
     private TextView networkInfo;
     private LanControlServer lan;
     private VideoCapture video;
+    private VisualMesh[] visualMeshes;
+    private CameraScene cameraScene;
     private long lanGeneration,remoteCommandsApplied;
     private final RemoteLease remoteLease=new RemoteLease();
     private final RemoteMailbox remoteMailbox=new RemoteMailbox(worker);
@@ -91,7 +93,7 @@ public final class MainActivity extends Activity {
         column.setPadding(24, 32, 24, 24);
         column.setBackgroundColor(Color.rgb(237, 244, 247));
         TextView title = new TextView(this);
-        title.setText("Microduck · Android M7.1"); title.setTextSize(24);
+        title.setText("Microduck · Android M8"); title.setTextSize(24);
         title.setTextColor(Color.rgb(23, 52, 75)); column.addView(title);
         TextView scope = new TextView(this);
         scope.setText("3D 物理仿真 + ONNX 站立 / 步行 / 前滚翻\n单指旋转、双指缩放；橙色轨迹、红色接触点。");
@@ -154,7 +156,8 @@ public final class MainActivity extends Activity {
                 String selected = getIntent().getStringExtra("keyframe");
                 keyframe = selected == null ? "SIT" : selected;
                 handle = NativeSim.open(new File(model,"scene.xml").getAbsolutePath(),keyframe);
-                preview.meshes(NativeSim.visualMeshes(handle));
+                visualMeshes=NativeSim.visualMeshes(handle);
+                preview.meshes(visualMeshes);
                 ready = true; publish(NativeSim.state(handle));
                 try { policies=new PolicyRunner(this); publish(NativeSim.state(handle)); }
                 catch(Exception e) { Log.e("MicroduckM1","Policy load failed; M1 remains available",e); main.post(()->report.setText("策略加载失败，物理测试仍可用："+e.getMessage())); }
@@ -270,12 +273,17 @@ public final class MainActivity extends Activity {
         if(policyEnabled) policies.afterStep();
         controlMs=(System.nanoTime()-begin)/1e6;
         snapshotMs=0;
-        if(withVisual && renderEnabled && visualCadence.due(System.nanoTime())) pushVisual();
+        if(withVisual && (renderEnabled || lan!=null) && visualCadence.due(System.nanoTime())) pushVisual();
         controlWithVisualMs=(System.nanoTime()-begin)/1e6;
     }
     private void pushVisual() {
-        if(!renderEnabled || !ready || destroyed) return;
-        long begin=System.nanoTime(); preview.frame(NativeSim.visualSnapshot(handle)); snapshotMs=(System.nanoTime()-begin)/1e6;
+        if(!ready || destroyed || (!renderEnabled && lan==null)) return;
+        long begin=System.nanoTime();
+        SceneFrame frame=new SceneFrame(NativeSim.visualSnapshot(handle),System.nanoTime());
+        cameraScene=new CameraScene(visualMeshes,frame);
+        if(renderEnabled) preview.frame(frame);
+        if(video!=null) video.scene(cameraScene);
+        snapshotMs=(System.nanoTime()-begin)/1e6;
     }
     private void startRealtimeTest() {
         if(renderEnabled && !preview.ready()) throw new IllegalStateException("请等待 3D 画面加载完成；如有渲染错误，可关闭 3D 做对照测试");
@@ -369,7 +377,7 @@ public final class MainActivity extends Activity {
                 data.put("model","scene.xml → robot_groundcontact.xml");
                 data.put("stage",policy?"M2: ONNX + XML position servo":"M1: position servo only; no policy");
                 data.put("policy_enabled",policy); data.put("control_ms",control);
-                data.put("app_stage","M7.1"); data.put("render_enabled",render);
+                data.put("app_stage","M8"); data.put("render_enabled",render);
                 data.put("ready",loaded); data.put("running",running);
                 data.put("lan_enabled",lanEnabled); data.put("remote_control_active",remoteActive);
                 data.put("remote_commands_applied",commands); data.put("remote_stop_reason",stopReason);
@@ -447,14 +455,16 @@ public final class MainActivity extends Activity {
             ByteArrayOutputStream bytes=new ByteArrayOutputStream(); byte[] chunk=new byte[4096]; int size;
             while((size=input.read(chunk))!=-1) bytes.write(chunk,0,size);
             byte[] page=bytes.toByteArray(); long generation=++lanGeneration;
-            video=new VideoCapture(preview);
+            video=new VideoCapture(getApplicationContext());
+            if(cameraScene!=null) video.scene(cameraScene);
+            pushVisual();
             VideoCapture sessionVideo=video;
             lan=new LanControlServer(8080,page,()->remoteState,
                 command->remoteMailbox.submit(command,value->{
                     try { return applyRemote(value,generation); }
                     catch(LanControlServer.CommandFailure e) { throw e; }
                     catch(Exception e) { failed(e); throw e; }
-                }),sessionVideo::frame);
+                }),sessionVideo::frame,sessionVideo::signal);
             StringBuilder links=new StringBuilder("另一台设备连接同一 Wi-Fi，在浏览器打开以下地址（可长按复制）：\n");
             for(NetworkInterface nic:Collections.list(NetworkInterface.getNetworkInterfaces())) {
                 if(!nic.isUp() || nic.isLoopback()) continue;

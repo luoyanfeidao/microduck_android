@@ -7,8 +7,8 @@ android {
         applicationId 'com.microduck.sim'
         minSdk 28
         targetSdk 34
-        versionCode 14
-        versionName '0.7.1-m71'
+        versionCode 15
+        versionName '0.8.0-m8'
         ndk { abiFilters 'arm64-v8a' }
         externalNativeBuild {
             cmake {
@@ -29,6 +29,7 @@ android {
 }
 dependencies {
     implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.20.0'
+    implementation 'io.getstream:stream-webrtc-android:1.3.9'
 }
 
 // Rebuild the MJCF dependency bundle from the sibling training repository before packaging.

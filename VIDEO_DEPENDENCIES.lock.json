@@ -1,0 +1,20 @@
+{
+  "webrtc": {
+    "coordinate": "io.getstream:stream-webrtc-android:1.3.9",
+    "publisher": "https://github.com/GetStream/webrtc-android/releases/tag/1.3.9",
+    "aar_url": "https://repo.maven.apache.org/maven2/io/getstream/stream-webrtc-android/1.3.9/stream-webrtc-android-1.3.9.aar",
+    "aar_sha256": "4c34f3c2b8ec4a66f8a11fec55a939e5345827359c7614d71fed2572e602671d",
+    "sources_sha256": "b6efaf3c38955e0eb86b9f19e79fd44489a951faa7d8ab8b981be3fc9d357440",
+    "bytecode_major": 55,
+    "min_sdk": 21,
+    "native_upstream_commit": "Not specified in publisher release; do not infer Chromium revision from artifact version"
+  },
+  "transitive": {
+    "kotlin_stdlib": "1.9.25",
+    "kotlin_stdlib_1.9.25_sha256": "f9cdcdbff1f5de85380ae526977e683726c2aa42db1ed6e6e50ae89e496e95fd",
+    "androidx_annotation": "1.9.1 (Android runtime variant annotation-jvm)",
+    "annotation_jvm_1.9.1_sha256": "1e343917ebf27ba96fe4dc52b1cad7fd32b738fbc6355bb6cd5b3b305d7212d0"
+  },
+  "build_chain": "AGP7.2.2 / Gradle7.5 / JDK11 unchanged; AndroidX enabled for annotation dependency",
+  "verification": "scripts/check_video_dependencies.py inspects AAR/ELF and converts dependency JARs with actual AGP7.2.2 bundled D8; Studio APK build/device behavior remains unverified"
+}

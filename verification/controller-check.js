@@ -4,7 +4,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('nod
 async function main(){
   const nodes=new Map(),timers=new Map(),events={},requests=[],created=new Set(),revoked=new Set();
   let timerId=0,urlId=0,now=0,mode='ok',heldResolve;
-  function node(id){if(!nodes.has(id))nodes.set(id,{value:'',checked:false,disabled:false,textContent:'',src:'',removeAttribute(k){delete this[k]}});return nodes.get(id)}
+  function node(id){if(!nodes.has(id))nodes.set(id,{value:'',checked:false,disabled:false,textContent:'',src:'',pause(){},play(){return Promise.resolve()},removeAttribute(k){delete this[k]}});return nodes.get(id)}
   const buttons=['stand','forward','pause','roulade'].map(op=>({dataset:{op},disabled:false}));
   const response=(status,data,headers={})=>({status,ok:status===200,headers:{get:key=>headers[key]||null},
     json:async()=>data,blob:async()=>({jpeg:true})});
@@ -32,6 +32,7 @@ async function main(){
   const html=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/controller.html'),'utf8');
   vm.runInContext(html.split('<script>')[1].split('</script>')[0],context);
   const flush=async()=>{for(let i=0;i<40;i++)await Promise.resolve()};
+  node('videoMode').value='jpeg';
   assert(node('videoToggle').disabled);
   node('token').value='a'.repeat(32);await node('connect').onclick();await flush();
   assert(!node('videoToggle').disabled);assert(!requests.some(r=>r.url==='/api/frame'));
@@ -56,6 +57,7 @@ async function main(){
   mode='unavailable';node('videoToggle').onchange();await flush();assert(node('videoStatus').textContent.includes('等待画面'));
   assert([...timers.values()].some(t=>t.ms===500));
   mode='unauthorized';node('videoToggle').onchange();await flush();
+  node('videoMode').value='jpeg';
   assert(node('videoToggle').disabled);assert(!node('video').src);assert.equal(timers.size,0);
   assert([...created].every(url=>revoked.has(url)));
   console.log(JSON.stringify({video_opt_in:true,bearer_header:true,slow_video_does_not_block_controls:true,

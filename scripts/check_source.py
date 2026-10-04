@@ -23,11 +23,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--java-home", type=pathlib.Path, required=True)
     parser.add_argument("--android-sdk", type=pathlib.Path, required=True)
+    parser.add_argument("--webrtc-aar", type=pathlib.Path, required=True)
     parser.add_argument("--ort-aar", type=pathlib.Path, required=True)
     parser.add_argument("--mujoco-dir", type=pathlib.Path, required=True,
                         help="Desktop MuJoCo 3.10.0 Python package with include/ and libmujoco")
-    parser.add_argument("--stage", default="M7.1")
-    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m71-checks.json")
+    parser.add_argument("--stage", default="M8")
+    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m8-checks.json")
     parser.add_argument("--host-json-jar", type=pathlib.Path,
                         help="Host-only org.json jar to execute LAN loopback tests; not an APK dependency")
     args = parser.parse_args()
@@ -59,11 +60,17 @@ def main():
         out = pathlib.Path(tmp)
         with zipfile.ZipFile(args.ort_aar) as aar:
             (out / "ort.jar").write_bytes(aar.read("classes.jar"))
+        with zipfile.ZipFile(args.webrtc_aar) as aar:
+            (out / "webrtc.jar").write_bytes(aar.read("classes.jar"))
+        report["webrtc_aar_sha256"] = hashlib.sha256(args.webrtc_aar.read_bytes()).hexdigest()
+        video_lock = json.loads((ROOT / "VIDEO_DEPENDENCIES.lock.json").read_text())
+        if report["webrtc_aar_sha256"] != video_lock["webrtc"]["aar_sha256"]:
+            raise ValueError("WebRTC AAR differs from pinned publisher artifact")
         sources = sorted((ROOT / "app/src/main/java/com/microduck/sim").glob("*.java"))
         sources += [ROOT / "verification" / (test + ".java") for test in
-                    ("SceneFrameCheck", "HeadCameraCheck", "RouladeWindowCheck", "RenderOptimizationCheck", "ReportDispatcherCheck", "NetworkControlCheck", "VideoFramesCheck", "CapturedReportCheck")]
+                    ("SceneFrameCheck", "HeadCameraCheck", "RouladeWindowCheck", "RenderOptimizationCheck", "ReportDispatcherCheck", "NetworkControlCheck", "VideoFramesCheck", "CapturedReportCheck", "RtcSessionCheck")]
         run([java / "javac", "-Xlint:all", "-cp",
-             f"{sdk / 'platforms/android-34/android.jar'}:{out / 'ort.jar'}", "-d", out, *sources])
+             f"{sdk / 'platforms/android-34/android.jar'}:{out / 'ort.jar'}:{out / 'webrtc.jar'}", "-d", out, *sources])
         report["java_android34_ort120_jdk11_compile"] = "passed"
         for test in ("SceneFrameCheck", "HeadCameraCheck", "RouladeWindowCheck", "RenderOptimizationCheck", "ReportDispatcherCheck", "VideoFramesCheck"):
             report[test] = json.loads(run([java / "java", "-cp", out, "com.microduck.sim." + test]))
@@ -72,9 +79,12 @@ def main():
                 str(out) + ":" + str(args.host_json_jar.resolve()), "com.microduck.sim.NetworkControlCheck"]))
             report["CapturedReportCheck"] = json.loads(run([java / "java", "-cp",
                 str(out) + ":" + str(args.host_json_jar.resolve()), "com.microduck.sim.CapturedReportCheck"]))
+            report["RtcSessionCheck"] = json.loads(run([java / "java", "-cp",
+                str(out) + ":" + str(args.host_json_jar.resolve()), "com.microduck.sim.RtcSessionCheck"]))
         else:
             report["NetworkControlCheck"] = "Not executed; provide --host-json-jar for loopback tests"
             report["CapturedReportCheck"] = "Not executed; provide --host-json-jar for deferred JSON checks"
+            report["RtcSessionCheck"] = "Not executed; provide --host-json-jar for signaling session tests"
         node = shutil.which("node")
         if node:
             script = (ROOT / "app/src/main/assets/controller.html").read_text().split("<script>", 1)[1].split("</script>", 1)[0]
@@ -82,6 +92,7 @@ def main():
             run([node, "--check", out / "controller.js"])
             report["controller_javascript_syntax"] = "passed"
             report["controller_behavior"] = json.loads(run([node, ROOT / "verification/controller-check.js"]))
+            report["controller_rtc_behavior"] = json.loads(run([node, ROOT / "verification/controller-rtc-check.js"]))
         else:
             report["controller_javascript_syntax"] = "Not executed; node unavailable"
         ndk = sdk / "ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++"
@@ -101,12 +112,13 @@ def main():
                  library, exe])
             report[name] = json.loads(run([exe, ROOT / "app/src/main/assets/model/scene.xml",
                                           ROOT / "verification" / fixture]))
-    paths = [ROOT / "app/build.gradle", ROOT / "app/src/main/AndroidManifest.xml",
+    paths = [ROOT / "VIDEO_DEPENDENCIES.lock.json", ROOT / "gradle.properties",
+             ROOT / "scripts/check_video_dependencies.py", ROOT / "app/build.gradle", ROOT / "app/src/main/AndroidManifest.xml",
              ROOT / "app/src/main/assets/controller.html", pathlib.Path(__file__).resolve()]
     paths += sorted((ROOT / "app/src/main/cpp").glob("*"))
     paths += sources
     paths += [ROOT / "verification/visual-bridge-check.cpp", ROOT / "verification/native-contract-check.cpp"]
-    paths += [ROOT / "verification/controller-check.js"]
+    paths += [ROOT / "verification/controller-check.js", ROOT / "verification/controller-rtc-check.js"]
     paths += [bundle / "manifest.json", bundle / "smoke.json", ROOT / "UPSTREAM.lock.json",
               ROOT / "scripts/prepare_assets.py", ROOT / "scripts/policy_rehearsal.py",
               ROOT / "scripts/roulade_rehearsal.py", ROOT / "verification/camera_visibility_check.py"]
@@ -115,7 +127,7 @@ def main():
                                 for p in paths if p.is_file()}
     report["baseline_device_report"] = "device-M3-realtime-render-test.json"
     report["previous_device_report"] = "device-M54-video-on-realtime-test.json (external viewer capture, not head camera)"
-    report["device_status"] = "M7 camera fix user-confirmed; M7 roll user-confirmed incomplete. Pending user Android Studio " + args.stage + " build and 2-second forward-roll validation; performance/lifecycle checks deferred by user"
+    report["device_status"] = "M7.1 camera and full-roll user-confirmed. Pending user Android Studio " + args.stage + " build: independent camera with preview off, WebRTC negotiated hardware codec/video; performance checks deferred by user"
     target = args.report
     target.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))

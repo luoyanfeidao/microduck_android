@@ -32,17 +32,23 @@ public final class NetworkControlCheck {
         lease.release(); lease.heartbeat(5_000_000_000L); if(lease.active() || lease.expired(9_000_000_000L)) throw new AssertionError("Local ownership");
         mailboxCheck(walk);
         AtomicInteger commands=new AtomicInteger(); byte[] page="<h1>Microduck 🦆</h1>".getBytes(StandardCharsets.UTF_8);
-        VideoFrames video=new VideoFrames(); video.available(true); AtomicInteger frameRequests=new AtomicInteger();
+        VideoFrames video=new VideoFrames(); video.available(true); AtomicInteger frameRequests=new AtomicInteger(),signals=new AtomicInteger();
         try(LanControlServer server=new LanControlServer(0,page,()->"{\"running\":false}",cmd->{
             if(cmd.op.equals("reset")) throw new LanControlServer.CommandFailure(409,"Local test running");
             commands.incrementAndGet(); return "{\"ok\":true}";
-        },()->{frameRequests.incrementAndGet();return video.request(System.nanoTime());})) {
+        },()->{frameRequests.incrementAndGet();return video.request(System.nanoTime());},body->{signals.incrementAndGet();return "{\"ok\":true}";})) {
             String origin="http://127.0.0.1:"+server.port(),auth="Bearer "+server.token();
             check(request(origin,"/",null,null),200,"Microduck");
             check(request(origin,"/health",null,null),200,"microduck-lan");
             check(request(origin,"/api/state",null,null),401,"error");
             check(request(origin,"/api/state","Bearer wrong",null),401,"error");
             check(request(origin,"/api/state",auth,null),200,"running");
+            check(request(origin,"/api/rtc",null,"{}"),401,"error");
+            if(signals.get()!=0) throw new AssertionError("Unauthenticated video signaling");
+            check(request(origin,"/api/rtc",auth,"x".repeat(24000)),200,"ok");
+            if(signals.get()!=1) throw new AssertionError("Offer body rejected by command size limit");
+            check(request(origin,"/api/rtc",auth,"x".repeat(32769)),413,"error");
+            check(request(origin,"/api/rtc",auth,null),405,"error");
             check(request(origin,"/api/frame",null,null),401,"error");
             if(frameRequests.get()!=0) throw new AssertionError("Unauthenticated request started video");
             check(request(origin,"/api/frame",auth,null),503,"Waiting");
@@ -87,7 +93,7 @@ public final class NetworkControlCheck {
         System.out.println("{\"http_page_state_commands\":true,\"token_required\":true,\"invalid_requests_never_apply\":true,"
             +"\"http_size_duplicate_transfer_and_timeout_checks\":true,\"velocity_pose_validation\":true,"
             +"\"heartbeat_and_local_takeover\":true,\"mailbox_timeout_cancels_queued_command\":true,\"mailbox_pending_limit\":true,"
-            +"\"jpeg_auth_bytes_headers_and_unavailable\":true,\"concurrent_frames_and_heartbeats\":true}");
+            +"\"rtc_auth_offer_size_bound_method\":true,\"jpeg_auth_bytes_headers_and_unavailable\":true,\"concurrent_frames_and_heartbeats\":true}");
     }
     private static void frameCheck(String origin,String auth,byte[] expected) throws Exception {
         HttpURLConnection connection=(HttpURLConnection)new URL(origin+"/api/frame").openConnection();

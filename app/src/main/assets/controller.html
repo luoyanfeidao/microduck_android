@@ -13,16 +13,18 @@ label{display:block;margin:12px 0}label input{display:block;width:100%;margin-to
 #message{min-height:24px}#pair input{width:100%}
 .camera-box{position:relative;aspect-ratio:360/640;max-width:360px;margin:auto;overflow:hidden;background:#1e3040;border-radius:9px}
 #video{position:absolute;top:50%;left:50%;width:177.7778%;height:56.25%;object-fit:contain;transform:translate(-50%,-50%) rotate(90deg)}
-#video:not([src]){display:none}#videoToggle{width:auto;display:inline;margin-right:8px}
+#video:not([src]){display:none}
+#rtcVideo{width:100%;height:100%;object-fit:contain}#rtcVideo[hidden]{display:none}#videoToggle{width:auto;display:inline;margin-right:8px}
 </style>
 <main>
 <h1>Microduck · 局域网控制</h1>
-<p class="note">仿真手机保持应用在前台并开启 3D。实时画面来自机器人的头部摄像头，随头部运动；手机上可独立拖动外部观察视角。</p>
+<p class="note">仿真手机保持应用在前台。外部 3D 可关闭，相机独立运行。实时画面来自机器人的头部摄像头，随头部运动；手机上可独立拖动外部观察视角。</p>
 <section id="pair"><label>仿真手机显示的访问码<input id="token" type="password" autocomplete="off" spellcheck="false" maxlength="32"></label>
 <button id="connect">连接</button></section>
 <section><div id="message" role="status">尚未连接</div><div id="status">等待手机状态…</div></section>
 <section><label><input id="videoToggle" type="checkbox">开启机器人摄像头</label>
-<div class="camera-box"><img id="video" alt="机器人头部摄像头的仿真画面"></div><p id="videoStatus" class="note" role="status">摄像头未开启</p></section>
+<label>画面传输<select id="videoMode"><option value="rtc">WebRTC（优先 H.264 硬件编码）</option><option value="jpeg">JPEG（兼容模式）</option></select></label>
+<div class="camera-box"><video id="rtcVideo" autoplay muted playsinline hidden></video><img id="video" alt="机器人头部摄像头的仿真画面"></div><p id="videoStatus" class="note" role="status">摄像头未开启</p></section>
 <section id="controls">
 <div class="row"><button data-op="stand">策略站立</button><button data-op="forward">前进 0.30m/s</button></div>
 <button data-op="roulade" style="width:100%">向前翻滚一次</button>
@@ -43,15 +45,16 @@ label{display:block;margin:12px 0}label input{display:block;width:100%;margin-to
 const $=id=>document.getElementById(id);
 let exchange=Promise.resolve();
 let token=new URLSearchParams(location.hash.slice(1)).get('token')||'',connected=false,busy=false,polling=false;
+let rtcView=null;
 let videoEpoch=0,videoTimer=0,videoCancel=null,activeUrl='',lastSequence='',videoFrames=0,videoAt=performance.now();
 if(token) history.replaceState(null,'',location.pathname);
 $('token').value=token;
 function controls(){document.querySelectorAll('#controls button').forEach(b=>b.disabled=!connected||busy);$('videoToggle').disabled=!connected}
 function haltVideo(text='画面已关闭'){
-  videoEpoch++;clearTimeout(videoTimer);if(videoCancel)videoCancel.abort();videoCancel=null;
+  stopRtc();videoEpoch++;clearTimeout(videoTimer);if(videoCancel)videoCancel.abort();videoCancel=null;
   if(activeUrl)URL.revokeObjectURL(activeUrl);activeUrl='';$('video').removeAttribute('src');$('videoStatus').textContent=text;
 }
-function startVideo(){
+function startJpeg(){
   haltVideo();if(!connected||document.hidden||!$('videoToggle').checked)return;
   lastSequence='';videoFrames=0;videoAt=performance.now();$('videoStatus').textContent='等待第一帧…';videoLoop(videoEpoch);
 }
@@ -63,7 +66,7 @@ async function videoLoop(epoch){
     const response=await fetch('/api/frame',{headers:{Authorization:'Bearer '+token},cache:'no-store',signal:cancel.signal});
     if(epoch!==videoEpoch)return;
     if(response.status===401){connected=false;controls();haltVideo('访问码失效，请重新连接');return}
-    if(!response.ok){retry=500;throw Error('等待画面；请保持仿真应用在前台并开启3D')}
+    if(!response.ok){retry=500;throw Error('等待画面；请保持仿真应用在前台')}
     const sequence=response.headers.get('X-Frame-Sequence');
     if(!response.headers.get('Content-Type')?.startsWith('image/jpeg'))throw Error('画面格式错误');
     const blob=await response.blob();
@@ -80,7 +83,98 @@ async function videoLoop(epoch){
     if(epoch===videoEpoch)videoTimer=setTimeout(()=>videoLoop(epoch),Math.max(0,retry-(performance.now()-started)));
   }
 }
-$('videoToggle').onchange=startVideo;
+function startVideo(){
+  if($('videoMode').value==='jpeg')startJpeg();else startRtc();
+}
+function stopRtc(){
+  const view=rtcView;rtcView=null;
+  $('rtcVideo').pause();$('rtcVideo').srcObject=null;$('rtcVideo').hidden=true;
+  if(!view)return;
+  view.cancel.abort();view.pc.close();clearTimeout(view.timeout);
+  // Use this session's access code/id; a late close cannot close a replacement viewer.
+  fetch('/api/rtc',{method:'POST',headers:{Authorization:'Bearer '+view.key,'Content-Type':'application/json'},
+    body:JSON.stringify({op:'close',id:view.id}),keepalive:true}).catch(()=>{});
+}
+async function rtcRequest(view,body){
+  const cancel=new AbortController(),abort=()=>cancel.abort(),timer=setTimeout(abort,2500);
+  view.cancel.signal.addEventListener('abort',abort,{once:true});
+  try{
+    const response=await fetch('/api/rtc',{method:'POST',headers:{Authorization:'Bearer '+view.key,'Content-Type':'application/json'},
+      body:JSON.stringify({...body,id:view.id}),cache:'no-store',signal:cancel.signal});
+    const data=await response.json();
+    if(response.status===401){connected=false;controls();haltVideo('访问码失效，请重新连接');throw Error('访问码失效')}
+    if(!response.ok)throw Error(data.error||'视频信令失败');
+    return data;
+  }finally{clearTimeout(timer);view.cancel.signal.removeEventListener('abort',abort)}
+}
+function rtcCurrent(view){return rtcView===view&&!view.cancel.signal.aborted}
+function rtcFailure(view,error){
+  if(rtcCurrent(view))haltVideo('WebRTC未连接：'+error.message+'。可重新开启或选择 JPEG。');
+}
+function waitIce(view){
+  return new Promise((resolve,reject)=>{
+    const pc=view.pc;
+    if(view.cancel.signal.aborted){reject(Error('视频已关闭'));return}
+    if(pc.iceGatheringState==='complete'){resolve();return}
+    const done=()=>{if(pc.iceGatheringState==='complete')finish()},abort=()=>finish(Error('视频已关闭'));
+    const timer=setTimeout(()=>finish(),4000);
+    function finish(error){clearTimeout(timer);pc.removeEventListener('icegatheringstatechange',done);
+      view.cancel.signal.removeEventListener('abort',abort);if(error)reject(error);else resolve()}
+    pc.addEventListener('icegatheringstatechange',done);view.cancel.signal.addEventListener('abort',abort,{once:true});
+  });
+}
+async function startRtc(){
+  haltVideo();if(!connected||document.hidden||!$('videoToggle').checked)return;
+  if(typeof RTCPeerConnection==='undefined'){ $('videoStatus').textContent='浏览器不支持 WebRTC，请选择 JPEG';return}
+  if(typeof crypto==='undefined'||!crypto.getRandomValues){$('videoStatus').textContent='浏览器不支持视频会话，请选择 JPEG';return}
+  const id=Array.from(crypto.getRandomValues(new Uint8Array(16)),v=>v.toString(16).padStart(2,'0')).join('');
+  let peer;try{peer=new RTCPeerConnection({iceServers:[]})}catch(error){$('videoStatus').textContent='WebRTC初始化失败，请选择 JPEG';return}
+  const view={id,key:token,pc:peer,cancel:new AbortController(),after:0,
+    answered:false,started:performance.now(),timeout:0,lastFrames:0,lastStatsAt:0};rtcView=view;
+  const pc=view.pc;$('videoStatus').textContent='正在建立 WebRTC 视频…';
+  pc.ontrack=event=>{
+    if(!rtcCurrent(view))return;
+    $('rtcVideo').srcObject=new MediaStream([event.track]);$('rtcVideo').hidden=false;
+    $('rtcVideo').play().catch(error=>rtcFailure(view,error));
+  };
+  pc.onconnectionstatechange=()=>{
+    if(!rtcCurrent(view))return;
+    if(pc.connectionState==='failed')rtcFailure(view,Error('ICE连接失败，请检查同一局域网是否允许设备互通'));
+  };
+  try{
+    const transceiver=pc.addTransceiver('video',{direction:'recvonly'});
+    if(transceiver.setCodecPreferences&&typeof RTCRtpReceiver!=='undefined'){
+      const codecs=RTCRtpReceiver.getCapabilities('video')?.codecs;
+      if(codecs)transceiver.setCodecPreferences([...codecs].sort((a,b)=>Number(b.mimeType==='video/H264')-Number(a.mimeType==='video/H264')));
+    }
+    await pc.setLocalDescription(await pc.createOffer());await waitIce(view);
+    if(!rtcCurrent(view))return;
+    await rtcRequest(view,{op:'open',sdp:pc.localDescription.sdp});
+    if(rtcCurrent(view))rtcPoll(view);
+  }catch(error){rtcFailure(view,error)}
+}
+async function rtcPoll(view){
+  if(!rtcCurrent(view))return;
+  try{
+    const data=await rtcRequest(view,{op:'poll',after:view.after});
+    if(!rtcCurrent(view))return;
+    if(data.error)throw Error(data.error);
+    if(data.answer&&!view.answered){await view.pc.setRemoteDescription(data.answer);view.answered=true}
+    if(!rtcCurrent(view))return;
+    if(view.answered){for(const candidate of data.candidates){if(!rtcCurrent(view))return;await view.pc.addIceCandidate(candidate)}view.after=data.next}
+    const stats=await view.pc.getStats();if(!rtcCurrent(view))return;
+    let received=0,codec='等待协商';
+    stats.forEach(report=>{if(report.type==='inbound-rtp'&&report.kind==='video'){
+      received=report.framesDecoded||0;codec=stats.get(report.codecId)?.mimeType||codec;
+    }});
+    const now=performance.now(),fps=view.lastStatsAt?(received-view.lastFrames)*1000/(now-view.lastStatsAt):0;
+    view.lastStatsAt=now;view.lastFrames=received;
+    $('videoStatus').textContent=`机器人视角 · WebRTC ${codec} · ${fps.toFixed(1)} FPS · 解码 ${received} 帧 · ${data.state}`;
+    if(!received&&now-view.started>12000)throw Error('视频帧等待超时');
+    videoTimer=setTimeout(()=>rtcPoll(view),1000);
+  }catch(error){rtcFailure(view,error)}
+}
+$('videoToggle').onchange=startVideo;$('videoMode').onchange=startVideo;
 function message(text){$('message').textContent=text}
 function request(path,body,keepalive=false){
   const task=exchange.then(()=>fetchRequest(path,body,keepalive));exchange=task.catch(()=>{});return task;

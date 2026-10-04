@@ -1,4 +1,4 @@
-# Android Studio 施工入口（M7.1：延长前滚翻窗口）
+# Android Studio 施工入口（M8：独立机器人相机 + WebRTC）
 
 在 Android Studio 中打开当前目录 `android-sim`，不要打开外层 Microduck 目录。由你完成 Sync、编译、安装和真机运行。
 
@@ -6,11 +6,11 @@
 
 当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。另一台Android浏览器可发站立/步行/前滚翻/暂停/复位命令并读状态；视频来自模型的 `head_camera`，随机器人头部运动。手机保留外部观察视角。控制见 [NETWORK.md](NETWORK.md)，相机见 [VIDEO.md](VIDEO.md)，前滚翻见 [SKILLS.md](SKILLS.md)。
 
-**当前功能开发M7.1：** `0.7.1-m71` / versionCode=14，标题 `Microduck · Android M7.1`。修复M6摄像头被模型镜头背面遮挡的灰屏，新增手机和网页“向前翻滚一次”：现有roulade ONNX执行100周期/2秒仿真时间，然后保持当前位置切回站立控制；重复点击不延长在途动作。暂停冻结动作，点翻滚可继续剩余周期；站立/步行或复位取消动作。在Studio编译运行，保持应用前台及“显示3D”开启，开启LAN服务，浏览器刷新并重新连接，勾选“开启机器人摄像头”。相机仍为640×360、10FPS目标、JPEG质量70，网页转90°。无新增Maven依赖。
+**当前功能开发 M8：** `0.8.0-m8` / versionCode=15，标题 `Microduck · Android M8`。机器人相机拥有独立 EGL 上下文和 Surface，关闭手机“显示3D”后仍能出流。网页新增 WebRTC（目标20FPS、优先H.264硬件编码、单观看者）与JPEG兼容模式（640×360、10FPS、质量70）。在Studio重新Sync、Build、Run，保持应用前台，开启LAN并刷新控制网页；勾选“开启机器人摄像头”，可关闭手机3D并观察视频是否继续。保留站立/步行、2秒翻滚、滤波、伺服及50Hz控制基线，抬头慢/僵硬未在这次改动中修复。视频方案、架构和功能验收见 [VIDEO.md](VIDEO.md)。
 
 **详细技术说明：** [PDF](docs/Android_Microduck_方案架构与编译复用说明.pdf) / [Markdown](docs/Android_Microduck_方案架构与编译复用说明.md)，重点说明Android与两个Pollen仓库的资源复用、构建边界、NDK引擎编译、训练BAM差异，并包含架构图、关键源码注解、依赖及使用方法。生成与源码引用检查见 [docs/README.md](docs/README.md)。
 
-**检查边界：** [verification/m71-checks.json](verification/m71-checks.json)验证Java/Android JNI、相机及物理对照、翻滚时间窗口/动作倍率、三策略摘要与smoke覆盖、网页/HTTP协议。用户已确认M7摄像头正常、M7.1整圈翻滚通过，反馈抬头慢、整体动作僵硬；只读手机日志证据见 [device-M71-roll-acceptance.json](verification/device-M71-roll-acceptance.json)。采样未见推理瓶颈，主机对照发现交接时头颈恢复不同步、视线先向下再恢复；关闭恢复阶段头部滤波仅小幅改善，诊断见 [SKILLS.md](SKILLS.md)。当前保留已通过的2秒配置，不宣称任意起始姿态成功或动作质量已修复。代理未打包/安装/运行APK。性能、温升及前后台验收按用户要求延期。下面M5/M5.4数据是外部观察窗口画面的历史结果。
+**检查边界：** [verification/m8-checks.json](verification/m8-checks.json)验证实际WebRTC AAR/JDK11 Java编译、JNI/物理/相机对照、动作窗口及网页/HTTP协议，增加信令大小、会话替换、迟到回调、关闭与offer乱序检查。依赖AAR、arm64库及原AGP7.2.2 D8的转换检查见 [m8-video-dependencies.json](verification/m8-video-dependencies.json)。M8完整APK编译及WebRTC设备功能尚待用户Studio确认。用户已确认M7摄像头正常、M7.1整圈翻滚通过，反馈抬头慢、整体动作僵硬；只读手机日志证据见 [device-M71-roll-acceptance.json](verification/device-M71-roll-acceptance.json)。采样未见推理瓶颈，主机对照发现交接时头颈恢复不同步、视线先向下再恢复；关闭恢复阶段头部滤波仅小幅改善，诊断见 [SKILLS.md](SKILLS.md)。当前保留已通过的2秒配置，不宣称任意起始姿态成功或动作质量已修复。代理未打包/安装/运行APK。性能、温升及前后台验收按用户要求延期。下面M5/M5.4数据是外部观察窗口画面的历史结果。
 
 **历史M5.4视频开启30秒验收通过：** `0.5.4-m54` / versionCode=11。1501周期/6004物理步、墙钟30.007秒/仿真30.02秒，完整工作线程p99=10.648ms/max=19.772ms、超20ms周期0，调度迟到超过20ms周期0；手机30.03FPS、视频298发布帧/9.93FPS、265帧提供HTTP、采集错误0，数值及最终位姿与M5.3一致。报告捕获平均0.285ms/max=0.519ms，队列提交max=0.087ms。证据 [verification/device-M54-video-acceptance.json](verification/device-M54-video-acceptance.json)。单次最大预算余量0.228ms，温度/频率未控制，不代表长期或硬实时保证。
 
@@ -40,13 +40,15 @@
 
 M2 新增 Maven 依赖 `com.microsoft.onnxruntime:onnxruntime-android:1.20.0`，再次 Sync 会下载它。已检查实际 AAR 的 Java 类版本兼容 JDK 11，因此构建链维持不变。当前目标手机的系统页大小为 4096 字节；该 AAR 的 JNI 库仅有 4KB ELF 对齐，16KB 页设备尚不支持当前组合，不能凭 MuJoCo 库的 16KB 对齐宣称整个 APK 已支持。
 
+**M8新增依赖：** `io.getstream:stream-webrtc-android:1.3.9`，首次Sync下载AAR及Kotlin stdlib1.9.25/AndroidX annotation1.9.1。AndroidX已启用；JDK11、AGP7.2.2、Gradle7.5保持。AAR字节码major55、minSdk21，arm64 JNI为16KB对齐；ORT的4KB限制仍在。固定来源与摘要 [VIDEO_DEPENDENCIES.lock.json](VIDEO_DEPENDENCIES.lock.json)，通知/许可见 `app/src/main/assets/licenses/`。
+
 CMake 会从源码构建 MuJoCo 和 JNI 库，不需要手动复制 `.so`。MuJoCo 固定为 3.10.0，提交 `28009f9105cd92784b7b0b30c0605a5e29107a77`。本机已准备 `.native-cache` 源码缓存；缓存缺失时构建配置会下载官方源码及上游固定版本依赖。缓存和生成模型不提交到版本控制。
 
 ## 手机上怎么验收
 
 **保留的 M3 实时验收：**
 
-1. 在 Android Studio 重新 Sync、Build、Run；当前M6沿用已跑通的物理/策略/构建配置，本次没有新增Maven依赖。以下是保留的性能测试方法，用户已将其延期。
+1. 下面是保留的性能测试方法，用户已将其延期；M8功能验收先按 [VIDEO.md](VIDEO.md) 完成，无需重跑30秒测试。
 2. 上方应出现真实机器人 CAD 外观及地面网格。单指拖动旋转视角，双指缩放；“复位视角”恢复默认角度和距离。“跟随机器人”保持机器人在中心，取消后可以观察它在地面上的位移。
 3. 点击“策略站立”观察平衡；点击“前进 0.30m/s”观察脚步。橙线是最近约 512 个绘制快照的地面轨迹，红点是 MuJoCo 当前接触点，可以关闭接触点显示。
 4. 等 3D 正常显示后，点击“实时测试 30s”。从 HOME 重置，发送 vx=.30，按 50Hz 运行 30 秒墙钟，然后自动暂停。保持应用在前台且不再点击重置；告诉 Codex 完成，以便经 ADB 获取报告。
@@ -125,10 +127,11 @@ python3 scripts/check_source.py \
   --java-home /Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home \
   --android-sdk /Users/navinfo/Android/sdk \
   --ort-aar /private/tmp/microduck-onnxruntime-android-1.20.0.aar \
+  --webrtc-aar /private/tmp/microduck-webrtc-stream-1.3.9.aar \
   --mujoco-dir ../Pollen/microduck_rl/.venv/lib/python3.12/site-packages/mujoco
 ```
 
-当前绘制视觉 mesh（group<3），不显示碰撞几何；采用模型材质颜色和简化光照。地面是与当前场景水平 floor 对齐的程序网格，不复制桌面纹理、阴影或完整材质。M6在同一GLES线程另行渲染 `head_camera` 的640×360离屏帧，只绘制场景，不加入调试轨迹/接触点。该视角与手机观察视角独立，仍使用简化材质/地面，尚未完全复制桌面MuJoCo画面效果。原M5窗口PixelCopy链路已被相机FBO替换；M5.4两次30秒结果保留为历史基线。
+当前绘制视觉 mesh（group<3），不显示碰撞几何；采用模型材质颜色和简化光照。地面是与当前场景水平 floor 对齐的程序网格，不复制桌面纹理、阴影或完整材质。M6曾在同一GLES线程另行渲染 `head_camera` 的640×360离屏帧，只绘制场景，不加入调试轨迹/接触点。该视角与手机观察视角独立，仍使用简化材质/地面，尚未完全复制桌面MuJoCo画面效果。原M5窗口PixelCopy链路已被相机FBO替换；M5.4两次30秒结果保留为历史基线。
 
 ## 61D / 14D 接线约定
 
@@ -225,6 +228,12 @@ flowchart TD
 | `app/src/main/java/com/microduck/sim/VideoCapture.java` | 按需SurfaceView采集、独立线程JPEG编码 |
 | `app/src/main/java/com/microduck/sim/VideoFrames.java` | 单帧缓存、单个采集、时限和会话关闭 |
 | `app/src/main/assets/controller.html` | 第二台Android的浏览器控制页面 |
+| `app/src/main/java/com/microduck/sim/SceneRenderer.java` | 预览/相机共同绘制实现，各实例独立GPU资源 |
+| `app/src/main/java/com/microduck/sim/CameraScene.java` | 两路GL共享的CPU不可变快照 |
+| `app/src/main/java/com/microduck/sim/RtcVideo.java` | 单peer、H.264优先硬件编码、stats与原生寿命 |
+| `app/src/main/java/com/microduck/sim/RtcSession.java` | 有界信令、generation、8秒租期与取消id |
+| `VIDEO_DEPENDENCIES.lock.json` | WebRTC AAR/传递依赖的固定来源与摘要 |
+| `scripts/check_video_dependencies.py` | 实际AAR/ELF及AGP原D8的依赖兼容检查 |
 | `scripts/check_source.py` | Mac源码检查及带摘要的报告；不运行Gradle或安装APK |
 | `scripts/host_baseline.py` | 桌面物理基线，结果见 `verification/host-baseline.json` |
 | `scripts/policy_rehearsal.py` | ONNX 对照、观测夹具、过滤开关与速度命令的闭环预演 |

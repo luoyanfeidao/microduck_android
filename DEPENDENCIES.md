@@ -31,3 +31,5 @@ git -C Pollen/microduck_rl checkout cb70b792312d559a4da09064d92009079671815f
 如果替换了 ONNX，应在包含 onnxruntime/numpy/mujoco 的训练仓库 Python 环境中重新执行 `scripts/policy_rehearsal.py`，更新推理对照并重新验收，不能只修改摘要。
 
 构建复用关系详见 [技术说明PDF](docs/Android_Microduck_方案架构与编译复用说明.pdf) / [Markdown](docs/Android_Microduck_方案架构与编译复用说明.md)：已有资源时Android打包无需Cargo或训练仓库.venv；只用标准库Python复制资源，NDK另行编译MuJoCo源码。`UPSTREAM.lock.json`是来源记录，资源脚本不会按它自动校验上游Git提交。
+
+M8视频增加 `io.getstream:stream-webrtc-android:1.3.9` 与它的Kotlin stdlib1.9.25、AndroidX annotation1.9.1传递依赖。它是预编译Android Java/native AAR，由Gradle解析，不从两个Pollen仓库或mediad构建；不需要Android版GStreamer或Cargo。固定AAR摘要和来源见 [VIDEO_DEPENDENCIES.lock.json](VIDEO_DEPENDENCIES.lock.json)，原AGP/JDK的依赖DEX兼容检查见 [verification/m8-video-dependencies.json](verification/m8-video-dependencies.json)。整个APK的Studio构建仍待确认。

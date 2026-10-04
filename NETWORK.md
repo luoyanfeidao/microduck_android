@@ -1,12 +1,10 @@
-# M7.1：一台 Android 仿真，另一台浏览器看机器人摄像头并控制
+# M8：一台 Android 仿真，另一台浏览器看机器人摄像头并控制
 
-当前源码 `0.7.1-m71` / versionCode=14，手机标题 `Microduck · Android M7.1`，由用户在Android Studio构建/安装/运行。视频使用模型head_camera的机器人视角，修复镜头背面遮挡导致的灰屏；手机保留独立外部观察视角。新增前滚翻命令，机制见 [SKILLS.md](SKILLS.md)。访问码及JPEG HTTP路径保留，结构图见 [VIDEO.md](VIDEO.md)。源码检查 [verification/m71-checks.json](verification/m71-checks.json)通过，用户确认摄像头正常、M7.1整圈翻滚通过；抬头慢与整体僵硬待优化。性能/前后台验收按用户要求延期。
-
-真实CAD视图仍由仿真手机以约30FPS绘制；浏览器默认关闭画面，勾选“开启机器人摄像头”后按需采集、传输，目标10FPS、640×360。50Hz物理/策略及模型保留，新增roulade ONNX。
+当前源码 `0.8.0-m8` / versionCode=15，标题 `Microduck · Android M8`，由用户Studio构建/安装/运行。独立GL相机支持关闭外部3D；视频新增硬件编码WebRTC，保留JPEG兼容模式。站立、步行、2秒翻滚和控制心跳保留。架构及验收见 [VIDEO.md](VIDEO.md)，源码检查 [verification/m8-checks.json](verification/m8-checks.json)。M8真机WebRTC及隐藏3D相机尚未验收，性能检查延期。
 
 ## 双设备操作
 
-1. 仿真手机用 Studio 运行新版，等模型、策略和3D加载完成。向下滚动，点击“开启局域网控制”。
+1. 仿真手机用 Studio 运行新版，等模型和策略加载完成。向下滚动，点击“开启局域网控制”。
 2. 两台设备连接同一个 Wi-Fi，或由其中一台提供热点。应用显示地址及访问码；优先使用 Wi-Fi / 热点接口对应的地址，通常接口名为 `wlan0`。路由器若开启了客户端隔离，两台设备可能无法互相访问。
 3. 控制手机浏览器打开显示的完整 `http://IP:8080/#token=...` 地址。复制包含片段的完整链接会自动填写访问码；只输入 `http://IP:8080/` 时，在页面粘贴仿真手机显示的访问码并点击连接。
    升级后重新加载页面，连接后可勾选“开启机器人摄像头”；开启画面不启动仿真。使用及视角确认见 [VIDEO.md](VIDEO.md)。
@@ -40,7 +38,7 @@ flowchart LR
 
 网络线程不访问原生句柄、MuJoCo模型/数据或ORT session。命令投递给仿真线程后才返回执行确认。排队命令1秒未完成返回504，尚未开始执行的命令被取消；已开始执行的操作不能因HTTP断开而回滚。命令处理需要依次执行，409表示本机实时测试占用控制，429表示已有命令等待确认。浏览器将请求串行化，避免自身心跳与控制指令争抢。
 
-HTTP连接由2个收发线程及4个排队连接处理；请求头总量最多4096字节，命令体最多512字节，读取阶段截止时间2秒；从开始处理请求起总截止时间3秒，包含JPEG写出。服务仅实现当前页面所需的HTTP/1.1、固定路径及Content-Length请求，不支持chunked请求体、任意文件或跨域控制。视频与命令在网页中独立发起；每个页面最多一个图片请求。
+HTTP连接由2个收发线程及4个排队连接处理；请求头总量最多4096字节，命令体最多512字节、WebRTC信令体最多32KiB，读取阶段截止时间2秒；从开始处理请求起总截止时间3秒，包含JPEG写出。服务仅实现当前页面所需的HTTP/1.1、固定路径及Content-Length请求，不支持chunked请求体、任意文件或跨域控制。视频与命令在网页中独立发起；每个页面最多一个图片请求或一个WebRTC观看会话。WebRTC媒体走ICE/DTLS-SRTP；HTTP只交换offer/answer和ICE，不传H.264视频包。
 
 普通状态缓存由报告线程更新，HTTP读取不触发JNI。报告增加 `running`、`lan_enabled`、`remote_control_active`、`remote_commands_applied`、`remote_stop_reason`；心跳不计入已执行控制命令数。`heartbeat_timeout`表示这次暂停由心跳超时触发。
 
@@ -52,6 +50,7 @@ HTTP连接由2个收发线程及4个排队连接处理；请求头总量最多40
 | `GET /health` | 检查服务和协议版本 | 无 |
 | `GET /api/state` | 最近状态JSON | `Authorization: Bearer <访问码>` |
 | `GET /api/frame` | 最新JPEG；未就绪503 | 同上；访问码不放在URL中 |
+| `POST /api/rtc` | WebRTC open/poll/close；一次只发视频、无音频 | 同上；JSON信令，上限32KiB |
 | `POST /api/command` | 执行下表命令 | 同上；Content-Type为application/json |
 
 | JSON | 行为 |
@@ -95,6 +94,7 @@ python3 scripts/check_source.py \
   --java-home /Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home \
   --android-sdk /Users/navinfo/Android/sdk \
   --ort-aar /private/tmp/microduck-onnxruntime-android-1.20.0.aar \
+  --webrtc-aar /private/tmp/microduck-webrtc-stream-1.3.9.aar \
   --mujoco-dir ../Pollen/microduck_rl/.venv/lib/python3.12/site-packages/mujoco \
   --host-json-jar /绝对路径/json-20180813.jar
 ```

@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 /** Small HTTP/1.1 LAN server; bounded requests, no native handles or policy sessions. */
 final class LanControlServer implements AutoCloseable {
     interface Commands { String apply(RemoteCommand command) throws Exception; }
+    interface Signaling { String apply(String body) throws Exception; }
     static final class CommandFailure extends Exception {
         private static final long serialVersionUID=1;
         final int status;
@@ -47,12 +48,16 @@ final class LanControlServer implements AutoCloseable {
     private final Commands commands;
     private final Supplier<VideoFrames.Frame> video;
     private final String token;
+    private final Signaling signaling;
     private volatile boolean closed;
     LanControlServer(int port,byte[] page,Supplier<String> state,Commands commands) throws IOException {
         this(port,page,state,commands,()->null);
     }
     LanControlServer(int port,byte[] page,Supplier<String> state,Commands commands,Supplier<VideoFrames.Frame> video) throws IOException {
-        this.page=page.clone(); this.state=state; this.commands=commands; this.video=video;
+        this(port,page,state,commands,video,body->{ throw new CommandFailure(503,"WebRTC unavailable"); });
+    }
+    LanControlServer(int port,byte[] page,Supplier<String> state,Commands commands,Supplier<VideoFrames.Frame> video,Signaling signaling) throws IOException {
+        this.page=page.clone(); this.state=state; this.commands=commands; this.video=video; this.signaling=signaling;
         deadlines.setRemoveOnCancelPolicy(true);
         byte[] random=new byte[16]; new SecureRandom().nextBytes(random);
         StringBuilder key=new StringBuilder();
@@ -109,22 +114,29 @@ final class LanControlServer implements AutoCloseable {
         if(path.equals("/api/frame")) {
             if(!words[0].equals("GET")) throw new BadRequest(405);
             VideoFrames.Frame frame=video.get();
-            if(frame==null) { json(connection,503,"{\"error\":\"Waiting for 3D frame; keep simulator visible\"}"); return; }
+            if(frame==null) { json(connection,503,"{\"error\":\"Waiting for head camera; keep simulator in foreground\"}"); return; }
             respondHead(connection,200,"image/jpeg",frame.size(),
                 "\r\nX-Frame-Sequence: "+frame.sequence+"\r\nX-Frame-Age-Ms: "+Math.max(0,(System.nanoTime()-frame.capturedNs)/1_000_000L));
             OutputStream out=connection.getOutputStream(); frame.writeTo(out); out.flush(); return;
         }
-        if(!path.equals("/api/command")) { json(connection,404,"{\"error\":\"Unknown path\"}"); return; }
+        boolean rtc=path.equals("/api/rtc");
+        if(!rtc && !path.equals("/api/command")) { json(connection,404,"{\"error\":\"Unknown path\"}"); return; }
         if(!words[0].equals("POST")) throw new BadRequest(405);
         if(!headers.getOrDefault("content-type","").split(";",2)[0].trim().equalsIgnoreCase("application/json")) throw new BadRequest(415);
         int length;
         try { length=Integer.parseInt(headers.getOrDefault("content-length","")); }
         catch(NumberFormatException e) { throw new BadRequest(411); }
-        if(length<1 || length>512) throw new BadRequest(413);
+        if(length<1 || length>(rtc?32*1024:512)) throw new BadRequest(413);
         byte[] body=new byte[length]; int offset=0;
         while(offset<length) {
             remaining(connection,deadline); int n=in.read(body,offset,length-offset);
             if(n<0) throw new BadRequest(400); offset+=n;
+        }
+        if(rtc) {
+            try { json(connection,200,signaling.apply(new String(body,StandardCharsets.UTF_8))); }
+            catch(CommandFailure e) { json(connection,e.status,"{\"error\":\"Video session unavailable; reconnect or select JPEG\"}"); }
+            catch(Exception e) { json(connection,400,"{\"error\":\"Invalid video signaling request\"}"); }
+            return;
         }
         RemoteCommand command;
         try { command=RemoteCommand.parse(new String(body,StandardCharsets.UTF_8)); }
@@ -156,7 +168,7 @@ final class LanControlServer implements AutoCloseable {
     private static void respondHead(Socket socket,int status,String type,int length,String extra) throws IOException {
         String head="HTTP/1.1 "+status+" Response\r\nContent-Type: "+type+"\r\nContent-Length: "+length
             +"\r\nConnection: close\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff"
-            +"\r\nContent-Security-Policy: default-src 'self'; img-src 'self' blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'"
+            +"\r\nContent-Security-Policy: default-src 'self'; img-src 'self' blob:; media-src 'self' blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'"
             +"\r\nReferrer-Policy: no-referrer"+extra+"\r\n\r\n";
         socket.getOutputStream().write(head.getBytes(StandardCharsets.US_ASCII));
     }

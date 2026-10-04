@@ -1,0 +1,23 @@
+{
+  "scope": "Dependency-only source/DEX compatibility; no Gradle, app DEX, APK or device execution",
+  "webrtc_aar_sha256": "4c34f3c2b8ec4a66f8a11fec55a939e5345827359c7614d71fed2572e602671d",
+  "d8_version": "D8 3.2.74 (build 5a007b90730be50a5cc54e7897d86312107f4984 from go/r8bot (luci-r8-custom-ci-xenial-2-tnjr))",
+  "builder_sha256": "f4c1ae6db2aa4b2dc021db5659c71f6af81157a2975a59da78e811b8b509f1af",
+  "class_versions": {
+    "55": 417
+  },
+  "aar_metadata": "aarFormatVersion=1.0\naarMetadataVersion=1.0\nminCompileSdk=1\nminCompileSdkExtension=0\nminAndroidGradlePluginVersion=1.0.0\ncoreLibraryDesugaringEnabled=false\n",
+  "manifest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n     Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.\n\n     Licensed under the Apache License, Version 2.0 (the \"License\");\n     you may not use this file except in compliance with the License.\n     You may obtain a copy of the License at\n\n          http://www.apache.org/licenses/LICENSE-2.0\n\n     Unless required by applicable law or agreed to in writing, software\n     distributed under the License is distributed on an \"AS IS\" BASIS,\n     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n     See the License for the specific language governing permissions and\n     limitations under the License.\n-->\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"org.webrtc\" >\n\n    <uses-sdk android:minSdkVersion=\"21\" />\n\n    <uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\" />\n\n</manifest>",
+  "arm64_load_alignment": [
+    16384,
+    16384,
+    16384
+  ],
+  "arm64_jni_sha256": "4e9d2df81f7db6d184a9d0024e6f9825c6325c3ee54a8d61ef657f02ef8d85e7",
+  "whole_apk_16kb_supported": false,
+  "dependency_dex": "passed",
+  "warnings": "",
+  "dex_files": [
+    "classes.dex"
+  ]
+}
