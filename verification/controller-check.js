@@ -5,7 +5,7 @@ async function main(){
   const nodes=new Map(),timers=new Map(),events={},requests=[],created=new Set(),revoked=new Set();
   let timerId=0,urlId=0,now=0,mode='ok',heldResolve;
   function node(id){if(!nodes.has(id))nodes.set(id,{value:'',checked:false,disabled:false,textContent:'',src:'',removeAttribute(k){delete this[k]}});return nodes.get(id)}
-  const buttons=['stand','forward','pause'].map(op=>({dataset:{op},disabled:false}));
+  const buttons=['stand','forward','pause','roulade'].map(op=>({dataset:{op},disabled:false}));
   const response=(status,data,headers={})=>({status,ok:status===200,headers:{get:key=>headers[key]||null},
     json:async()=>data,blob:async()=>({jpeg:true})});
   const context=vm.createContext({
@@ -42,6 +42,8 @@ async function main(){
   mode='held';node('videoToggle').onchange();await flush();
   const count=requests.length;await buttons[1].onclick();await flush();
   assert(requests.slice(count).some(r=>r.url==='/api/command'&&JSON.parse(r.options.body).op==='walk'));
+  await buttons[3].onclick();await flush();
+  assert(requests.some(r=>r.url==='/api/command'&&JSON.parse(r.options.body).op==='roulade'));
   node('videoToggle').checked=false;node('videoToggle').onchange();await flush();
   assert(!node('video').src);assert.equal(timers.size,0);
   // Deliver a late HTTP success from a stopped session; it must not revive the picture.
@@ -58,6 +60,6 @@ async function main(){
   assert([...created].every(url=>revoked.has(url)));
   console.log(JSON.stringify({video_opt_in:true,bearer_header:true,slow_video_does_not_block_controls:true,
     stop_and_hidden_cancel_requests:true,late_frame_does_not_revive_view:true,background_pause:true,
-    unavailable_retries:true,expired_token_disconnects:true,blob_urls_released:true}));
+    unavailable_retries:true,expired_token_disconnects:true,blob_urls_released:true,roulade_command:true}));
 }
 main().catch(error=>{console.error(error);process.exitCode=1});

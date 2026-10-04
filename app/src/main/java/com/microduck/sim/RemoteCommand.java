@@ -17,7 +17,7 @@ final class RemoteCommand {
         String op=(String)value;
         String allowed;
         switch(op) {
-            case "stand": case "pause": case "heartbeat": allowed="op"; break;
+            case "stand": case "roulade": case "pause": case "heartbeat": allowed="op"; break;
             case "walk": allowed="op,vx,vy,yaw"; break;
             case "reset": allowed="op,pose"; break;
             default: throw new IllegalArgumentException("Unknown command");

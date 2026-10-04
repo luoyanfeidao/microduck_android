@@ -20,8 +20,9 @@ public final class NetworkControlCheck {
     public static void main(String[] args) throws Exception {
         RemoteCommand walk=RemoteCommand.parse("{\"op\":\"walk\",\"vx\":0.3,\"vy\":-0.15,\"yaw\":0.5}");
         if(walk.vx!=.3f || walk.vy!=-.15f || walk.yaw!=.5f) throw new AssertionError("Velocity mapping");
+        if(!RemoteCommand.parse("{\"op\":\"roulade\"}").op.equals("roulade")) throw new AssertionError("Roll command");
         for(String text:new String[]{"{}","{\"op\":7}","{\"op\":\"unknown\"}",
-            "{\"op\":\"stand\",\"vx\":0}","{\"op\":\"walk\",\"vx\":0.31}",
+            "{\"op\":\"roulade\",\"vx\":0}","{\"op\":\"stand\",\"vx\":0}","{\"op\":\"walk\",\"vx\":0.31}",
             "{\"op\":\"walk\",\"vy\":0.16}","{\"op\":\"walk\",\"yaw\":0.51}",
             "{\"op\":\"walk\",\"vx\":\"0.3\"}","{\"op\":\"walk\",\"vx\":null}",
             "{\"op\":\"reset\",\"pose\":\"HOME\"}","{\"op\":\"reset\",\"pose\":true}"}) reject(text);
@@ -52,6 +53,7 @@ public final class NetworkControlCheck {
             check(request(origin,"/api/frame",auth,"{}"),405,"error");
             check(request(origin,"/api/command",auth,"{\"op\":\"walk\",\"vx\":0.3}"),200,"ok");
             check(request(origin,"/api/command",auth,"{\"op\":\"stand\"}"),200,"ok");
+            check(request(origin,"/api/command",auth,"{\"op\":\"roulade\"}"),200,"ok");
             check(request(origin,"/api/command",auth,"{\"op\":\"pause\"}"),200,"ok");
             check(request(origin,"/api/command",auth,"{\"op\":\"walk\",\"vx\":100}"),400,"error");
             check(request(origin,"/api/command",auth,"{\"op\":\"reset\",\"pose\":\"SIT\"}"),409,"error");
@@ -63,7 +65,7 @@ public final class NetworkControlCheck {
             checkRaw(server,prefix+"Transfer-Encoding: chunked\r\n\r\n",400);
             checkRaw(server,prefix+"\r\n",411);
             checkRaw(server,"GET /health HTTP/1.1\r\nX-Long: "+"x".repeat(5000)+"\r\n\r\n",431);
-            if(commands.get()!=3) throw new AssertionError("Rejected request executed command");
+            if(commands.get()!=4) throw new AssertionError("Rejected request executed command");
             ExecutorService concurrent=Executors.newFixedThreadPool(2);
             try {
                 Future<?> pictures=concurrent.submit(()->{

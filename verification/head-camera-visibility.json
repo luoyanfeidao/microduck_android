@@ -1,0 +1,134 @@
+{
+  "scope": "CPU visual triangle intersections at HOME; not Android GPU validation",
+  "mujoco_default_back_face_culling": true,
+  "near_m": 0.003542399375531272,
+  "enclosure_back_faces_occlude_rays": 9,
+  "rays": [
+    {
+      "ray": [
+        -0.8,
+        -0.8
+      ],
+      "two_sided": {
+        "geom_id": 43,
+        "body": "jaw_soft",
+        "mesh": "lens",
+        "distance_m": 0.009091843373042327,
+        "back_face": true
+      },
+      "back_faces_culled": null
+    },
+    {
+      "ray": [
+        0,
+        -0.8
+      ],
+      "two_sided": {
+        "geom_id": 43,
+        "body": "jaw_soft",
+        "mesh": "lens",
+        "distance_m": 0.00866270969457689,
+        "back_face": true
+      },
+      "back_faces_culled": null
+    },
+    {
+      "ray": [
+        0.8,
+        -0.8
+      ],
+      "two_sided": {
+        "geom_id": 43,
+        "body": "jaw_soft",
+        "mesh": "lens",
+        "distance_m": 0.00909184337708136,
+        "back_face": true
+      },
+      "back_faces_culled": null
+    },
+    {
+      "ray": [
+        -0.8,
+        0
+      ],
+      "two_sided": {
+        "geom_id": 43,
+        "body": "jaw_soft",
+        "mesh": "lens",
+        "distance_m": 0.00897476901182654,
+        "back_face": true
+      },
+      "back_faces_culled": null
+    },
+    {
+      "ray": [
+        0,
+        0
+      ],
+      "two_sided": {
+        "geom_id": 43,
+        "body": "jaw_soft",
+        "mesh": "lens",
+        "distance_m": 0.008499998965301262,
+        "back_face": true
+      },
+      "back_faces_culled": null
+    },
+    {
+      "ray": [
+        0.8,
+        0
+      ],
+      "two_sided": {
+        "geom_id": 43,
+        "body": "jaw_soft",
+        "mesh": "lens",
+        "distance_m": 0.008974769011826542,
+        "back_face": true
+      },
+      "back_faces_culled": null
+    },
+    {
+      "ray": [
+        -0.8,
+        0.8
+      ],
+      "two_sided": {
+        "geom_id": 43,
+        "body": "jaw_soft",
+        "mesh": "lens",
+        "distance_m": 0.00909184337708136,
+        "back_face": true
+      },
+      "back_faces_culled": null
+    },
+    {
+      "ray": [
+        0,
+        0.8
+      ],
+      "two_sided": {
+        "geom_id": 43,
+        "body": "jaw_soft",
+        "mesh": "lens",
+        "distance_m": 0.00866270969457689,
+        "back_face": true
+      },
+      "back_faces_culled": null
+    },
+    {
+      "ray": [
+        0.8,
+        0.8
+      ],
+      "two_sided": {
+        "geom_id": 43,
+        "body": "jaw_soft",
+        "mesh": "lens",
+        "distance_m": 0.009091843373042327,
+        "back_face": true
+      },
+      "back_faces_culled": null
+    }
+  ]
+}

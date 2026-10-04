@@ -1,14 +1,14 @@
-# Android Studio 施工入口（M6：机器人头部摄像头）
+# Android Studio 施工入口（M7：摄像头灰屏修复与前滚翻）
 
 在 Android Studio 中打开当前目录 `android-sim`，不要打开外层 Microduck 目录。由你完成 Sync、编译、安装和真机运行。
 
 首次从 GitHub 获取时，先按 [DEPENDENCIES.md](DEPENDENCIES.md) 准备外部源码和已验证策略；固定提交及资源摘要见 [UPSTREAM.lock.json](UPSTREAM.lock.json)。
 
-当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。另一台Android浏览器可发站立/步行/暂停/复位命令并读状态；当前M6视频来自模型的 `head_camera`，随机器人头部运动。手机保留外部观察视角。控制见 [NETWORK.md](NETWORK.md)，相机原理及使用见 [VIDEO.md](VIDEO.md)。
+当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。另一台Android浏览器可发站立/步行/前滚翻/暂停/复位命令并读状态；视频来自模型的 `head_camera`，随机器人头部运动。手机保留外部观察视角。控制见 [NETWORK.md](NETWORK.md)，相机见 [VIDEO.md](VIDEO.md)，前滚翻见 [SKILLS.md](SKILLS.md)。
 
-**当前功能开发M6：** `0.6-m6` / versionCode=12，标题 `Microduck · Android M6`。在Studio编译运行，保持应用前台及“显示3D”开启，开启LAN服务，浏览器重新加载页面并连接，勾选“开启机器人摄像头”。以640×360原始相机帧、10FPS目标、JPEG质量70提供画面，网页按相机安装方向转90°；拖动手机观察视角不改变网页相机。相机使用模型世界位置/旋转/FOV及裁剪平面，沿用桌面相机局部X轴180°修正。GPU单独渲染相机帧，不复制手机窗口；JSON控制协议沿用现有版本，无新增Maven依赖。
+**当前功能开发M7：** `0.7-m7` / versionCode=13，标题 `Microduck · Android M7`。修复M6摄像头被模型镜头背面遮挡的灰屏，新增手机和网页“向前翻滚一次”：现有roulade ONNX执行50周期/1秒仿真时间，然后保持当前位置切回站立控制；重复点击不延长在途动作。暂停冻结动作，点翻滚可继续剩余周期；站立/步行或复位取消动作。在Studio编译运行，保持应用前台及“显示3D”开启，开启LAN服务，浏览器刷新并重新连接，勾选“开启机器人摄像头”。相机仍为640×360、10FPS目标、JPEG质量70，网页转90°。无新增Maven依赖。
 
-**检查边界：** [verification/m6-checks.json](verification/m6-checks.json)验证Java/Android JNI源码、三组相机姿态与桌面MuJoCo对照、像素通道/上下翻转、原物理和策略、网页/HTTP协议；相机对照最大误差约2.6e-8。尚未由代理打包/安装/运行APK，真实手机的FBO与网页显示待用户Studio运行确认。用户明确将性能、温升及前后台验收留到后面，不再以这些测试阻塞功能开发。下面M5/M5.4数据是外部观察窗口画面的历史结果，不是机器人摄像头性能证据。
+**检查边界：** [verification/m7-checks.json](verification/m7-checks.json)验证Java/Android JNI、相机及物理对照、翻滚时间窗口/动作倍率、三策略摘要与smoke覆盖、网页/HTTP协议。模型几何射线复现了M6灰屏，四组CPU前滚翻预演数值正常并回到接近直立，但不能据此宣称任意起始姿态都完成标准前滚翻。用户确认M6画面灰且手机报告持续产帧无错误；M7手机画面和动作仍待运行确认。代理未打包/安装/运行APK。性能、温升及前后台验收按用户要求延期。下面M5/M5.4数据是外部观察窗口画面的历史结果。
 
 **历史M5.4视频开启30秒验收通过：** `0.5.4-m54` / versionCode=11。1501周期/6004物理步、墙钟30.007秒/仿真30.02秒，完整工作线程p99=10.648ms/max=19.772ms、超20ms周期0，调度迟到超过20ms周期0；手机30.03FPS、视频298发布帧/9.93FPS、265帧提供HTTP、采集错误0，数值及最终位姿与M5.3一致。报告捕获平均0.285ms/max=0.519ms，队列提交max=0.087ms。证据 [verification/device-M54-video-acceptance.json](verification/device-M54-video-acceptance.json)。单次最大预算余量0.228ms，温度/频率未控制，不代表长期或硬实时保证。
 
@@ -34,7 +34,7 @@
 4. 执行 Gradle Sync，首次同步保持网络可用。配置为 AGP 7.2.2 / Gradle 7.5，不必在首次验收时顺带升级构建链。
 5. 选择 `app` 和你的 ARM64 Android 设备，点击 Run。最低 Android API 28；本次目标设备为 V2185A / Android 16 / 骁龙 SM8450。
 
-构建会自动执行 `scripts/prepare_assets.py`，从旁边的 `Pollen/microduck_rl` 收集 XML 与 38 个 STL，从 `Pollen/microduck/policies` 收集 `alpha_stand.onnx / alpha_walking.onnx`，并生成 SHA-256 清单。因此需要保留当前目录与 `Pollen` 的相对位置，以及 PATH 中可用的 **Python 3.9+**、Git。若 Studio 报找不到 `python3`，从终端运行 `python3 scripts/prepare_assets.py` 确认解释器可用，并修正启动 Studio 时的 PATH。
+构建会自动执行 `scripts/prepare_assets.py`，从旁边的 `Pollen/microduck_rl` 收集 XML 与 38 个 STL，从 `Pollen/microduck/policies` 收集 `alpha_stand.onnx / alpha_walking.onnx / roulade.onnx`，并生成 SHA-256 清单。因此需要保留当前目录与 `Pollen` 的相对位置，以及 PATH 中可用的 **Python 3.9+**、Git。若 Studio 报找不到 `python3`，从终端运行 `python3 scripts/prepare_assets.py` 确认解释器可用，并修正启动 Studio 时的 PATH。
 
 M2 新增 Maven 依赖 `com.microsoft.onnxruntime:onnxruntime-android:1.20.0`，再次 Sync 会下载它。已检查实际 AAR 的 Java 类版本兼容 JDK 11，因此构建链维持不变。当前目标手机的系统页大小为 4096 字节；该 AAR 的 JNI 库仅有 4KB ELF 对齐，16KB 页设备尚不支持当前组合，不能凭 MuJoCo 库的 16KB 对齐宣称整个 APK 已支持。
 

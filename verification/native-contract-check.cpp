@@ -37,6 +37,12 @@ int main(int argc,char** argv) {
            std::abs(s.model->actuator_gainprm[s.actuators[i]*mjNGAIN]-.8*s.base_gain[i])>1e-12)
             throw std::runtime_error("Standing filter/gain mismatch");
     }
+    apply_scaled_action(s,action,1.0,1.0,false);
+    for(int i=0;i<N;++i) {
+        if(std::abs(s.data->ctrl[s.actuators[i]]-(HOME[i]+action[i]))>1e-12 ||
+           s.model->actuator_gainprm[s.actuators[i]*mjNGAIN]!=s.base_gain[i])
+            throw std::runtime_error("Roulade full scale/gain mismatch");
+    }
     action[0]=std::numeric_limits<float>::quiet_NaN(); bool rejected=false;
     try { apply_policy_action(s,action,true,true); } catch(const std::runtime_error&) { rejected=true; }
     if(!rejected) throw std::runtime_error("NaN action accepted");
@@ -57,5 +63,5 @@ int main(int argc,char** argv) {
     try { advance(s,0); } catch(const std::runtime_error&) { rejected=true; }
     if(!rejected || s.steps!=steps) throw std::runtime_error("Invalid advance accepted");
     std::cout<<"{\"observation_max_error\":"<<max_error<<",\"action_scale_filter_gain\":\"passed\",\"nan_rejection\":\"passed\","
-             <<"\"advance_baseline_500_ticks_exact\":true,\"invalid_step_rejection\":true}\n";
+             <<"\"advance_baseline_500_ticks_exact\":true,\"invalid_step_rejection\":true,\"roulade_scale_gain\":true}\n";
 }

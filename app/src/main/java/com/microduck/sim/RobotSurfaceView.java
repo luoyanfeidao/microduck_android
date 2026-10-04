@@ -68,6 +68,7 @@ final class RobotSurfaceView extends GLSurfaceView {
             data.put("render_mesh_format","indexed position-normal pairs / uint32");
             data.put("render_error",error); data.put("camera_follow",follow);
             data.put("head_camera_available",hasCamera); data.put("head_camera_fovy_degrees",fovy);
+            data.put("head_camera_back_face_culling",true);
         };
     }
     @Override public boolean onTouchEvent(MotionEvent event) {
@@ -220,10 +221,15 @@ final class RobotSurfaceView extends GLSurfaceView {
                 throw new IllegalStateException("Head camera scene is not ready");
             if(rgba.capacity()!=HeadCamera.WIDTH*HeadCamera.HEIGHT*4)
                 throw new IllegalArgumentException("Invalid head camera target");
+            boolean wasCulling=GLES30.glIsEnabled(GLES30.GL_CULL_FACE);
             try {
                 ensureCameraFramebuffer();
                 GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER,cameraFramebuffer);
                 GLES30.glViewport(0,0,HeadCamera.WIDTH,HeadCamera.HEIGHT);
+                // MuJoCo culls back faces by default. The camera lies inside the head shell;
+                // drawing its interior faces otherwise covers the entire sensor in grey.
+                GLES30.glEnable(GLES30.GL_CULL_FACE); GLES30.glCullFace(GLES30.GL_BACK);
+                GLES30.glFrontFace(GLES30.GL_CCW);
                 GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT|GLES30.GL_DEPTH_BUFFER_BIT);
                 frame.camera.viewMatrix(view);
                 Matrix.perspectiveM(projection,0,frame.camera.fovy,(float)HeadCamera.WIDTH/HeadCamera.HEIGHT,frame.camera.near,frame.camera.far);
@@ -235,6 +241,7 @@ final class RobotSurfaceView extends GLSurfaceView {
                 int glError=GLES30.glGetError();
                 if(glError!=GLES30.GL_NO_ERROR) throw new IllegalStateException("Head camera GLES error 0x"+Integer.toHexString(glError));
             } finally {
+                if(!wasCulling) GLES30.glDisable(GLES30.GL_CULL_FACE);
                 GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER,0);
                 GLES30.glViewport(0,0,width,height);
             }

@@ -91,10 +91,10 @@ public final class MainActivity extends Activity {
         column.setPadding(24, 32, 24, 24);
         column.setBackgroundColor(Color.rgb(237, 244, 247));
         TextView title = new TextView(this);
-        title.setText("Microduck · Android M6"); title.setTextSize(24);
+        title.setText("Microduck · Android M7"); title.setTextSize(24);
         title.setTextColor(Color.rgb(23, 52, 75)); column.addView(title);
         TextView scope = new TextView(this);
-        scope.setText("3D 物理仿真 + ONNX 站立 / 步行\n单指旋转、双指缩放；橙色轨迹、红色接触点。");
+        scope.setText("3D 物理仿真 + ONNX 站立 / 步行 / 前滚翻\n单指旋转、双指缩放；橙色轨迹、红色接触点。");
         scope.setTextSize(15); column.addView(scope);
         status = new TextView(this); status.setText("正在校验模型并加载 MuJoCo…");
         status.setTextSize(15); status.setTypeface(Typeface.MONOSPACE); column.addView(status);
@@ -111,6 +111,8 @@ public final class MainActivity extends Activity {
         LinearLayout policyButtons=row(column);
         button(policyButtons,"策略站立",()->enqueueLocal(()->{ enablePolicy(0); start(); }));
         button(policyButtons,"前进 0.30m/s",()->enqueueLocal(()->{ enablePolicy(.30f); start(); }));
+        LinearLayout skillButtons=row(column);
+        button(skillButtons,"向前翻滚一次",()->enqueueLocal(()->{ enableRoulade(); start(); }));
         LinearLayout policyTests=row(column);
         button(policyTests,"策略测试 10s",()->enqueueLocal(this::policyBenchmark));
         button(policyTests,"关闭策略",()->enqueueLocal(()->{ pause(); policyEnabled=false; publish(NativeSim.state(handle)); }));
@@ -255,12 +257,17 @@ public final class MainActivity extends Activity {
         }
         policies.velocity(vx,0,0);
     }
+    private void enableRoulade() {
+        if(policyEnabled && policies!=null && policies.rolling()) return;
+        enablePolicy(0); policies.startRoulade();
+    }
     private void controlStep(boolean withVisual) {
         long begin=System.nanoTime();
         try { if(policyEnabled) policies.tick(handle); }
         catch(Exception e) { throw new IllegalStateException("Policy inference failed",e); }
         long physicsBegin=System.nanoTime(); policyTickMs=(physicsBegin-begin)/1e6;
         NativeSim.advance(handle,4); physicsMs=(System.nanoTime()-physicsBegin)/1e6;
+        if(policyEnabled) policies.afterStep();
         controlMs=(System.nanoTime()-begin)/1e6;
         snapshotMs=0;
         if(withVisual && renderEnabled && visualCadence.due(System.nanoTime())) pushVisual();
@@ -362,7 +369,7 @@ public final class MainActivity extends Activity {
                 data.put("model","scene.xml → robot_groundcontact.xml");
                 data.put("stage",policy?"M2: ONNX + XML position servo":"M1: position servo only; no policy");
                 data.put("policy_enabled",policy); data.put("control_ms",control);
-                data.put("app_stage","M6"); data.put("render_enabled",render);
+                data.put("app_stage","M7"); data.put("render_enabled",render);
                 data.put("ready",loaded); data.put("running",running);
                 data.put("lan_enabled",lanEnabled); data.put("remote_control_active",remoteActive);
                 data.put("remote_commands_applied",commands); data.put("remote_stop_reason",stopReason);
@@ -476,6 +483,8 @@ public final class MainActivity extends Activity {
                 enablePolicy(command.op.equals("walk")?command.vx:0);
                 if(command.op.equals("walk")) policies.velocity(command.vx,command.vy,command.yaw);
                 remoteStopReason=""; start(); remoteLease.claim(now); break;
+            case "roulade":
+                enableRoulade(); remoteStopReason=""; start(); remoteLease.claim(now); break;
             case "reset":
                 pause(); policyEnabled=false; if(policies!=null) policies.reset(); keyframe=command.pose;
                 NativeSim.reset(handle,keyframe); remoteStopReason="remote_reset"; break;

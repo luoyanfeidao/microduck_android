@@ -1,8 +1,8 @@
-# M6：一台 Android 仿真，另一台浏览器看机器人摄像头并控制
+# M7：一台 Android 仿真，另一台浏览器看机器人摄像头并控制
 
-当前源码 `0.6-m6` / versionCode=12，手机标题 `Microduck · Android M6`，由用户在Android Studio构建/安装/运行。视频已改为模型 `head_camera` 的机器人视角；手机保留独立外部观察视角。控制、访问码及JPEG HTTP路径沿用原协议，使用及结构图见 [VIDEO.md](VIDEO.md)。源码及桌面相机对照检查 [verification/m6-checks.json](verification/m6-checks.json)通过，手机显示待确认。旧M5.4两次30秒实测是窗口画面基线；性能/前后台验收按用户2026-10-04要求延期，不阻塞功能开发。
+当前源码 `0.7-m7` / versionCode=13，手机标题 `Microduck · Android M7`，由用户在Android Studio构建/安装/运行。视频使用模型head_camera的机器人视角，修复镜头背面遮挡导致的灰屏；手机保留独立外部观察视角。新增前滚翻命令，机制见 [SKILLS.md](SKILLS.md)。访问码及JPEG HTTP路径保留，结构图见 [VIDEO.md](VIDEO.md)。源码检查 [verification/m7-checks.json](verification/m7-checks.json)通过，M7手机画面/动作待确认。性能/前后台验收按用户要求延期。
 
-真实CAD视图仍由仿真手机以约30FPS绘制；浏览器默认关闭画面，勾选“开启实时画面”后按需采集、传输，目标10FPS、最大640×480。模型、ONNX、动作过滤及50Hz物理/策略沿用原基线。
+真实CAD视图仍由仿真手机以约30FPS绘制；浏览器默认关闭画面，勾选“开启机器人摄像头”后按需采集、传输，目标10FPS、640×360。50Hz物理/策略及模型保留，新增roulade ONNX。
 
 ## 双设备操作
 
@@ -10,7 +10,7 @@
 2. 两台设备连接同一个 Wi-Fi，或由其中一台提供热点。应用显示地址及访问码；优先使用 Wi-Fi / 热点接口对应的地址，通常接口名为 `wlan0`。路由器若开启了客户端隔离，两台设备可能无法互相访问。
 3. 控制手机浏览器打开显示的完整 `http://IP:8080/#token=...` 地址。复制包含片段的完整链接会自动填写访问码；只输入 `http://IP:8080/` 时，在页面粘贴仿真手机显示的访问码并点击连接。
    升级后重新加载页面，连接后可勾选“开启机器人摄像头”；开启画面不启动仿真。使用及视角确认见 [VIDEO.md](VIDEO.md)。
-4. 点击“策略站立”，应开始平衡；点击“前进0.30m/s”，应开始步行。网页每秒刷新仿真时间、位移、策略及控制耗时。状态来自最近发布的捕获对象，通常约250ms刷新一次。
+4. 点击“策略站立”，应开始平衡；点击“前进0.30m/s”，应开始步行。“向前翻滚一次”执行1秒仿真时间后切回站立控制，重复点击不延长；首次建议先站稳，动作说明见 [SKILLS.md](SKILLS.md)。网页每秒刷新状态，来自通常约250ms更新的捕获对象。
 5. 点击“暂停仿真”，手机停止物理推进。点击复位SIT/STAND/INIT，会暂停、关闭策略并复位关键帧；重新站立/前进可再次运行。
 6. 浏览器切后台时尝试发送暂停；浏览器断开、Wi-Fi丢失或没有心跳超过3秒时，仿真手机自动暂停。网页恢复后需再次点击站立/前进，心跳本身不会启动仿真。
 7. 仿真手机离开应用会暂停并关闭服务；回到应用后须重新点击“开启局域网控制”，使用新地址/访问码连接。手机上的本地控制按钮接管控制，已有网页心跳不会重新启动它。
@@ -58,6 +58,7 @@ HTTP连接由2个收发线程及4个排队连接处理；请求头总量最多40
 | --- | --- |
 | `{"op":"stand"}` | 启用站立策略并运行 |
 | `{"op":"walk","vx":0.30,"vy":0,"yaw":0}` | 设定速度并运行 |
+| `{"op":"roulade"}` | 执行一次前滚翻窗口，50周期后切回站立；不排队或延长当前动作 |
 | `{"op":"pause"}` | 暂停，释放远程控制 |
 | `{"op":"reset","pose":"SIT"}` | 暂停、关闭策略、复位关键帧 |
 | `{"op":"heartbeat"}` | 延长已有远程运行的心跳期限 |
@@ -114,15 +115,15 @@ python3 scripts/check_source.py \
 
 | file:line | 作用 |
 | --- | --- |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:436` | 开启服务、显示地址 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:466` | 仿真线程执行命令及会话检查 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:183` | 控制周期及心跳检查 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:499` | 退出前台时关闭 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:443` | 开启服务、显示地址 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:473` | 仿真线程执行命令及会话检查 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:185` | 控制周期及心跳检查 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:508` | 退出前台时关闭 |
 | `app/src/main/java/com/microduck/sim/LanControlServer.java:28` | Socket、线程与请求边界 |
 | `app/src/main/java/com/microduck/sim/LanControlServer.java:87` | HTTP路径、授权和命令路由 |
 | `app/src/main/java/com/microduck/sim/RemoteCommand.java:7` | 命令验证 |
 | `app/src/main/java/com/microduck/sim/RemoteMailbox.java:12` | 等待确认与超时取消 |
 | `app/src/main/java/com/microduck/sim/RemoteLease.java:4` | 心跳/控制归属 |
-| `app/src/main/assets/controller.html:38` | 浏览器画面、状态和心跳 |
+| `app/src/main/assets/controller.html:40` | 浏览器画面、状态和心跳 |
 | `verification/NetworkControlCheck.java:1` | 回环与协议检查 |
-| `verification/m6-checks.json:1` | 当前检查结果及源码摘要 |
+| `verification/m7-checks.json:1` | 当前检查结果及源码摘要 |

@@ -1,0 +1,174 @@
+{
+  "scope": "CPU XML servos matching Android action scale/gain/filter; not BAM or device acceptance",
+  "mujoco": "3.10.0",
+  "onnxruntime": "1.24.4",
+  "roulade_sha256": "3d60da08fc13f29c1b57f41977aa898132c0d60042100149d8e775affcbca32b",
+  "action_scale": 1.0,
+  "gain_ratio": 1.0,
+  "duration_s": 1.0,
+  "command": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "rollouts": [
+    {
+      "initial_state": "HOME",
+      "filter": true,
+      "roll_ticks": 50,
+      "recovery_stand_ticks": 150,
+      "finite": true,
+      "roll_end": {
+        "root_xyz": [
+          0.39155443427027686,
+          0.009269981055540695,
+          0.04954942821000882
+        ],
+        "quaternion": [
+          -0.6213776136583419,
+          -0.05639990565426552,
+          0.7812160153888836,
+          -0.020259545561766446
+        ],
+        "pitch_integral_degrees": 253.98516258799899
+      },
+      "max_forward_pitch_integral_degrees": 299.40848368381927,
+      "max_lateral_rate_rad_s": 6.027830433423005,
+      "min_root_height_m": 0.04804620755775334,
+      "final_root_xyz": [
+        0.45128577441670786,
+        0.18145207424260762,
+        0.11586726649774877
+      ],
+      "final_quaternion": [
+        0.38935548514313495,
+        0.0019181999394260576,
+        8.973729395104451e-05,
+        -0.9210855653223334
+      ],
+      "final_tilt_degrees": 0.22005005840699782
+    },
+    {
+      "initial_state": "HOME",
+      "filter": false,
+      "roll_ticks": 50,
+      "recovery_stand_ticks": 150,
+      "finite": true,
+      "roll_end": {
+        "root_xyz": [
+          0.08753959898886861,
+          0.00852055937277088,
+          0.15982570564532045
+        ],
+        "quaternion": [
+          0.2394525392996913,
+          0.21567233481140663,
+          0.9460750579979161,
+          -0.033013785819962914
+        ],
+        "pitch_integral_degrees": 151.6250872936934
+      },
+      "max_forward_pitch_integral_degrees": 152.0021551568416,
+      "max_lateral_rate_rad_s": 11.318773239702102,
+      "min_root_height_m": 0.034058083133775854,
+      "final_root_xyz": [
+        0.10402056161410207,
+        0.0026708187232425263,
+        0.11585032694779196
+      ],
+      "final_quaternion": [
+        0.9988370714635638,
+        0.0008697550776289248,
+        0.0017028999306354959,
+        0.048175183736259876
+      ],
+      "final_tilt_degrees": 0.21911711563515338
+    },
+    {
+      "initial_state": "standing_policy_1s",
+      "filter": true,
+      "roll_ticks": 50,
+      "recovery_stand_ticks": 150,
+      "finite": true,
+      "roll_end": {
+        "root_xyz": [
+          0.39409845160486695,
+          -0.005665712254981126,
+          0.04955793451390378
+        ],
+        "quaternion": [
+          -0.49189564497783367,
+          0.03412149077194298,
+          0.8691871187195288,
+          0.03725789810742562
+        ],
+        "pitch_integral_degrees": 235.83300721029724
+      },
+      "max_forward_pitch_integral_degrees": 289.98746751485527,
+      "max_lateral_rate_rad_s": 9.505666772510063,
+      "min_root_height_m": 0.04709309753266911,
+      "final_root_xyz": [
+        0.6594959475413019,
+        0.050735883989822726,
+        0.11583934579552109
+      ],
+      "final_quaternion": [
+        0.05540394397651618,
+        0.0021671367066720664,
+        -0.0006651043928571454,
+        -0.99846144850289
+      ],
+      "final_tilt_degrees": 0.25976807403043295
+    },
+    {
+      "initial_state": "standing_policy_1s",
+      "filter": false,
+      "roll_ticks": 50,
+      "recovery_stand_ticks": 150,
+      "finite": true,
+      "roll_end": {
+        "root_xyz": [
+          0.12864338225154676,
+          0.004759427000697763,
+          0.18450574824868454
+        ],
+        "quaternion": [
+          0.11808643770352814,
+          -0.0026829888049697084,
+          0.9927831465730683,
+          0.020736891812422456
+        ],
+        "pitch_integral_degrees": 166.0971556548284
+      },
+      "max_forward_pitch_integral_degrees": 263.91773722976956,
+      "max_lateral_rate_rad_s": 7.9954910511160255,
+      "min_root_height_m": 0.04808720740553791,
+      "final_root_xyz": [
+        0.36784164218538407,
+        0.18376460006984802,
+        0.1158515804387519
+      ],
+      "final_quaternion": [
+        0.6186168283152552,
+        0.002091184865919305,
+        0.0008437940266457391,
+        -0.7856895918126137
+      ],
+      "final_tilt_degrees": 0.25840462931902886
+    }
+  ],
+  "limitations": [
+    "Pitch-rate integral describes motion and is not a contact-gated success detector.",
+    "No guarantee that arbitrary walking/fallen starting states complete a roll."
+  ]
+}

@@ -15,6 +15,7 @@ final class NativeSim {
     static native String resetHome(long handle);
     static native float[] observation(long handle, float[] previousAction, float[] command);
     static native void applyAction(long handle, float[] rawAction, boolean standing, boolean filter);
+    static native void applyRouladeAction(long handle, float[] rawAction, boolean filter);
     static native VisualMesh[] visualMeshes(long handle);
     static native float[] visualSnapshot(long handle);
     static native void close(long handle);

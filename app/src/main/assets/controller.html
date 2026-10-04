@@ -25,6 +25,8 @@ label{display:block;margin:12px 0}label input{display:block;width:100%;margin-to
 <div class="camera-box"><img id="video" alt="机器人头部摄像头的仿真画面"></div><p id="videoStatus" class="note" role="status">摄像头未开启</p></section>
 <section id="controls">
 <div class="row"><button data-op="stand">策略站立</button><button data-op="forward">前进 0.30m/s</button></div>
+<button data-op="roulade" style="width:100%">向前翻滚一次</button>
+<p class="note">前滚翻策略执行 1 秒后切回站立控制；重复点击不延长翻滚。首次启动策略会从 HOME 开始，已运行时保留当前姿态。可随时暂停或切换站立。</p>
 <button class="pause" data-op="pause" style="width:100%">暂停仿真</button>
 <details><summary style="margin-top:18px">自定义速度</summary>
 <p class="note">前进 0.30m/s 已有手机基准；横移、转向与后退尚待验证。速度改变保留当前姿态。</p>

@@ -88,18 +88,21 @@ void build_observation(const Simulation& s,const float* previous,const float* co
     obs[55]=obs[56]=obs[60]=0; // Unbound body x/y/yaw.
     for(int i=0;i<61;++i) if(!std::isfinite(obs[i])) throw std::runtime_error("Non-finite observation");
 }
-void apply_policy_action(Simulation& s,const float* raw,bool standing,bool filter) {
+void apply_scaled_action(Simulation& s,const float* raw,double scale,double gain_ratio,bool filter) {
     for(int i=0;i<N;++i) if(!std::isfinite(raw[i])) throw std::runtime_error("Non-finite policy action");
     for(int i=0;i<N;++i) {
-        double target=HOME[i]+(standing?1.0:.9)*raw[i];
+        double target=HOME[i]+scale*raw[i];
         double alpha=(i>=5 && i<=8)?.5:.7;
         if(filter && s.has_previous_target) target=alpha*target+(1-alpha)*s.previous_target[i];
         s.data->ctrl[s.actuators[i]]=target; s.previous_target[i]=target;
-        double gain=s.base_gain[i]*(standing?.8:1.0);
+        double gain=s.base_gain[i]*gain_ratio;
         s.model->actuator_gainprm[s.actuators[i]*mjNGAIN]=gain;
         s.model->actuator_biasprm[s.actuators[i]*mjNBIAS+1]=-gain;
     }
     s.has_previous_target=true;
+}
+void apply_policy_action(Simulation& s,const float* raw,bool standing,bool filter) {
+    apply_scaled_action(s,raw,standing?1.0:.9,standing?.8:1.0,filter);
 }
 std::string state(const Simulation& s) {
     int feet[2] = {0,0};
@@ -251,6 +254,15 @@ extern "C" JNIEXPORT void JNICALL Java_com_microduck_sim_NativeSim_applyAction(
         if(!action || env->GetArrayLength(action)!=N) throw std::runtime_error("Expected rawAction[14]");
         env->GetFloatArrayRegion(action,0,N,raw);
         apply_policy_action(s,raw,standing,filter);
+    } catch(const std::exception& e) { fail(env,e); }
+}
+extern "C" JNIEXPORT void JNICALL Java_com_microduck_sim_NativeSim_applyRouladeAction(
+    JNIEnv* env,jclass,jlong handle,jfloatArray action,jboolean filter) {
+    try {
+        auto& s=sim(handle); float raw[N];
+        if(!action || env->GetArrayLength(action)!=N) throw std::runtime_error("Expected rawAction[14]");
+        env->GetFloatArrayRegion(action,0,N,raw);
+        apply_scaled_action(s,raw,1.0,1.0,filter);
     } catch(const std::exception& e) { fail(env,e); }
 }
 

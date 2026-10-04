@@ -14,7 +14,7 @@ ROOT=Path(__file__).resolve().parents[1]
 HOME=np.array([0,-.0873,-.4579,-.0049,.4530,.3491,.3491,0,0,0,.0873,.4579,.0049,-.4530])
 NAMES='left_hip_yaw left_hip_roll left_hip_pitch left_knee left_ankle neck_pitch head_pitch head_yaw head_roll right_hip_yaw right_hip_roll right_hip_pitch right_knee right_ankle'.split()
 options=ort.SessionOptions(); options.intra_op_num_threads=1; options.inter_op_num_threads=1
-sessions={name:ort.InferenceSession(str(ROOT/'app/src/main/assets/policies'/f'{name}.onnx'),sess_options=options) for name in ('alpha_stand','alpha_walking')}
+sessions={name:ort.InferenceSession(str(ROOT/'app/src/main/assets/policies'/f'{name}.onnx'),sess_options=options) for name in ('alpha_stand','alpha_walking','roulade')}
 tests=[]
 for name,s in sessions.items():
     assert [(n.name,n.shape,n.type) for n in s.get_inputs()]==[('obs',[1,61],'tensor(float)')]

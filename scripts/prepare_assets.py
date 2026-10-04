@@ -36,7 +36,7 @@ print(json.dumps({'assets':len(records),'bytes':sum(r['bytes'] for r in records)
 policy_dest=PROJECT/'app/src/main/assets/policies'
 policy_dest.mkdir(parents=True,exist_ok=True)
 policies=[]
-for name in ('alpha_stand','alpha_walking'):
+for name in ('alpha_stand','alpha_walking','roulade'):
     source=PROJECT.parent/'Pollen/microduck/policies'/(name+'.onnx')
     shutil.copyfile(source,policy_dest/source.name)
     policies.append({'name':name,'file':source.name,'sha256':hashlib.sha256(source.read_bytes()).hexdigest()})

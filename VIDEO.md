@@ -1,10 +1,12 @@
-# M6：机器人头部摄像头
+# M7：机器人头部摄像头与灰屏修复
 
-当前源码 `0.6-m6` / versionCode=12，手机标题 `Microduck · Android M6`。由用户在Android Studio编译、安装、运行。用户2026-10-04要求继续功能开发，性能、温升和前后台验收留到后面。
+当前源码 `0.7-m7` / versionCode=13，手机标题 `Microduck · Android M7`。由用户在Android Studio编译、安装、运行。性能、温升和前后台验收按用户要求延期。
 
 ## 视频源与桌面端的关系
 
-M6视频来自模型的 `head_camera`：在相机的世界位置、朝向和视场角下重新渲染场景。手机上保留可拖动的外部观察视角，改变该视角不会改变机器人相机。摄像头位置跟随头部关节和机身姿态；相机画面不加入观察窗口的轨迹/接触点标注。
+视频来自模型的 `head_camera`：在相机的世界位置、朝向和视场角下重新渲染场景。手机上保留可拖动的外部观察视角，改变该视角不会改变机器人相机。摄像头位置跟随头部关节和机身姿态；相机画面不加入观察窗口的轨迹/接触点标注。
+
+M6用户反馈画面一片灰，[普通手机报告](verification/device-M6-grey-camera-report.json)显示帧持续发布、采集错误为0。因此产帧成功不能证明场景正确。CPU按实际视觉三角形求交，在HOME姿态的9条视线均命中模型 `lens` 的背面，距相机约8.5–9.1mm；剔除背面后这些遮挡消失，见 [几何证据](verification/head-camera-visibility.json) 与 `verification/camera_visibility_check.py:1`。MuJoCo默认开启背面剔除，而Android原外部观察渲染关闭它。M7只在相机pass开启GL_BACK/GL_CCW，并恢复原剔除状态；未移动相机、删除镜头网格或修改训练模型。修复入口 `app/src/main/java/com/microduck/sim/RobotSurfaceView.java:218`；仍待手机显示确认。
 
 旧M5–M5.4使用PixelCopy复制观察窗口。旧版视频显示及两次30秒预算测试已通过，但它们不是机器人相机的验收结果，历史证据保留在 `verification/device-M54-video-acceptance.json` 和 `verification/device-M54-video-off-acceptance.json`。
 
@@ -23,7 +25,7 @@ M6视频来自模型的 `head_camera`：在相机的世界位置、朝向和视�
 
 ## 在Studio运行和使用
 
-1. 重新编译运行，确认标题M6；保持仿真应用前台及“显示3D”开启。
+1. 重新编译运行，确认标题M7；保持仿真应用前台及“显示3D”开启。
 2. 开启局域网控制，控制设备连接同一Wi-Fi，重新打开应用显示的地址，刷新网页并连接。每次服务开启都生成新访问码。
 3. 勾选“开启机器人摄像头”。首次短暂等待后应出现头部相机视野。原始JPEG为640×360，网页旋转后以竖向画面展示。
 4. 可点策略站立或前进观察机器人视野变化。拖动仿真手机的外部观察视角，网页相机视角应保持由机器人头部决定。暂停时还能持续收到静止的相机画面。
@@ -63,12 +65,13 @@ GLES线程复用网格，另建颜色纹理与深度缓冲，用相机投影绘�
 
 ## 报告字段
 
-| 字段 | M6含义 |
+| 字段 | M7含义 |
 | --- | --- |
 | `video_source` | head_camera |
 | `video_backend` | head_camera GLES framebuffer / JPEG latest-frame HTTP |
 | `video_mount_rotate` | 消费者顺时针转90°，JPEG仍保持原始640×360 |
 | `head_camera_available` / `head_camera_fovy_degrees` | 最新场景快照包含相机 / 模型垂直FOV |
+| `head_camera_back_face_culling` | 相机pass使用背面剔除；不表示手机画面已经验收 |
 | `video_enabled` / `video_demand_active` / `video_copy_pending` | 会话开启 / 最近2秒观看需求 / 一个相机任务正在处理 |
 | `video_copy_ms` | 保留字段名，改为采集请求至GLES读回完成的耗时，含GL排队及相机渲染，不是PixelCopy |
 | `video_encode_ms` | 最近一次ARGB转换、Bitmap填充及JPEG编码耗时，不含编码线程队列等待 |
@@ -76,13 +79,13 @@ GLES线程复用网格，另建颜色纹理与深度缓冲，用相机投影绘�
 | `video_frame_age_ms` | 状态捕获时距采集请求的帧龄，不是端到端显示延迟或物理状态年龄 |
 | `video_frames_published` / `video_frames_served` | 会话累计发布 / 提供给HTTP，后者不证明浏览器已显示 |
 | `video_capture_failures` / `video_error` | 相机渲染、读回或编码失败统计 |
-| `test_video_frames_published` / `test_video_frames_served` | 保留的30秒测试增量，M6本轮未做真机性能验收 |
+| `test_video_frames_published` / `test_video_frames_served` | 保留的30秒测试增量，M7本轮未做真机性能验收 |
 
 ## 检查结果与代码入口
 
-[verification/m6-checks.json](verification/m6-checks.json)包含JDK11/Android34/ORT Java编译、Android ARM64 JNI语法、原物理观测/动作与网格快照、相机矩阵和像素转换、缓存/HTTP/模拟网页检查。三组头部/机身姿态与桌面“修改cam_quat后再forward及mjv_updateScene”的独立对照，最大误差约2.6e-8；没有修改模型相机或训练文件。原500周期物理基准状态仍逐项一致。
+[verification/m7-checks.json](verification/m7-checks.json)包含JDK11/Android34/ORT Java编译、Android ARM64 JNI语法、原物理观测/动作与网格快照、相机矩阵和像素转换、翻滚窗口与倍率、缓存/HTTP/模拟网页检查。三组头部/机身姿态与桌面独立对照最大误差约2.6e-8；没有修改模型相机或训练文件。原500周期物理推进实现对照仍逐项一致。
 
-主机没有执行Android GLES FBO、JPEG真实图像解码或真实浏览器CSS旋转；这些仍需手机运行确认。性能、温升、前后台、端到端延迟按用户要求延期；原M5.4性能不能外推到当前相机。
+M6手机已实际产帧但用户看到灰屏；主机没有执行M7 Android GLES绘制、JPEG真实图像解码或真实浏览器CSS旋转。灰屏修复仍需手机显示确认。性能、温升、前后台、端到端延迟按用户要求延期；原M5.4性能不能外推到当前相机。
 
 | file:line（相对android-sim） | 作用 |
 | --- | --- |
@@ -90,8 +93,8 @@ GLES线程复用网格，另建颜色纹理与深度缓冲，用相机投影绘�
 | `app/src/main/java/com/microduck/sim/SceneFrame.java:6` | v2数据校验、相机尾部解析 |
 | `app/src/main/java/com/microduck/sim/HeadCamera.java:6` | 相机姿态/FOV/裁剪校验及视图矩阵 |
 | `app/src/main/java/com/microduck/sim/RobotSurfaceView.java:44` | 将相机任务提交到GLES线程 |
-| `app/src/main/java/com/microduck/sim/RobotSurfaceView.java:217` | 相机投影、独立绘制、读回及窗口状态恢复 |
-| `app/src/main/java/com/microduck/sim/RobotSurfaceView.java:242` | 创建/检查相机FBO |
+| `app/src/main/java/com/microduck/sim/RobotSurfaceView.java:218` | 背面剔除、相机投影、绘制、读回及状态恢复 |
+| `app/src/main/java/com/microduck/sim/RobotSurfaceView.java:249` | 创建/检查相机FBO |
 | `app/src/main/java/com/microduck/sim/VideoCapture.java:29` | 按需发起相机任务及JPEG编码 |
 | `app/src/main/java/com/microduck/sim/CameraPixels.java:6` | RGBA到ARGB和行序翻转 |
 | `app/src/main/java/com/microduck/sim/VideoCapture.java:57` | 相机报告字段 |
