@@ -17,3 +17,4 @@ __pycache__/
 *.jks
 *.keystore
 verification/rust-simio/target/
+rust/control-core/target/

@@ -1,8 +1,10 @@
-# M9：一台 Android 仿真，另一台浏览器看机器人摄像头并控制
+# M10：一台 Android 仿真，另一台浏览器看机器人摄像头并控制
 
-当前源码 `0.9.0-m9` / versionCode=17，标题 `Microduck · Android M9`，由用户Studio构建/安装/运行。局域网访问码改为4位数字。独立GL相机支持关闭外部3D；视频使用硬件编码WebRTC，保留JPEG兼容模式。站立、步行、2秒翻滚和控制心跳保留。架构及验收见 [VIDEO.md](VIDEO.md)，源码检查 [verification/m9-checks.json](verification/m9-checks.json)。用户已反馈M8实机验证正常，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)；性能检查延期。
+当前源码 `0.10.0-m10` / versionCode=18，标题 `Microduck · Android M10`，由用户Studio构建/安装/运行。局域网访问码改为4位数字。独立GL相机支持关闭外部3D；视频使用硬件编码WebRTC，保留JPEG兼容模式。站立、步行、2秒翻滚和控制心跳保留。架构及验收见 [VIDEO.md](VIDEO.md)，源码检查 [verification/m10-checks.json](verification/m10-checks.json)。用户已反馈M8实机验证正常，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)；性能检查延期。
 
 M9新增 [Rust SimIo身体服务](BAM_SIMIO.md)：通过USB连接桌面robotd。身体服务开启期间，HTTP控制返回409、网页动作按钮禁用；状态与视频仍可查看。手机按钮可接管并关闭身体服务。
+
+M10本地动作已由APK内嵌Rust核心执行，不需要电脑。构建与行为边界见 [RUST_CORE.md](RUST_CORE.md)。外部SimIo模式继续保留。
 
 ## 双设备操作
 
@@ -117,10 +119,10 @@ python3 scripts/check_source.py \
 
 | file:line | 作用 |
 | --- | --- |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:473` | 开启服务、显示地址 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:505` | 仿真线程执行命令及会话检查 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:474` | 开启服务、显示地址 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:506` | 仿真线程执行命令及会话检查 |
 | `app/src/main/java/com/microduck/sim/MainActivity.java:205` | 控制周期及心跳检查 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:570` | 退出前台时关闭 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:571` | 退出前台时关闭 |
 | `app/src/main/java/com/microduck/sim/LanControlServer.java:28` | Socket、线程与请求边界 |
 | `app/src/main/java/com/microduck/sim/LanControlServer.java:84` | HTTP路径、授权和命令路由 |
 | `app/src/main/java/com/microduck/sim/RemoteCommand.java:7` | 命令验证 |
@@ -128,4 +130,4 @@ python3 scripts/check_source.py \
 | `app/src/main/java/com/microduck/sim/RemoteLease.java:4` | 心跳/控制归属 |
 | `app/src/main/assets/controller.html:40` | 浏览器画面、状态和心跳 |
 | `verification/NetworkControlCheck.java:1` | 回环与协议检查 |
-| `verification/m9-checks.json:1` | 当前检查结果及源码摘要 |
+| `verification/m10-checks.json:1` | 当前检查结果及源码摘要 |

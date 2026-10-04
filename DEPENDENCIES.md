@@ -37,3 +37,7 @@ M8视频增加 `io.getstream:stream-webrtc-android:1.3.9` 与它的Kotlin stdlib
 ## M9：BAM与SimIo
 
 BAM是Apache-2.0上游Python公式的C++移植，随现有NDK/JNI编译，不新增APK包依赖。固定来源、参数、源码摘要见 [BAM.lock.json](BAM.lock.json)，许可和修改通知位于assets/licenses。SimIo是Android Java TCP身体服务；Rust robotd及桌面ORT在电脑运行，不通过Gradle或NDK编译。Python BAM/NumPy与verification/rust-simio的Cargo依赖只用于主机验证，不进入APK。编译复用关系及命令见 [BAM_SIMIO.md](BAM_SIMIO.md)。
+
+## M10：APK内Rust核心
+
+新增Cargo构建步骤：原版Rust Controller、obs/model/io/imu/safety模块和robotd-params等path依赖，与Android适配层编为aarch64-linux-android静态库，由NDK链接进libmicroduck_m1.so。构建期需要Rust工具链及Android ARM64标准库，本机已配置；运行期不需要电脑/Python/Cargo。Android ORT 1.20.0和WebRTC AAR保持，不引入Rust ort或桌面ORT动态库。来源与逐文件SHA见 [RUST_CORE.lock.json](RUST_CORE.lock.json)，crate版本见rust/control-core/Cargo.lock，许可随assets打包。完整编译关系和范围见 [RUST_CORE.md](RUST_CORE.md)；以上M9“APK不编译Rust”属于历史描述。

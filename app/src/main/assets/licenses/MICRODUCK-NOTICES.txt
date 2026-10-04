@@ -1,0 +1,5 @@
+Microduck Rust control sources, Apache-2.0.
+Source: Pollen/microduck (provenance in RUST_CORE.lock.json).
+Android adaptation: synchronous Android ORT callback, C ABI/JNI, body adapter and lifecycle.
+Upstream controller compiled intact with appended skill cancellation and completed-window restart hooks.
+Upstream source files and their license headers are unchanged.

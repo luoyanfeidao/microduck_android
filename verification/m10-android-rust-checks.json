@@ -1,0 +1,42 @@
+{
+  "scope": "NDK/CMake ARM64 shared library successfully linked; no Gradle/APK/device run",
+  "machine": "AArch64",
+  "load_alignment": [
+    16384,
+    16384,
+    16384
+  ],
+  "needed": [
+    "libmujoco.so",
+    "liblog.so",
+    "libdl.so",
+    "libm.so",
+    "libc.so"
+  ],
+  "defined_exports": [
+    "Java_com_microduck_sim_RustControl_open",
+    "Java_com_microduck_sim_RustControl_close",
+    "Java_com_microduck_sim_RustControl_command",
+    "Java_com_microduck_sim_RustControl_tick",
+    "duck_core_open",
+    "duck_core_close",
+    "duck_core_command",
+    "duck_core_tick"
+  ],
+  "library_sha256": "a2717d0590a5e0a06ff4916a75d50a900c4034ca253d6b763eec86b1de909bfd",
+  "source_sha256": {
+    "app/src/main/cpp/CMakeLists.txt": "c9a99ff86d17808c1892e2767dd75169a8302b3db87e5af70b29704dccf89604",
+    "app/src/main/cpp/native_sim.cpp": "46ac1ede5a709bdd3b6b952a1218dacf8a9b06c3436905194ec825a54449f567",
+    "app/src/main/cpp/bam_actuator.h": "5e3b570b6445fa4feec98e474b6e46e472ac4d1e26aacfcfb8c4e593a628211a",
+    "app/src/main/cpp/rust_control_jni.cpp": "330d9282e1a92e33d1fd5457c24079f543a5809a8a6d94c312c580c16e9cfd86",
+    "app/src/main/cpp/rust_control.h": "f7ea5d3f96e76803344619184ec8f8477d8ca423f0c046c755af5b921d64a1e1",
+    "scripts/build_rust_core.py": "d2469622c8354b57982873f007b502696aa872bc8261e2f3f019495162fa7c40",
+    "scripts/check_android_rust.py": "8ee7ff43444afb9d99bba951406eb7de5986e6c955f008f6eb8705936a96db4f",
+    "RUST_CORE.lock.json": "c89f37110967d2ddb4679383ab790058a20bcf68f3fd7ee27dfb9bdf89a2c3ce",
+    "rust/control-core/Cargo.toml": "ad35b383dc1f84782b2fd92c421493ebd1b2843a97770cb3be2b33093856b05c",
+    "rust/control-core/Cargo.lock": "7ccacf822e09a44b95c9f07eee4bf6099378ba0c1a71ed7dcd6f44b96b9a489e",
+    "rust/control-core/build.rs": "4040b2f00e52bcc39520e826c574457d9ed56e036f44447ed25d51d5f9c3d7c1",
+    "rust/control-core/src/policy.rs": "a31602caa6905fb6fa529635d3ee1626b42305b892b7e69f6556c687a7ce2546",
+    "rust/control-core/src/lib.rs": "fad721b2aa8ba60b51f42fb266a9e42b2c65c251abd7bfdfa36de15ad79346f5"
+  }
+}

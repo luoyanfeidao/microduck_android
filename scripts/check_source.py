@@ -27,8 +27,8 @@ def main():
     parser.add_argument("--ort-aar", type=pathlib.Path, required=True)
     parser.add_argument("--mujoco-dir", type=pathlib.Path, required=True,
                         help="Desktop MuJoCo 3.10.0 Python package with include/ and libmujoco")
-    parser.add_argument("--stage", default="M9")
-    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m9-checks.json")
+    parser.add_argument("--stage", default="M10")
+    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m10-checks.json")
     parser.add_argument("--host-json-jar", type=pathlib.Path,
                         help="Host-only org.json jar to execute LAN loopback tests; not an APK dependency")
     args = parser.parse_args()
@@ -104,7 +104,7 @@ def main():
         ndk = sdk / "ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++"
         run([ndk, "--target=aarch64-linux-android28", "-std=c++20", "-fsyntax-only",
              "-Wall", "-Wextra", "-Werror", "-I" + str(mujoco / "include"),
-             ROOT / "app/src/main/cpp/native_sim.cpp"])
+             ROOT / "app/src/main/cpp/native_sim.cpp", ROOT / "app/src/main/cpp/rust_control_jni.cpp"])
         report["android_arm64_jni_syntax_Werror"] = "passed"
         library = mujoco / "libmujoco.3.10.0.dylib"
         for name, fixture in (("visual-bridge-check", "visual-reference-fixture.txt"),
@@ -118,7 +118,7 @@ def main():
                  library, exe])
             report[name] = json.loads(run([exe, ROOT / "app/src/main/assets/model/scene.xml",
                                           ROOT / "verification" / fixture]))
-    paths = [ROOT / "BAM.lock.json", ROOT / "app/src/main/assets/licenses/BAM-APACHE-2.0.txt",
+    paths = [ROOT / "RUST_CORE.lock.json", ROOT / "BAM.lock.json", ROOT / "app/src/main/assets/licenses/BAM-APACHE-2.0.txt",
              ROOT / "app/src/main/assets/licenses/BAM-NOTICES.txt", ROOT / "VIDEO_DEPENDENCIES.lock.json", ROOT / "gradle.properties",
              ROOT / "scripts/check_video_dependencies.py", ROOT / "app/build.gradle", ROOT / "app/src/main/AndroidManifest.xml",
              ROOT / "app/src/main/assets/controller.html", pathlib.Path(__file__).resolve()]
@@ -134,7 +134,7 @@ def main():
                                 for p in paths if p.is_file()}
     report["baseline_device_report"] = "device-M3-realtime-render-test.json"
     report["previous_device_report"] = "device-M54-video-on-realtime-test.json (external viewer capture, not head camera)"
-    report["device_status"] = "M8 functional device verification user-confirmed. Pending user Android Studio " + args.stage + " build for BAM and SimIo body; performance checks deferred by user"
+    report["device_status"] = "M8 functional device verification user-confirmed. Pending user Android Studio " + args.stage + " build for embedded Rust core; performance checks deferred by user"
     target = args.report
     target.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))

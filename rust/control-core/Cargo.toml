@@ -1,0 +1,20 @@
+[package]
+name = "microduck-android-core"
+version = "0.10.0"
+edition = "2024"
+
+[lib]
+crate-type = ["staticlib", "rlib"]
+# Upstream unit tests target its desktop loader; our integration tests cover the Android adapter.
+test = false
+doctest = false
+
+[dependencies]
+duck-ipc-proto = { path = "../../../Pollen/microduck/duck-ipc-proto" }
+robotd-params = { path = "../../../Pollen/microduck/robotd-params" }
+thiserror = "2"
+tracing = "0.1"
+serde_json = "1"
+
+[profile.release]
+panic = "unwind"

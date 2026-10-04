@@ -285,6 +285,20 @@ extern "C" JNIEXPORT void JNICALL Java_com_microduck_sim_NativeSim_setBam(JNIEnv
 extern "C" JNIEXPORT jstring JNICALL Java_com_microduck_sim_NativeSim_bodySensors(JNIEnv* env,jclass,jlong handle) {
     try { return java_string(env,body_sensors(sim(handle))); } catch(const std::exception& e) { fail(env,e); return nullptr; }
 }
+extern "C" JNIEXPORT jdoubleArray JNICALL Java_com_microduck_sim_NativeSim_bodySample(JNIEnv* env,jclass,jlong handle) {
+    try {
+        auto& s=sim(handle);if(!finite(s))throw std::runtime_error("Non-finite body sample");
+        double values[40]{};
+        for(int w=0;w<15;++w) if(w!=9) {
+            int j=w<9?w:w-1;values[w]=s.data->qpos[s.qpos[j]];values[15+w]=s.data->qvel[s.qvel[j]];
+        }
+        const auto* quat=s.data->qpos+s.root_qpos+3;
+        mjtNum rotation[9];mju_quat2Mat(rotation,quat);
+        for(int i=0;i<3;++i){values[30+i]=s.data->qvel[s.root_dof+3+i];values[33+i]=-rotation[6+i];}
+        for(int i=0;i<4;++i)values[36+i]=quat[i];
+        auto result=env->NewDoubleArray(40);if(result)env->SetDoubleArrayRegion(result,0,40,values);return result;
+    }catch(const std::exception& e){fail(env,e);return nullptr;}
+}
 extern "C" JNIEXPORT void JNICALL Java_com_microduck_sim_NativeSim_bodyTargets(JNIEnv* env,jclass,jlong handle,jdoubleArray targets) {
     try {
         if(!targets || env->GetArrayLength(targets)!=15) throw std::runtime_error("Expected 15 SimIo targets");

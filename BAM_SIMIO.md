@@ -1,6 +1,8 @@
 # M9：BAM 执行器与 Rust SimIo 身体服务
 
-当前版本 `0.9.0-m9` / versionCode=17，手机标题 `Microduck · Android M9`。用户继续通过 Android Studio 编译、安装、运行，Gradle JDK 为 JBR 17.0.14，Java 源码/输出兼容级别11。PDF按用户要求保持上次快照。
+本页记录M9身体服务方案；M10已经内嵌Rust本地控制核心，当前使用见 [RUST_CORE.md](RUST_CORE.md)。以下“APK没有Rust”只描述M9历史状态，USB外部控制步骤在M10仍适用。
+
+M9版本 `0.9.0-m9` / versionCode=17，手机标题 `Microduck · Android M9`。用户继续通过 Android Studio 编译、安装、运行，Gradle JDK 为 JBR 17.0.14，Java 源码/输出兼容级别11。PDF按用户要求保持上次快照。
 
 ## 两项如何组合
 

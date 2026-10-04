@@ -54,9 +54,23 @@ add_subdirectory("${MUJOCO_SOURCE_DIR}" mujoco-build EXCLUDE_FROM_ALL)
 target_compile_definitions(mujoco PRIVATE _POSIX_C_SOURCE=200809L)
 # Android packages .so files; keep the bundled library SONAME unversioned.
 set_target_properties(mujoco PROPERTIES VERSION "" SOVERSION "")
-add_library(microduck_m1 SHARED native_sim.cpp)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+find_program(DUCK_CARGO cargo HINTS "$ENV{HOME}/.cargo/bin" REQUIRED)
+set(DUCK_RUST_TARGET_DIR "${CMAKE_CURRENT_BINARY_DIR}/rust-target")
+set(DUCK_RUST_ARCHIVE "${DUCK_RUST_TARGET_DIR}/aarch64-linux-android/release/libmicroduck_android_core.a")
+# Always invoke Cargo so upstream source changes are verified and Cargo tracks incremental inputs.
+add_custom_target(duck_rust_build
+  COMMAND "${Python3_EXECUTABLE}" "${M1_PROJECT_ROOT}/scripts/build_rust_core.py"
+    --cargo "${DUCK_CARGO}" --target-dir "${DUCK_RUST_TARGET_DIR}"
+    --linker "${ANDROID_TOOLCHAIN_ROOT}/bin/aarch64-linux-android28-clang"
+  BYPRODUCTS "${DUCK_RUST_ARCHIVE}"
+  VERBATIM)
+add_library(duck_rust_core STATIC IMPORTED)
+set_target_properties(duck_rust_core PROPERTIES IMPORTED_LOCATION "${DUCK_RUST_ARCHIVE}")
+add_dependencies(duck_rust_core duck_rust_build)
+add_library(microduck_m1 SHARED native_sim.cpp rust_control_jni.cpp)
 target_compile_features(microduck_m1 PRIVATE cxx_std_20)
 target_compile_options(microduck_m1 PRIVATE -Wall -Wextra -Werror)
 target_link_options(microduck_m1 PRIVATE -Wl,-z,max-page-size=16384)
 target_link_options(mujoco PRIVATE -Wl,-z,max-page-size=16384)
-target_link_libraries(microduck_m1 PRIVATE mujoco log)
+target_link_libraries(microduck_m1 PRIVATE mujoco duck_rust_core log dl m)

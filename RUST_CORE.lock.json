@@ -1,0 +1,33 @@
+{
+  "upstream": "https://github.com/pollen-robotics/microduck",
+  "revision": "a9ec4b2079ef8ee7904014089c885bb07d57d63c",
+  "source_authority": "Exact file hashes; checkout may contain local edits. No upstream source modified by Android build.",
+  "license": "Apache-2.0",
+  "rustc_verified": "1.98.1",
+  "android_target": "aarch64-linux-android",
+  "android_api": 28,
+  "inference": "Existing Android ORT 1.20.0 through synchronous callback; no Rust ort crate",
+  "upstream_sha256": {
+    "duck-control/src/model.rs": "a94830cf411f3159b9bd6def017cd4481b007e860fe5f378ffd2d483237babee",
+    "duck-control/src/imu.rs": "fa8b56fc7f7ceda56c0cd789b6338db492f6b4d4a1796e7ee699118d6f6e8f80",
+    "duck-control/src/io.rs": "2fdbb954b5c8edfb2cdbbc70251a8fa7f5a0679eebb0659bce67268cb1e46e20",
+    "duck-control/src/obs.rs": "9545dae40e6a324cea153d2dc8d79563ba105c348f96e00128fb2e55d27f26a6",
+    "duck-control/src/safety.rs": "e160869badeed46c4ab0de5ee4097c5de9113b21834287d06bb562c6dd16503e",
+    "robotd/src/control.rs": "2913f61ce9d755d7d92e67f7cab79c09bf0bf82f7f1c28a962f1cb15b27a668a",
+    "duck-ipc-proto/Cargo.toml": "c34af99463e6349590b27fb6e99f26cb9f0233020eb0e0e35a1d4ef7b39d938e",
+    "duck-ipc-proto/src/lib.rs": "53483806ed6b76eeccdf7930e879ed90fbaa4e8c3b290c4995d4668ab1df74df",
+    "robotd-params/Cargo.toml": "fef345ddab3c69cf787360a59e9f5bcad19195a82b72746ddcfc05e25e455001",
+    "robotd-params/src/edit.rs": "c93cb7b2da1ba4f48eff1cc9313d21c4e483b0db7d2a0db8d4c5eb87df642635",
+    "robotd-params/src/lib.rs": "c2a4cf9cb101b094c644764a063c6fb206f18a91105b98ccef484311bb8f06be",
+    "robotd-params/src/registry.rs": "636a95dee821f8e0cb88c8e622dbc53008dd2847b3741cf63655b908959c6233",
+    "kinematics/Cargo.toml": "a62537e0a9e2c12a34d469569e46d084623b27084b6a7c9289f8c2245fac7fbc",
+    "kinematics/src/hand.rs": "ce6b4c01a88bfba34cc3f812c2b6ba9636851aa4bc931e74f8f515b452879a32",
+    "kinematics/src/head.rs": "7f3f34dada6ea56dd1d7f77d9ee2671c659d665585d3dd3dd4451fb4c35ef3c1",
+    "kinematics/src/lib.rs": "790bad4e44a062b622de6e8134f4d9f98ac5fd4a642dafab9ae654ababe24986",
+    "kinematics/src/math.rs": "f5ef74e4abb1cbe4410be561a85abab7d8e9bd374b1157480d1b00918474c316",
+    "kinematics/src/mjcf.rs": "c0e08e645fb41296fcd214ff103da6fb40506b136360485b28ae3e3a92ea5457",
+    "kinematics/src/tof.rs": "4577031883630e6063c6d51e3a6faed5b9261480267d97ea4a8354bcecb9f3cd",
+    "Cargo.toml": "e9d514f3412c168fde38f1ed419bce3ac3913c42fdde8d42b1804b2b3bc2aedd",
+    "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+  }
+}

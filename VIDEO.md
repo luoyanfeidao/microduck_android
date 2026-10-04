@@ -1,12 +1,14 @@
-# M9：独立机器人相机与硬件编码 WebRTC
+# M10：独立机器人相机与硬件编码 WebRTC
 
-当前源码 `0.9.0-m9` / versionCode=17，手机标题 `Microduck · Android M9`。由用户在Android Studio Sync、编译、安装和运行。两项优先工作均已实现：独立相机 EGL/Surface 与 WebRTC 视频轨道/硬件编码。用户已反馈M8“实机验证正常”，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)。M8.1仅将局域网访问码改为4位数字；实际codec/硬件编码器细节未另取设备报告，性能/温升长测仍延期。
+当前源码 `0.10.0-m10` / versionCode=18，手机标题 `Microduck · Android M10`。由用户在Android Studio Sync、编译、安装和运行。两项优先工作均已实现：独立相机 EGL/Surface 与 WebRTC 视频轨道/硬件编码。用户已反馈M8“实机验证正常”，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)。M8.1仅将局域网访问码改为4位数字；实际codec/硬件编码器细节未另取设备报告，性能/温升长测仍延期。
 
 M9增加BAM与Rust身体服务，见 [BAM_SIMIO.md](BAM_SIMIO.md)。视频链路保持；身体服务期间网页只监看，动作控制由Rust接管。M8功能已由用户确认，M9仍待Studio运行。
 
+M10本地动作已由APK内嵌Rust核心执行，不需要电脑。构建与行为边界见 [RUST_CORE.md](RUST_CORE.md)。外部SimIo模式继续保留。
+
 ## Studio运行与功能验收
 
-1. Sync、Build、Run；确认标题M9。首次Sync下载Stream WebRTC 1.3.9及传递依赖，当前Studio使用JBR 17.0.14作为Gradle JDK；AGP7.2.2/Gradle7.5保持，Java源码/输出兼容级别为11。
+1. Sync、Build、Run；确认标题M10。首次Sync下载Stream WebRTC 1.3.9及传递依赖，当前Studio使用JBR 17.0.14作为Gradle JDK；AGP7.2.2/Gradle7.5保持，Java源码/输出兼容级别为11。
 2. 手机保持应用前台，开启局域网控制；控制设备用同一Wi-Fi/热点，刷新控制网页，使用本次4位数字访问码连接。
 3. 勾选“开启机器人摄像头”，默认WebRTC。画面下方应显示 `video/H264` 或实际协商codec、解码累计帧和接收FPS。设置是优先H.264，不能把“设置了优先”当成已经协商成功。
 4. 手机关闭“显示3D”，点站立/前进：浏览器相机应继续随机器人头部运动；开启3D并拖动外部观察视角，相机应仍由头部姿态决定。

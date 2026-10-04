@@ -18,6 +18,7 @@ final class NativeSim {
     static native void applyRouladeAction(long handle, float[] rawAction, boolean filter);
     static native void setBam(long handle, boolean enabled);
     static native String bodySensors(long handle);
+    static native double[] bodySample(long handle); // pos15, vel15, gyro3, gravity3, quat4
     static native void bodyTargets(long handle, double[] wireTargets);
     static native void bodyGain(long handle, int kp);
     static native void bodyTorque(long handle, boolean on);

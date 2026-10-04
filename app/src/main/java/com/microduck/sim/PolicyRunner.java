@@ -13,7 +13,9 @@ final class PolicyRunner implements AutoCloseable {
     private final OrtEnvironment env = OrtEnvironment.getEnvironment();
     private final Map<String,OrtSession> sessions = new HashMap<>();
     private final Map<String,String> hashes = new HashMap<>();
-    private final float[] previous = new float[14], command = new float[13];
+    private final float[] command = new float[13];
+    private long rustCore;
+    private boolean fallen;
     private final RouladeWindow roulade=new RouladeWindow();
     String active = "none";
     double inferenceMs, smokeMaxError;
@@ -51,6 +53,7 @@ final class PolicyRunner implements AutoCloseable {
             }
             if(!covered.containsAll(sessions.keySet())) throw new IllegalStateException("Policy smoke fixture missing");
             if(smokeMaxError>1e-3) throw new IllegalStateException("Desktop/device ONNX smoke mismatch: "+smokeMaxError);
+            rustCore=RustControl.open();
         } catch(Exception e) { close(); throw e; }
     }
     private static void validate(OrtSession s) throws Exception {
@@ -75,31 +78,37 @@ final class PolicyRunner implements AutoCloseable {
             return out;
         }
     }
-    void reset() { Arrays.fill(previous,0); Arrays.fill(command,0); roulade.reset(); active="none"; inferenceMs=0; }
-    void velocity(float vx,float vy,float yaw) { roulade.cancel(); command[0]=vx; command[1]=vy; command[2]=yaw; }
+    void reset() { RustControl.command(rustCore,0); fallen=false; Arrays.fill(command,0); roulade.reset(); active="none"; inferenceMs=0; }
+    void velocity(float vx,float vy,float yaw) { if(roulade.active()) RustControl.command(rustCore,2); roulade.cancel(); command[0]=vx; command[1]=vy; command[2]=yaw; }
     boolean rolling() { return roulade.active(); }
     void startRoulade() {
         if(!sessions.containsKey("roulade")) throw new IllegalStateException("Forward-roll policy missing");
-        if(roulade.start()) Arrays.fill(command,0);
+        if(!roulade.active()) { RustControl.command(rustCore,1); roulade.start(); Arrays.fill(command,0); }
     }
     void afterStep() { roulade.advance(); }
+    // Called synchronously by Rust on this same worker; no JNI global reference is retained.
+    float[] rustInfer(int net,float[] observation) throws Exception {
+        String[] names={"alpha_stand","alpha_walking","roulade"};
+        if(net<0 || net>=names.length) throw new IllegalStateException("Unsupported Rust policy");
+        active=names[net];
+        long start=System.nanoTime();float[] action=infer(sessions.get(active),observation);
+        inferenceMs=(System.nanoTime()-start)/1e6;return action;
+    }
     void tick(long handle) throws Exception {
-        boolean standing=Math.sqrt(command[0]*command[0]+command[1]*command[1]+command[2]*command[2])<.05;
-        boolean rolling=roulade.active();
-        active=rolling?"roulade":standing?"alpha_stand":"alpha_walking";
-        float[] obs=NativeSim.observation(handle,previous,command);
-        long start=System.nanoTime(); float[] action=infer(sessions.get(active),obs);
-        inferenceMs=(System.nanoTime()-start)/1e6;
-        if(rolling) NativeSim.applyRouladeAction(handle,action,filter);
-        else NativeSim.applyAction(handle,action,standing,filter);
-        System.arraycopy(action,0,previous,0,14); // Feedback remains raw, before scale/filter.
+        double[] result=RustControl.tick(rustCore,NativeSim.bodySample(handle),
+            new double[]{command[0],command[1],command[2]},filter,this);
+        NativeSim.bodyGain(handle,(int)result[15]);
+        NativeSim.bodyTargets(handle,Arrays.copyOf(result,15));
+        fallen=result[17]!=0;
     }
     CapturedReport.Fields captureReport() {
         String policy=active,version=env.getVersion(),hash=hashes.get(active);
         double smoke=smokeMaxError,inference=inferenceMs,vx=command[0],vy=command[1],yaw=command[2];
-        boolean filtered=filter;
+        boolean filtered=filter,wasFallen=fallen;
         boolean rolling=roulade.active(); int remaining=roulade.remaining(); long completed=roulade.completed();
         return data->{
+            data.put("control_core","embedded Rust / upstream Controller + Safety");
+            data.put("rust_fallen",wasFallen);
             data.put("policy",policy); data.put("onnx_runtime",version);
             data.put("policy_smoke_max_abs_error",smoke); data.put("inference_ms",inference);
             data.put("action_filter",filtered?"runtime defaults: head .5 / legs .7":"disabled");
@@ -110,6 +119,7 @@ final class PolicyRunner implements AutoCloseable {
         };
     }
     @Override public void close() {
+        if(rustCore!=0) { RustControl.close(rustCore); rustCore=0; }
         for(OrtSession s:sessions.values()) try { s.close(); } catch(OrtException ignored) {}
         sessions.clear(); // OrtEnvironment is shared process-wide; do not close it here.
     }

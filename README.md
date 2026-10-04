@@ -1,4 +1,4 @@
-# Android Studio 施工入口（M9：BAM执行器 + Rust SimIo身体服务）
+# Android Studio 施工入口（M10：APK内嵌Rust控制核心）
 
 在 Android Studio 中打开当前目录 `android-sim`，不要打开外层 Microduck 目录。由你完成 Sync、编译、安装和真机运行。
 
@@ -6,7 +6,9 @@
 
 当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。另一台Android浏览器可发站立/步行/前滚翻/暂停/复位命令并读状态；视频来自模型的 `head_camera`，随机器人头部运动。手机保留外部观察视角。控制见 [NETWORK.md](NETWORK.md)，相机见 [VIDEO.md](VIDEO.md)，前滚翻见 [SKILLS.md](SKILLS.md)。
 
-**当前功能开发 M9：** `0.9.0-m9` / versionCode=17。默认使用BAM XL330 M6执行器，可切回XML伺服；新增USB SimIo身体服务，由桌面原版Rust robotd控制Android MuJoCo身体。APK没有嵌入Rust。方案、架构、控制权和运行命令见 [BAM_SIMIO.md](BAM_SIMIO.md)。JDK17/release11源码回归见 [m9-checks.json](verification/m9-checks.json)，BAM数值对照见 [m9-bam-checks.json](verification/m9-bam-checks.json)，真实Rust/Java/JNI及完整robotd联调见 [m9-simio-checks.json](verification/m9-simio-checks.json)。M9待用户Studio编译运行；主机验证不能代替设备动作质量确认。
+**当前功能开发 M10：** `0.10.0-m10` / versionCode=18。本地站立、步行和翻滚已交给APK内Rust Controller与Safety，运行时不需要电脑或USB。ONNX继续用现有Android ORT，由Rust同步调用；BAM、相机和外部SimIo调试入口保留。Studio构建自动通过Cargo编译Android ARM64静态库并链接进JNI。架构、依赖、使用方法及验证边界见 [RUST_CORE.md](RUST_CORE.md)。已完成原生交叉编译和真实主机闭环，手机M10待用户Studio运行；PDF不更新。
+
+**历史功能开发 M9：** `0.9.0-m9` / versionCode=17。默认使用BAM XL330 M6执行器，可切回XML伺服；新增USB SimIo身体服务，由桌面原版Rust robotd控制Android MuJoCo身体。APK没有嵌入Rust。方案、架构、控制权和运行命令见 [BAM_SIMIO.md](BAM_SIMIO.md)。JDK17/release11源码回归见 [m9-checks.json](verification/m9-checks.json)，BAM数值对照见 [m9-bam-checks.json](verification/m9-bam-checks.json)，真实Rust/Java/JNI及完整robotd联调见 [m9-simio-checks.json](verification/m9-simio-checks.json)。M9待用户Studio编译运行；主机验证不能代替设备动作质量确认。
 
 **历史功能 M8.1：** `0.8.1-m81` / versionCode=16，标题 `Microduck · Android M8.1`。局域网访问码改为4位数字，每次开启服务重新随机生成，保留前导零。用户已反馈M8实机验证正常，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)。机器人相机拥有独立 EGL 上下文和 Surface，关闭手机“显示3D”后仍能出流。网页提供 WebRTC（目标20FPS、优先H.264硬件编码、单观看者）与JPEG兼容模式（640×360、10FPS、质量70）。在Studio重新Build、Run，保持应用前台，开启LAN并刷新控制网页，输入新4位访问码。保留站立/步行、2秒翻滚、滤波、伺服及50Hz控制基线，抬头慢/僵硬未在这次改动中修复。视频方案、架构和功能验收见 [VIDEO.md](VIDEO.md)。
 
@@ -143,7 +145,7 @@ python3 scripts/check_source.py \
 
 过滤复选框默认采用 Rust `Tuning::default` 的目标 EMA：头 alpha=0.5、腿 alpha=0.7，第一帧不滤波；可以关闭做 A/B。训练仓库要求无 action low-pass，与运行时存在差异，所以这里明确记录设置，不声称与训练物理完全一致。没有对头目标再加一次命令，也没有额外观测归一化；现有 ONNX 自带 normalizer。
 
-M9默认使用BAM M6的名义参数CPU实现，XML位置伺服保留作对照；训练的随机化与执行器延迟尚未移植。本地Android策略没有Rust完整Safety/skill等逻辑；开启SimIo身体服务时，这些逻辑由电脑原版robotd执行，详见 [BAM_SIMIO.md](BAM_SIMIO.md)。本项目连接仿真身体，不直接控制实物机器人。
+M10默认使用BAM M6名义参数CPU实现，XML位置伺服保留作对照；训练随机化与执行器延迟尚未移植。本地策略复用Rust Controller/观测/Safety，ORT仍由Android提供；完整daemon服务没有内嵌，范围见 [RUST_CORE.md](RUST_CORE.md)。外部桌面robotd仍可通过 [SimIo身体服务](BAM_SIMIO.md) 接管。本项目连接仿真身体，不直接控制实物机器人。
 
 换 ONNX 后要重新生成桌面对照，不能只更新 manifest：
 

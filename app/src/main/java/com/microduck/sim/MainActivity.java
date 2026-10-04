@@ -98,7 +98,7 @@ public final class MainActivity extends Activity {
         column.setPadding(24, 32, 24, 24);
         column.setBackgroundColor(Color.rgb(237, 244, 247));
         TextView title = new TextView(this);
-        title.setText("Microduck · Android M9"); title.setTextSize(24);
+        title.setText("Microduck · Android M10"); title.setTextSize(24);
         title.setTextColor(Color.rgb(23, 52, 75)); column.addView(title);
         TextView scope = new TextView(this);
         scope.setText("3D 物理仿真 + ONNX 站立 / 步行 / 前滚翻\n单指旋转、双指缩放；橙色轨迹、红色接触点。");
@@ -393,9 +393,9 @@ public final class MainActivity extends Activity {
                     data.put("wall_run_seconds",wallRun); data.put("late_ticks",capturedLateTicks); data.put("mode","running");
                 }
                 data.put("model","scene.xml → robot_groundcontact.xml");
-                data.put("stage",bodyEnabled?"M9: Rust SimIo body":policy?"M9: Android ONNX":"M9: pose simulation");
+                data.put("stage",bodyEnabled?"M10: desktop Rust SimIo body":policy?"M10: embedded Rust + Android ONNX":"M10: pose simulation");
                 data.put("policy_enabled",policy); data.put("control_ms",control);
-                data.put("app_stage","M9"); data.put("render_enabled",render);
+                data.put("app_stage","M10"); data.put("render_enabled",render);
                 data.put("simio_enabled",bodyEnabled);data.put("simio_connected",bodyConnected);
                 data.put("control_owner",bodyEnabled?"rust-simio":remoteActive?"browser":"local");
                 data.put("ready",loaded); data.put("running",running);
@@ -421,6 +421,7 @@ public final class MainActivity extends Activity {
                 app.putInto(data); visual.putInto(data);
                 if(videoFields!=null) videoFields.putInto(data);
                 if(policyFields!=null) policyFields.putInto(data);
+                if(bodyEnabled) { data.put("control_core","desktop Rust / SimIo"); data.remove("rust_fallen"); }
             },reportWriter);
             reports.submit(captured,completedTest,reportSubmitTiming);
             metadataCaptureMs[4]=(System.nanoTime()-policyDone)/1e6;
