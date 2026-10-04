@@ -31,16 +31,16 @@
 ## 在 Android Studio 编译
 
 1. File → Open，选择 `/Users/navinfo/AndroidStudioProjects/deepLearning/microduck/android-sim`。
-2. Settings → Build, Execution, Deployment → Build Tools → Gradle，使用工程自带 Gradle Wrapper；Gradle JDK 选择 **JDK 11**。当前机器可选择 `/Applications/Android Studio.app/Contents/jbr/Contents/Home`（本机这个目录是 JDK 11；其他机器请核实版本）。
+2. Settings → Build, Execution, Deployment → Build Tools → Gradle，使用工程自带 Gradle Wrapper。当前机器的 **Gradle JDK 是 JBR 17.0.14（JDK 17）**，安装目录 `/Users/navinfo/Library/Java/JavaVirtualMachines/jbr-17.0.14`，Java Home 为其 `Contents/Home`；本地Studio配置的名称是 `jbr-17`。应用的 `sourceCompatibility` / `targetCompatibility` 仍为 Java 11，这是源码和编译输出的兼容级别，与运行Gradle的JDK版本不同。
 3. SDK Manager 安装 Android SDK Platform 34、NDK **25.1.8937393**、CMake **3.30.3**。当前 `local.properties` 指向 `/Users/navinfo/Android/sdk`；换机器应让 Studio 更新 SDK 路径。
 4. 执行 Gradle Sync，首次同步保持网络可用。配置为 AGP 7.2.2 / Gradle 7.5，不必在首次验收时顺带升级构建链。
 5. 选择 `app` 和你的 ARM64 Android 设备，点击 Run。最低 Android API 28；本次目标设备为 V2185A / Android 16 / 骁龙 SM8450。
 
 构建会自动执行 `scripts/prepare_assets.py`，从旁边的 `Pollen/microduck_rl` 收集 XML 与 38 个 STL，从 `Pollen/microduck/policies` 收集 `alpha_stand.onnx / alpha_walking.onnx / roulade.onnx`，并生成 SHA-256 清单。因此需要保留当前目录与 `Pollen` 的相对位置，以及 PATH 中可用的 **Python 3.9+**、Git。若 Studio 报找不到 `python3`，从终端运行 `python3 scripts/prepare_assets.py` 确认解释器可用，并修正启动 Studio 时的 PATH。
 
-M2 新增 Maven 依赖 `com.microsoft.onnxruntime:onnxruntime-android:1.20.0`，再次 Sync 会下载它。已检查实际 AAR 的 Java 类版本兼容 JDK 11，因此构建链维持不变。当前目标手机的系统页大小为 4096 字节；该 AAR 的 JNI 库仅有 4KB ELF 对齐，16KB 页设备尚不支持当前组合，不能凭 MuJoCo 库的 16KB 对齐宣称整个 APK 已支持。
+M2 新增 Maven 依赖 `com.microsoft.onnxruntime:onnxruntime-android:1.20.0`，再次 Sync 会下载它。已有主机编译检查使用JDK 11；当前用户Studio运行Gradle使用JBR 17.0.14，两者分别记录。当前目标手机的系统页大小为 4096 字节；该 AAR 的 JNI 库仅有 4KB ELF 对齐，16KB 页设备尚不支持当前组合，不能凭 MuJoCo 库的 16KB 对齐宣称整个 APK 已支持。
 
-**M8新增依赖：** `io.getstream:stream-webrtc-android:1.3.9`，首次Sync下载AAR及Kotlin stdlib1.9.25/AndroidX annotation1.9.1。AndroidX已启用；JDK11、AGP7.2.2、Gradle7.5保持。AAR字节码major55、minSdk21，arm64 JNI为16KB对齐；ORT的4KB限制仍在。固定来源与摘要 [VIDEO_DEPENDENCIES.lock.json](VIDEO_DEPENDENCIES.lock.json)，通知/许可见 `app/src/main/assets/licenses/`。
+**M8新增依赖：** `io.getstream:stream-webrtc-android:1.3.9`，首次Sync下载AAR及Kotlin stdlib1.9.25/AndroidX annotation1.9.1。AndroidX已启用；当前Studio Gradle JDK为17，AGP7.2.2、Gradle7.5及Java源码/输出兼容级别11保持。AAR字节码major55、minSdk21，arm64 JNI为16KB对齐；ORT的4KB限制仍在。固定来源与摘要 [VIDEO_DEPENDENCIES.lock.json](VIDEO_DEPENDENCIES.lock.json)，通知/许可见 `app/src/main/assets/licenses/`。
 
 CMake 会从源码构建 MuJoCo 和 JNI 库，不需要手动复制 `.so`。MuJoCo 固定为 3.10.0，提交 `28009f9105cd92784b7b0b30c0605a5e29107a77`。本机已准备 `.native-cache` 源码缓存；缓存缺失时构建配置会下载官方源码及上游固定版本依赖。缓存和生成模型不提交到版本控制。
 
