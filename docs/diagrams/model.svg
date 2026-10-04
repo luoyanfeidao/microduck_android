@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="509.27559055118115" height="237" preserveAspectRatio="xMinYMin meet" viewBox="0 0 509 237" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="509.27559055118115" height="237"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-237)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="180" width="143" height="48" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="39.26123046875" y="208.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,416) scale(1,-1)">Onshape CAD</text>
+			<text x="40.83203125" y="194.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,388) scale(1,-1)">装配 / 质量 / 几何</text>
+			<rect x="183" y="180" width="143" height="48" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="220.466796875" y="208.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,416) scale(1,-1)">JSON + 导出器</text>
+			<text x="215.166015625" y="194.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,388) scale(1,-1)">选择零件 / 后处理规则</text>
+			<rect x="366" y="180" width="143" height="48" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="399.5654296875" y="208.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,416) scale(1,-1)">robot XML + STL</text>
+			<text x="409.5" y="194.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,388) scale(1,-1)">已生成模型文件</text>
+			<path d="M 143,204 L 182,204 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="182 204, 176.5973 206.6098, 176.5973 201.3902" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 326,204 L 365,204 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="365 204, 359.5973 206.6098, 359.5973 201.3902" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="366" y="93" width="143" height="49" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="414.99267578125" y="121.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,243) scale(1,-1)">scene.xml</text>
+			<text x="393.93359375" y="107.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,215) scale(1,-1)">模型 + 地面 + keyframes</text>
+			<path d="M 437,180 L 437,143 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="437 143, 439.6098 148.4027, 434.3902 148.4027" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="183" y="93" width="143" height="49" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="215.876953125" y="121.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,243) scale(1,-1)">Android 资源收集</text>
+			<text x="213.37890625" y="107.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,215) scale(1,-1)">递归 include / 文件依赖</text>
+			<path d="M 366,117 L 327,117 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="327 117, 332.4027 114.3902, 332.4027 119.6098" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="0" y="93" width="143" height="49" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="42.0419921875" y="121.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,243) scale(1,-1)">assets/model</text>
+			<text x="27.935546875" y="107.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,215) scale(1,-1)">保持相对路径 / SHA-256</text>
+			<path d="M 183,117 L 144,117 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="144 117, 149.4027 114.3902, 149.4027 119.6098" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="0" y="9" width="143" height="49" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="23.98291015625" y="37.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,75) scale(1,-1)">MuJoCo mj_loadXML</text>
+			<text x="33.974609375" y="23.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,47) scale(1,-1)">XML → 内存 mjModel</text>
+			<path d="M 71,93 L 71,59 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="71 59, 73.60979 64.40268, 68.39021 64.40268" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="266.1641845703125" y="50" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,100) scale(1,-1)">Android 构建只消费现成 XML / STL</text>
+			<text x="239.769775390625" y="29" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,58) scale(1,-1)">没有联网访问 CAD，也不执行 JSON → XML 导出</text>
+		</g>
+	</g>
+</svg>

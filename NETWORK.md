@@ -1,6 +1,6 @@
 # M7.1：一台 Android 仿真，另一台浏览器看机器人摄像头并控制
 
-当前源码 `0.7.1-m71` / versionCode=14，手机标题 `Microduck · Android M7.1`，由用户在Android Studio构建/安装/运行。视频使用模型head_camera的机器人视角，修复镜头背面遮挡导致的灰屏；手机保留独立外部观察视角。新增前滚翻命令，机制见 [SKILLS.md](SKILLS.md)。访问码及JPEG HTTP路径保留，结构图见 [VIDEO.md](VIDEO.md)。源码检查 [verification/m71-checks.json](verification/m71-checks.json)通过，用户确认M7摄像头正常、前滚翻不完整，M7.1将交接改为2秒，动作待确认。性能/前后台验收按用户要求延期。
+当前源码 `0.7.1-m71` / versionCode=14，手机标题 `Microduck · Android M7.1`，由用户在Android Studio构建/安装/运行。视频使用模型head_camera的机器人视角，修复镜头背面遮挡导致的灰屏；手机保留独立外部观察视角。新增前滚翻命令，机制见 [SKILLS.md](SKILLS.md)。访问码及JPEG HTTP路径保留，结构图见 [VIDEO.md](VIDEO.md)。源码检查 [verification/m71-checks.json](verification/m71-checks.json)通过，用户确认摄像头正常、M7.1整圈翻滚通过；抬头慢与整体僵硬待优化。性能/前后台验收按用户要求延期。
 
 真实CAD视图仍由仿真手机以约30FPS绘制；浏览器默认关闭画面，勾选“开启机器人摄像头”后按需采集、传输，目标10FPS、640×360。50Hz物理/策略及模型保留，新增roulade ONNX。
 

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="509.27559055118115" height="286" preserveAspectRatio="xMinYMin meet" viewBox="0 0 509 286" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="509.27559055118115" height="286"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-286)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="223" width="145" height="52" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="52.5" y="260.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,520) scale(1,-1)">资源分支</text>
+			<text x="29.03515625" y="246.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,492) scale(1,-1)">RL scene.xml + includes</text>
+			<text x="35.607421875" y="232.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,464) scale(1,-1)">Rust目录本地 ONNX</text>
+			<rect x="183" y="223" width="145" height="52" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="233.54931640625" y="260.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,520) scale(1,-1)">Java 分支</text>
+			<text x="232.6015625" y="246.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,492) scale(1,-1)">Android 源码</text>
+			<text x="210.58984375" y="232.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,464) scale(1,-1)">ORT Android 1.20.0 AAR</text>
+			<rect x="366" y="223" width="143" height="52" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="411.9384765625" y="260.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,520) scale(1,-1)">Native 分支</text>
+			<text x="413.494140625" y="246.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,492) scale(1,-1)">MuJoCo 源码</text>
+			<text x="406.046875" y="232.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,464) scale(1,-1)">JNI + NDK25补丁</text>
+			<rect x="0" y="134" width="145" height="52" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="32.76611328125" y="171.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,342) scale(1,-1)">preBuild 前置任务</text>
+			<text x="35.814453125" y="157.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,314) scale(1,-1)">prepareModelAssets</text>
+			<text x="43.94140625" y="143.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,286) scale(1,-1)">复制 + 摘要清单</text>
+			<rect x="183" y="134" width="145" height="52" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="225.76611328125" y="171.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,342) scale(1,-1)">Gradle / AGP</text>
+			<text x="233.751953125" y="157.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,314) scale(1,-1)">Java → DEX</text>
+			<text x="238.1640625" y="143.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,286) scale(1,-1)">AAR 合并</text>
+			<rect x="366" y="134" width="143" height="52" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="404.43115234375" y="171.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,342) scale(1,-1)">CMake / Clang</text>
+			<text x="403.482421875" y="157.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,314) scale(1,-1)">Android arm64-v8a</text>
+			<text x="387.484375" y="143.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,286) scale(1,-1)">libmujoco / libmicroduck_m1</text>
+			<path d="M 72,223 L 72,187 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="72 187, 74.60979 192.4027, 69.39021 192.4027" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 255,223 L 255,187 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="255 187, 257.6098 192.4027, 252.3902 192.4027" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 437,223 L 437,187 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="437 187, 439.6098 192.4027, 434.3902 192.4027" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="145" y="41" width="220" height="55" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="233.60595703125" y="79.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,159) scale(1,-1)">APK 打包</text>
+			<text x="208.3125" y="65.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,131) scale(1,-1)">DEX + assets + arm64 .so</text>
+			<text x="212.32421875" y="51.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,103) scale(1,-1)">由用户 Studio 构建/安装</text>
+			<path d="M 72,134 L 180,97 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="180 97, 175.7348 101.2199, 174.0431 96.28209" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 255,134 L 255,97 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="255 97, 257.6098 102.4027, 252.3902 102.4027" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 437,134 L 330,97 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="330 97, 335.9589 96.29914, 334.2531 101.2321" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="142.1322021484375" y="13" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,26) scale(1,-1)">三条分支汇合；不承诺它们在 Gradle 中固定先后或固定并行</text>
+		</g>
+	</g>
+</svg>

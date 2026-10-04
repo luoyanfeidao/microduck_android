@@ -8,6 +8,8 @@
 
 **当前功能开发M7.1：** `0.7.1-m71` / versionCode=14，标题 `Microduck · Android M7.1`。修复M6摄像头被模型镜头背面遮挡的灰屏，新增手机和网页“向前翻滚一次”：现有roulade ONNX执行100周期/2秒仿真时间，然后保持当前位置切回站立控制；重复点击不延长在途动作。暂停冻结动作，点翻滚可继续剩余周期；站立/步行或复位取消动作。在Studio编译运行，保持应用前台及“显示3D”开启，开启LAN服务，浏览器刷新并重新连接，勾选“开启机器人摄像头”。相机仍为640×360、10FPS目标、JPEG质量70，网页转90°。无新增Maven依赖。
 
+**详细技术说明：** [PDF](docs/Android_Microduck_方案架构与编译复用说明.pdf) / [Markdown](docs/Android_Microduck_方案架构与编译复用说明.md)，重点说明Android与两个Pollen仓库的资源复用、构建边界、NDK引擎编译、训练BAM差异，并包含架构图、关键源码注解、依赖及使用方法。生成与源码引用检查见 [docs/README.md](docs/README.md)。
+
 **检查边界：** [verification/m71-checks.json](verification/m71-checks.json)验证Java/Android JNI、相机及物理对照、翻滚时间窗口/动作倍率、三策略摘要与smoke覆盖、网页/HTTP协议。用户已确认M7摄像头正常、M7.1整圈翻滚通过，反馈抬头慢、整体动作僵硬；只读手机日志证据见 [device-M71-roll-acceptance.json](verification/device-M71-roll-acceptance.json)。采样未见推理瓶颈，主机对照发现交接时头颈恢复不同步、视线先向下再恢复；关闭恢复阶段头部滤波仅小幅改善，诊断见 [SKILLS.md](SKILLS.md)。当前保留已通过的2秒配置，不宣称任意起始姿态成功或动作质量已修复。代理未打包/安装/运行APK。性能、温升及前后台验收按用户要求延期。下面M5/M5.4数据是外部观察窗口画面的历史结果。
 
 **历史M5.4视频开启30秒验收通过：** `0.5.4-m54` / versionCode=11。1501周期/6004物理步、墙钟30.007秒/仿真30.02秒，完整工作线程p99=10.648ms/max=19.772ms、超20ms周期0，调度迟到超过20ms周期0；手机30.03FPS、视频298发布帧/9.93FPS、265帧提供HTTP、采集错误0，数值及最终位姿与M5.3一致。报告捕获平均0.285ms/max=0.519ms，队列提交max=0.087ms。证据 [verification/device-M54-video-acceptance.json](verification/device-M54-video-acceptance.json)。单次最大预算余量0.228ms，温度/频率未控制，不代表长期或硬实时保证。

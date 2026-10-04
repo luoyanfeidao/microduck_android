@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="509.27559055118115" height="298" preserveAspectRatio="xMinYMin meet" viewBox="0 0 509 298" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="509.27559055118115" height="298"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-298)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="235" width="145" height="50" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="51.11083984375" y="264.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,528) scale(1,-1)">UI 主线程</text>
+			<text x="37.1640625" y="250.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,500) scale(1,-1)">按钮 / Activity / 显示</text>
+			<rect x="366" y="235" width="143" height="50" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="403.056640625" y="264.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,528) scale(1,-1)">HTTP 收发线程</text>
+			<text x="404.384765625" y="250.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,500) scale(1,-1)">命令 / 状态 / JPEG</text>
+			<rect x="183" y="155" width="145" height="66" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="220.5" y="199.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,398) scale(1,-1)">单仿真工作线程</text>
+			<text x="228.607421875" y="185.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,370) scale(1,-1)">20ms 控制周期</text>
+			<text x="215.38671875" y="171.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,342) scale(1,-1)">ORT + JNI 唯一访问者</text>
+			<path d="M 145,250 L 215,222 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="215 222, 210.953 226.4296, 209.0145 221.5834" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="164.0" y="243.0" style="font-family: CN; font-size: 8px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,486) scale(1,-1)">本地投递</text>
+			<path d="M 366,250 L 295,222 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="295 222, 300.9834 221.5543, 299.0685 226.4099" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="316.716796875" y="243.0" style="font-family: CN; font-size: 8px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,486) scale(1,-1)">Mailbox</text>
+			<rect x="0" y="81" width="145" height="54" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="42.21435546875" y="119.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,238) scale(1,-1)">JNI / MuJoCo</text>
+			<text x="29.453125" y="105.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,210) scale(1,-1)">观测 → action → 4物理步</text>
+			<text x="41.380859375" y="91.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,182) scale(1,-1)">mjModel / mjData</text>
+			<path d="M 183,176 L 120,136 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="120 136, 125.9599 136.6927, 123.1621 141.0991" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="183" y="15" width="145" height="53" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="235.5" y="52.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,105) scale(1,-1)">报告线程</text>
+			<text x="219.490234375" y="38.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,77) scale(1,-1)">JSON / 文件 / logcat</text>
+			<text x="231.5" y="24.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,49) scale(1,-1)">最新状态缓存</text>
+			<path d="M 255,155 L 255,69 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="255 69, 257.6098 74.40268, 252.3902 74.40268" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="230.994140625" y="119.0" style="font-family: CN; font-size: 8px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,238) scale(1,-1)">约250ms捕获</text>
+			<rect x="366" y="81" width="143" height="54" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="402.77099609375" y="119.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,238) scale(1,-1)">GLES 渲染线程</text>
+			<text x="404.94140625" y="105.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,210) scale(1,-1)">网格 + 不可变快照</text>
+			<text x="401.943359375" y="91.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,182) scale(1,-1)">外部视角 / 相机FBO</text>
+			<path d="M 328,176 L 393,136 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="393 136, 389.7665 141.0542, 387.031 136.6089" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="343.162109375" y="163.0" style="font-family: CN; font-size: 8px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,326) scale(1,-1)">30Hz快照</text>
+			<path d="M 328,42 L 345,42 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<path d="M 345,42 L 345,260 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<path d="M 345,260 L 365,260 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="365 260, 359.5973 262.6098, 359.5973 257.3902" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="388.125" y="293" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,586) scale(1,-1)">只读报告缓存，不触发JNI</text>
+			<text x="9.899780273437493" y="34" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,68) scale(1,-1)">GL / HTTP / 报告不访问原生句柄</text>
+		</g>
+	</g>
+</svg>

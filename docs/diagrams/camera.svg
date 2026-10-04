@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="509.27559055118115" height="242" preserveAspectRatio="xMinYMin meet" viewBox="0 0 509 242" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="509.27559055118115" height="242"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-242)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="179" width="145" height="50" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="42.49267578125" y="215.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,430) scale(1,-1)">MuJoCo 状态</text>
+			<text x="31.15234375" y="201.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,402) scale(1,-1)">head_camera 世界姿态</text>
+			<text x="41.55859375" y="187.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,374) scale(1,-1)">局部X转180°修正</text>
+			<rect x="183" y="179" width="145" height="50" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="228.830078125" y="215.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,430) scale(1,-1)">场景快照 v2</text>
+			<text x="224.609375" y="201.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,402) scale(1,-1)">相机 / FOV / 裁剪</text>
+			<text x="219.5" y="187.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,374) scale(1,-1)">与手机观察视角独立</text>
+			<rect x="366" y="179" width="143" height="50" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="401.103515625" y="215.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,430) scale(1,-1)">GLES 相机 FBO</text>
+			<text x="402.482421875" y="201.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,402) scale(1,-1)">640×360 / 背面剔除</text>
+			<text x="401.70703125" y="187.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,374) scale(1,-1)">glReadPixels RGBA</text>
+			<path d="M 145,204 L 182,204 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="182 204, 176.5973 206.6098, 176.5973 201.3902" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 328,204 L 365,204 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="365 204, 359.5973 206.6098, 359.5973 201.3902" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="366" y="87" width="143" height="50" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="403.0517578125" y="123.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,246) scale(1,-1)">JPEG 编码线程</text>
+			<text x="396.642578125" y="109.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,218) scale(1,-1)">翻转行 / RGBA→ARGB</text>
+			<text x="401.48828125" y="95.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,190) scale(1,-1)">质量70 / 目标10FPS</text>
+			<path d="M 437,179 L 437,138 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="437 138, 439.6098 143.4027, 434.3902 143.4027" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="183" y="87" width="145" height="50" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="219.66259765625" y="123.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,246) scale(1,-1)">最新 JPEG 缓存</text>
+			<text x="223.5" y="109.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,218) scale(1,-1)">最多一个在途任务</text>
+			<text x="239.5" y="95.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,190) scale(1,-1)">按需采集</text>
+			<path d="M 366,112 L 329,112 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="329 112, 334.4027 109.3902, 334.4027 114.6098" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="0" y="87" width="145" height="50" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="35.8251953125" y="123.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,246) scale(1,-1)">HTTP /api/frame</text>
+			<text x="47.3828125" y="109.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,218) scale(1,-1)">Bearer 访问码</text>
+			<text x="40.5" y="95.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,190) scale(1,-1)">请求独立于控制链</text>
+			<path d="M 183,112 L 146,112 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="146 112, 151.4027 109.3902, 151.4027 114.6098" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="0" y="6" width="145" height="49" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="42.5" y="34.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,69) scale(1,-1)">控制端浏览器</text>
+			<text x="38.451171875" y="20.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,41) scale(1,-1)">安装方向顺时针90°</text>
+			<path d="M 72,87 L 72,56 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="72 56, 74.60979 61.40268, 69.39021 61.40268" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="286.25" y="40" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,80) scale(1,-1)">机器人相机重新渲染场景</text>
+			<text x="243.75" y="19" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,38) scale(1,-1)">不是复制手机模拟窗口，也不是手机实体摄像头</text>
+		</g>
+	</g>
+</svg>

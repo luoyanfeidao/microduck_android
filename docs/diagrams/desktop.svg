@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="509.27559055118115" height="289" preserveAspectRatio="xMinYMin meet" viewBox="0 0 509 289" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="509.27559055118115" height="289"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-289)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="219" width="145" height="54" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="31.93115234375" y="257.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,514) scale(1,-1)">microduck / Cargo</text>
+			<text x="35.595703125" y="243.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,486) scale(1,-1)">编译 robotd / robotctl</text>
+			<text x="42.26953125" y="229.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,458) scale(1,-1)">相机需要 mediad</text>
+			<rect x="366" y="219" width="143" height="54" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="389.70703125" y="257.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,514) scale(1,-1)">microduck_rl / Python</text>
+			<text x="419.044921875" y="243.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,486) scale(1,-1)">duck-body</text>
+			<text x="397.494140625" y="229.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,458) scale(1,-1)">MuJoCo 身体与传感器</text>
+			<rect x="0" y="126" width="145" height="54" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="46.65283203125" y="157.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,314) scale(1,-1)">Rust robotd</text>
+			<text x="28.265625" y="143.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,286) scale(1,-1)">obs / ORT / 控制 / Safety</text>
+			<rect x="366" y="126" width="143" height="54" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="403.59619140625" y="164.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,328) scale(1,-1)">body_server.py</text>
+			<text x="402.166015625" y="150.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,300) scale(1,-1)">位置伺服 / 地面接触</text>
+			<text x="405.935546875" y="136.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,272) scale(1,-1)">JSON read / write</text>
+			<path d="M 72,219 L 72,181 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="72 181, 74.60979 186.4027, 69.39021 186.4027" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 437,219 L 437,181 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="437 181, 439.6098 186.4027, 434.3902 186.4027" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 145,167 L 365,167 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="365 167, 359.5973 169.6098, 359.5973 164.3902" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="239.0" y="174.0" style="font-family: CN; font-size: 8px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,348) scale(1,-1)">TCP目标</text>
+			<path d="M 366,141 L 146,141 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="146 141, 151.4027 138.3902, 151.4027 143.6098" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="236.0" y="126.0" style="font-family: CN; font-size: 8px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,252) scale(1,-1)">TCP传感器</text>
+			<rect x="0" y="18" width="145" height="57" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="44.43115234375" y="57.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,115) scale(1,-1)">Rust mediad</text>
+			<text x="33.16015625" y="43.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,87) scale(1,-1)">GStreamer / WebRTC</text>
+			<text x="44.5" y="29.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,59) scale(1,-1)">浏览器实时相机</text>
+			<rect x="366" y="18" width="143" height="57" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="397.2021484375" y="57.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,115) scale(1,-1)">Python camera.py</text>
+			<text x="404.818359375" y="43.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,87) scale(1,-1)">MuJoCo Renderer</text>
+			<text x="414.607421875" y="29.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,59) scale(1,-1)">UYVY相机帧</text>
+			<path d="M 437,126 L 437,76 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="437 76, 439.6098 81.40268, 434.3902 81.40268" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 366,46 L 146,46 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="146 46, 151.4027 43.39021, 151.4027 48.60979" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="236.0" y="53.0" style="font-family: CN; font-size: 8px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,106) scale(1,-1)">TCP相机帧</text>
+			<text x="146.6063232421875" y="100" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,200) scale(1,-1)">桌面复用真实 Rust 服务；Android 已移植控制到 Java/JNI</text>
+		</g>
+	</g>
+</svg>
