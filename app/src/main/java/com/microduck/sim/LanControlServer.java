@@ -59,10 +59,7 @@ final class LanControlServer implements AutoCloseable {
     LanControlServer(int port,byte[] page,Supplier<String> state,Commands commands,Supplier<VideoFrames.Frame> video,Signaling signaling) throws IOException {
         this.page=page.clone(); this.state=state; this.commands=commands; this.video=video; this.signaling=signaling;
         deadlines.setRemoveOnCancelPolicy(true);
-        byte[] random=new byte[16]; new SecureRandom().nextBytes(random);
-        StringBuilder key=new StringBuilder();
-        for(byte value:random) key.append(String.format(Locale.ROOT,"%02x",value&255));
-        token=key.toString();
+        token=String.format(Locale.ROOT,"%04d",new SecureRandom().nextInt(10000));
         try { listener.setReuseAddress(true); listener.bind(new InetSocketAddress(port),6); }
         catch(IOException e) { clients.shutdownNow(); deadlines.shutdownNow(); listener.close(); throw e; }
         Thread accept=new Thread(this::acceptLoop,"microduck-lan-accept"); accept.start();

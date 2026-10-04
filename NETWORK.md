@@ -1,12 +1,12 @@
-# M8：一台 Android 仿真，另一台浏览器看机器人摄像头并控制
+# M8.1：一台 Android 仿真，另一台浏览器看机器人摄像头并控制
 
-当前源码 `0.8.0-m8` / versionCode=15，标题 `Microduck · Android M8`，由用户Studio构建/安装/运行。独立GL相机支持关闭外部3D；视频新增硬件编码WebRTC，保留JPEG兼容模式。站立、步行、2秒翻滚和控制心跳保留。架构及验收见 [VIDEO.md](VIDEO.md)，源码检查 [verification/m8-checks.json](verification/m8-checks.json)。M8真机WebRTC及隐藏3D相机尚未验收，性能检查延期。
+当前源码 `0.8.1-m81` / versionCode=16，标题 `Microduck · Android M8.1`，由用户Studio构建/安装/运行。局域网访问码改为4位数字。独立GL相机支持关闭外部3D；视频使用硬件编码WebRTC，保留JPEG兼容模式。站立、步行、2秒翻滚和控制心跳保留。架构及验收见 [VIDEO.md](VIDEO.md)，源码检查 [verification/m81-checks.json](verification/m81-checks.json)。用户已反馈M8实机验证正常，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)；性能检查延期。
 
 ## 双设备操作
 
 1. 仿真手机用 Studio 运行新版，等模型和策略加载完成。向下滚动，点击“开启局域网控制”。
 2. 两台设备连接同一个 Wi-Fi，或由其中一台提供热点。应用显示地址及访问码；优先使用 Wi-Fi / 热点接口对应的地址，通常接口名为 `wlan0`。路由器若开启了客户端隔离，两台设备可能无法互相访问。
-3. 控制手机浏览器打开显示的完整 `http://IP:8080/#token=...` 地址。复制包含片段的完整链接会自动填写访问码；只输入 `http://IP:8080/` 时，在页面粘贴仿真手机显示的访问码并点击连接。
+3. 控制手机浏览器打开显示的完整 `http://IP:8080/#token=...` 地址。复制包含片段的完整链接会自动填写访问码；只输入 `http://IP:8080/` 时，在页面输入仿真手机显示的4位数字访问码并点击连接。保留前导零，必须输入完整4位。
    升级后重新加载页面，连接后可勾选“开启机器人摄像头”；开启画面不启动仿真。使用及视角确认见 [VIDEO.md](VIDEO.md)。
 4. 点击“策略站立”，应开始平衡；点击“前进0.30m/s”，应开始步行。“向前翻滚一次”执行2秒仿真时间后切回站立控制，重复点击不延长；首次建议先站稳，动作说明见 [SKILLS.md](SKILLS.md)。网页每秒刷新状态，来自通常约250ms更新的捕获对象。
 5. 点击“暂停仿真”，手机停止物理推进。点击复位SIT/STAND/INIT，会暂停、关闭策略并复位关键帧；重新站立/前进可再次运行。
@@ -15,7 +15,7 @@
 
 速度改变保留当前姿态及策略历史；尚未启用策略时先放置HOME。自定义速度限制为 vx∈[−.30,.30]m/s、vy∈[−.15,.15]m/s、yaw∈[−.50,.50]rad/s；只有前进vx=.30已有手机闭环基准，其他方向需要单独观察验证。
 
-服务由手机手动开启，默认关闭。访问码每次开启时重新生成，只在手机和控制页面使用，不写入普通状态、日志或验证报告。当前是同一局域网内的HTTP调试服务。
+服务由手机手动开启，默认关闭。访问码每次开启时用SecureRandom重新生成，范围0000–9999，固定4位；只在手机和控制页面使用，不写入普通状态、日志或验证报告。内部WebRTC观看者id仍为32位十六进制，与手工输入的访问码是两个字段。当前是同一局域网内的HTTP调试服务。
 
 ## 数据与线程
 
@@ -120,7 +120,7 @@ python3 scripts/check_source.py \
 | `app/src/main/java/com/microduck/sim/MainActivity.java:185` | 控制周期及心跳检查 |
 | `app/src/main/java/com/microduck/sim/MainActivity.java:508` | 退出前台时关闭 |
 | `app/src/main/java/com/microduck/sim/LanControlServer.java:28` | Socket、线程与请求边界 |
-| `app/src/main/java/com/microduck/sim/LanControlServer.java:87` | HTTP路径、授权和命令路由 |
+| `app/src/main/java/com/microduck/sim/LanControlServer.java:84` | HTTP路径、授权和命令路由 |
 | `app/src/main/java/com/microduck/sim/RemoteCommand.java:7` | 命令验证 |
 | `app/src/main/java/com/microduck/sim/RemoteMailbox.java:12` | 等待确认与超时取消 |
 | `app/src/main/java/com/microduck/sim/RemoteLease.java:4` | 心跳/控制归属 |

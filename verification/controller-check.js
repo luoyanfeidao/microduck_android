@@ -34,11 +34,15 @@ async function main(){
   const flush=async()=>{for(let i=0;i<40;i++)await Promise.resolve()};
   node('videoMode').value='jpeg';
   assert(node('videoToggle').disabled);
-  node('token').value='a'.repeat(32);await node('connect').onclick();await flush();
+  for(const invalid of ['','123','12345','12a4','１２３４']){
+    node('token').value=invalid;await node('connect').onclick();await flush();
+    assert.equal(requests.length,0);assert(node('videoToggle').disabled);
+  }
+  node('token').value='0042';await node('connect').onclick();await flush();
   assert(!node('videoToggle').disabled);assert(!requests.some(r=>r.url==='/api/frame'));
   node('videoToggle').checked=true;node('videoToggle').onchange();await flush();
   assert(node('video').src.startsWith('blob:'));assert(node('videoStatus').textContent.includes('机器人视角'));
-  assert(requests.find(r=>r.url==='/api/frame').options.headers.Authorization==='Bearer '+'a'.repeat(32));
+  assert(requests.find(r=>r.url==='/api/frame').options.headers.Authorization==='Bearer 0042');
   // A held picture request cannot block a control command/heartbeat exchange.
   mode='held';node('videoToggle').onchange();await flush();
   const count=requests.length;await buttons[1].onclick();await flush();
@@ -60,7 +64,7 @@ async function main(){
   node('videoMode').value='jpeg';
   assert(node('videoToggle').disabled);assert(!node('video').src);assert.equal(timers.size,0);
   assert([...created].every(url=>revoked.has(url)));
-  console.log(JSON.stringify({video_opt_in:true,bearer_header:true,slow_video_does_not_block_controls:true,
+  console.log(JSON.stringify({four_digit_pairing:true,leading_zeroes_preserved:true,video_opt_in:true,bearer_header:true,slow_video_does_not_block_controls:true,
     stop_and_hidden_cancel_requests:true,late_frame_does_not_revive_view:true,background_pause:true,
     unavailable_retries:true,expired_token_disconnects:true,blob_urls_released:true,roulade_command:true}));
 }

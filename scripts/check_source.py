@@ -27,8 +27,8 @@ def main():
     parser.add_argument("--ort-aar", type=pathlib.Path, required=True)
     parser.add_argument("--mujoco-dir", type=pathlib.Path, required=True,
                         help="Desktop MuJoCo 3.10.0 Python package with include/ and libmujoco")
-    parser.add_argument("--stage", default="M8")
-    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m8-checks.json")
+    parser.add_argument("--stage", default="M8.1")
+    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m81-checks.json")
     parser.add_argument("--host-json-jar", type=pathlib.Path,
                         help="Host-only org.json jar to execute LAN loopback tests; not an APK dependency")
     args = parser.parse_args()
@@ -127,7 +127,7 @@ def main():
                                 for p in paths if p.is_file()}
     report["baseline_device_report"] = "device-M3-realtime-render-test.json"
     report["previous_device_report"] = "device-M54-video-on-realtime-test.json (external viewer capture, not head camera)"
-    report["device_status"] = "M7.1 camera and full-roll user-confirmed. Pending user Android Studio " + args.stage + " build: independent camera with preview off, WebRTC negotiated hardware codec/video; performance checks deferred by user"
+    report["device_status"] = "M8 functional device verification user-confirmed; no new ADB codec or performance evidence. Pending user Android Studio " + args.stage + " build for four-digit LAN pairing; performance checks deferred by user"
     target = args.report
     target.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))

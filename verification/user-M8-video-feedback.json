@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-04",
+  "stage": "M8",
+  "source": "user_message",
+  "observation": "实机验证正常",
+  "context": "用户在Android Studio自行编译运行M8独立相机和WebRTC实现后反馈。随后要求将局域网连接token改为4位。",
+  "functional_result": "user_confirmed_normal",
+  "new_adb_capture": false,
+  "limits": [
+    "本反馈未提供实际协商codec、硬件编码器名称或APK摘要。",
+    "不作为性能、延迟、温升或全部生命周期场景的验收。",
+    "M8.1四位访问码为后续修改，尚未由用户重新编译验证。"
+  ]
+}

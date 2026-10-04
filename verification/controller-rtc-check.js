@@ -43,14 +43,14 @@ async function main(){
   const html=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/controller.html'),'utf8');
   vm.runInContext(html.split('<script>')[1].split('</script>')[0],context);
   const flush=async()=>{for(let i=0;i<80;i++)await Promise.resolve()};
-  node('videoMode').value='rtc';node('token').value='a'.repeat(32);
+  node('videoMode').value='rtc';node('token').value='0042';
   await node('connect').onclick();await flush();assert.equal(peers.length,0);
   node('videoToggle').checked=true;await node('videoToggle').onchange();await flush();
   assert.equal(peers.length,1);assert.equal(peers[0].remoteDescription.type,'answer');
   assert.equal(peers[0].candidate.candidate,'native-ice');assert(!node('rtcVideo').hidden);
   assert(node('videoStatus').textContent.includes('video/H264'));assert(node('videoStatus').textContent.includes('42'));
   const first=JSON.parse(requests.find(r=>r.url==='/api/rtc'&&JSON.parse(r.options.body).op==='open').options.body);
-  assert.match(first.id,/^[0-9a-f]{32}$/);assert(requests.every(r=>r.options.headers.Authorization==='Bearer '+'a'.repeat(32)));
+  assert.match(first.id,/^[0-9a-f]{32}$/);assert(requests.every(r=>r.options.headers.Authorization==='Bearer 0042'));
   assert(!requests.some(r=>r.url==='/api/frame'));
   // Held signaling does not block commands; late answer must not revive a stopped/new session.
   holdPoll=true;await node('videoMode').onchange();await flush();const second=peers[1];

@@ -1,4 +1,4 @@
-# Android Studio 施工入口（M8：独立机器人相机 + WebRTC）
+# Android Studio 施工入口（M8.1：4位访问码 + 独立机器人相机 / WebRTC）
 
 在 Android Studio 中打开当前目录 `android-sim`，不要打开外层 Microduck 目录。由你完成 Sync、编译、安装和真机运行。
 
@@ -6,11 +6,11 @@
 
 当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。另一台Android浏览器可发站立/步行/前滚翻/暂停/复位命令并读状态；视频来自模型的 `head_camera`，随机器人头部运动。手机保留外部观察视角。控制见 [NETWORK.md](NETWORK.md)，相机见 [VIDEO.md](VIDEO.md)，前滚翻见 [SKILLS.md](SKILLS.md)。
 
-**当前功能开发 M8：** `0.8.0-m8` / versionCode=15，标题 `Microduck · Android M8`。机器人相机拥有独立 EGL 上下文和 Surface，关闭手机“显示3D”后仍能出流。网页新增 WebRTC（目标20FPS、优先H.264硬件编码、单观看者）与JPEG兼容模式（640×360、10FPS、质量70）。在Studio重新Sync、Build、Run，保持应用前台，开启LAN并刷新控制网页；勾选“开启机器人摄像头”，可关闭手机3D并观察视频是否继续。保留站立/步行、2秒翻滚、滤波、伺服及50Hz控制基线，抬头慢/僵硬未在这次改动中修复。视频方案、架构和功能验收见 [VIDEO.md](VIDEO.md)。
+**当前功能开发 M8.1：** `0.8.1-m81` / versionCode=16，标题 `Microduck · Android M8.1`。局域网访问码改为4位数字，每次开启服务重新随机生成，保留前导零。用户已反馈M8实机验证正常，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)。机器人相机拥有独立 EGL 上下文和 Surface，关闭手机“显示3D”后仍能出流。网页提供 WebRTC（目标20FPS、优先H.264硬件编码、单观看者）与JPEG兼容模式（640×360、10FPS、质量70）。在Studio重新Build、Run，保持应用前台，开启LAN并刷新控制网页，输入新4位访问码。保留站立/步行、2秒翻滚、滤波、伺服及50Hz控制基线，抬头慢/僵硬未在这次改动中修复。视频方案、架构和功能验收见 [VIDEO.md](VIDEO.md)。
 
 **详细技术说明：** [PDF](docs/Android_Microduck_方案架构与编译复用说明.pdf) / [Markdown](docs/Android_Microduck_方案架构与编译复用说明.md)，重点说明Android与两个Pollen仓库的资源复用、构建边界、NDK引擎编译、训练BAM差异，并包含架构图、关键源码注解、依赖及使用方法。生成与源码引用检查见 [docs/README.md](docs/README.md)。
 
-**检查边界：** [verification/m8-checks.json](verification/m8-checks.json)验证实际WebRTC AAR/JDK11 Java编译、JNI/物理/相机对照、动作窗口及网页/HTTP协议，增加信令大小、会话替换、迟到回调、关闭与offer乱序检查。依赖AAR、arm64库及原AGP7.2.2 D8的转换检查见 [m8-video-dependencies.json](verification/m8-video-dependencies.json)。M8完整APK编译及WebRTC设备功能尚待用户Studio确认。用户已确认M7摄像头正常、M7.1整圈翻滚通过，反馈抬头慢、整体动作僵硬；只读手机日志证据见 [device-M71-roll-acceptance.json](verification/device-M71-roll-acceptance.json)。采样未见推理瓶颈，主机对照发现交接时头颈恢复不同步、视线先向下再恢复；关闭恢复阶段头部滤波仅小幅改善，诊断见 [SKILLS.md](SKILLS.md)。当前保留已通过的2秒配置，不宣称任意起始姿态成功或动作质量已修复。代理未打包/安装/运行APK。性能、温升及前后台验收按用户要求延期。下面M5/M5.4数据是外部观察窗口画面的历史结果。
+**检查边界：** [verification/m81-checks.json](verification/m81-checks.json)验证实际WebRTC AAR/JDK11 Java编译、JNI/物理/相机对照、动作窗口及网页/HTTP协议，覆盖4位访问码、前导零保留、非法格式拒绝、信令大小、会话替换、迟到回调、关闭与offer乱序检查。依赖AAR、arm64库及原AGP7.2.2 D8的转换检查见 [m8-video-dependencies.json](verification/m8-video-dependencies.json)。M8设备功能已获用户确认，尚无这次实际codec及性能的新增ADB证据；M8.1访问码修改待用户Studio编译运行。用户已确认M7摄像头正常、M7.1整圈翻滚通过，反馈抬头慢、整体动作僵硬；只读手机日志证据见 [device-M71-roll-acceptance.json](verification/device-M71-roll-acceptance.json)。采样未见推理瓶颈，主机对照发现交接时头颈恢复不同步、视线先向下再恢复；关闭恢复阶段头部滤波仅小幅改善，诊断见 [SKILLS.md](SKILLS.md)。当前保留已通过的2秒配置，不宣称任意起始姿态成功或动作质量已修复。代理未打包/安装/运行APK。性能、温升及前后台验收按用户要求延期。下面M5/M5.4数据是外部观察窗口画面的历史结果。
 
 **历史M5.4视频开启30秒验收通过：** `0.5.4-m54` / versionCode=11。1501周期/6004物理步、墙钟30.007秒/仿真30.02秒，完整工作线程p99=10.648ms/max=19.772ms、超20ms周期0，调度迟到超过20ms周期0；手机30.03FPS、视频298发布帧/9.93FPS、265帧提供HTTP、采集错误0，数值及最终位姿与M5.3一致。报告捕获平均0.285ms/max=0.519ms，队列提交max=0.087ms。证据 [verification/device-M54-video-acceptance.json](verification/device-M54-video-acceptance.json)。单次最大预算余量0.228ms，温度/频率未控制，不代表长期或硬实时保证。
 

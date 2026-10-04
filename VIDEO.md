@@ -1,11 +1,11 @@
-# M8：独立机器人相机与硬件编码 WebRTC
+# M8.1：独立机器人相机与硬件编码 WebRTC
 
-当前源码 `0.8.0-m8` / versionCode=15，手机标题 `Microduck · Android M8`。由用户在Android Studio Sync、编译、安装和运行。两项优先工作均已写入源码：独立相机 EGL/Surface 与 WebRTC 视频轨道/硬件编码。主机检查通过；隐藏3D、实际H.264协商、图像方向和设备资源释放尚待真机确认。性能/温升长测仍延期。
+当前源码 `0.8.1-m81` / versionCode=16，手机标题 `Microduck · Android M8.1`。由用户在Android Studio Sync、编译、安装和运行。两项优先工作均已实现：独立相机 EGL/Surface 与 WebRTC 视频轨道/硬件编码。用户已反馈M8“实机验证正常”，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)。M8.1仅将局域网访问码改为4位数字；实际codec/硬件编码器细节未另取设备报告，性能/温升长测仍延期。
 
 ## Studio运行与功能验收
 
-1. Sync、Build、Run；确认标题M8。首次Sync下载Stream WebRTC 1.3.9及传递依赖，继续使用JDK11/AGP7.2.2/Gradle7.5。
-2. 手机保持应用前台，开启局域网控制；控制设备用同一Wi-Fi/热点，刷新控制网页，使用本次访问码连接。
+1. Sync、Build、Run；确认标题M8.1。首次Sync下载Stream WebRTC 1.3.9及传递依赖，继续使用JDK11/AGP7.2.2/Gradle7.5。
+2. 手机保持应用前台，开启局域网控制；控制设备用同一Wi-Fi/热点，刷新控制网页，使用本次4位数字访问码连接。
 3. 勾选“开启机器人摄像头”，默认WebRTC。画面下方应显示 `video/H264` 或实际协商codec、解码累计帧和接收FPS。设置是优先H.264，不能把“设置了优先”当成已经协商成功。
 4. 手机关闭“显示3D”，点站立/前进：浏览器相机应继续随机器人头部运动；开启3D并拖动外部观察视角，相机应仍由头部姿态决定。
 5. 切换JPEG兼容模式作对照，再切回WebRTC；暂停时仍可收到静止场景。核对两种传输的朝向一致，没有二次90°旋转、镜像、灰屏或拉伸。
@@ -105,4 +105,4 @@ M7灰屏修复及M7.1整圈翻滚已有用户确认。M8新增Java/实际AAR/ARM
 - `app/src/main/java/com/microduck/sim/RtcVideo.java:93`：异步offer/answer与H.264优先。
 - `app/src/main/java/com/microduck/sim/RtcVideo.java:191`：native寿命释放。
 - `app/src/main/java/com/microduck/sim/RtcSession.java:9`：generation/租期/乱序隔离。
-- `app/src/main/java/com/microduck/sim/LanControlServer.java:122`：HTTP信令路径。
+- `app/src/main/java/com/microduck/sim/LanControlServer.java:119`：HTTP信令路径。

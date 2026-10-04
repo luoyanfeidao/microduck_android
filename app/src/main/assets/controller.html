@@ -19,7 +19,7 @@ label{display:block;margin:12px 0}label input{display:block;width:100%;margin-to
 <main>
 <h1>Microduck · 局域网控制</h1>
 <p class="note">仿真手机保持应用在前台。外部 3D 可关闭，相机独立运行。实时画面来自机器人的头部摄像头，随头部运动；手机上可独立拖动外部观察视角。</p>
-<section id="pair"><label>仿真手机显示的访问码<input id="token" type="password" autocomplete="off" spellcheck="false" maxlength="32"></label>
+<section id="pair"><label>仿真手机显示的4位访问码<input id="token" type="password" inputmode="numeric" pattern="[0-9]{4}" autocomplete="off" spellcheck="false" maxlength="4"></label>
 <button id="connect">连接</button></section>
 <section><div id="message" role="status">尚未连接</div><div id="status">等待手机状态…</div></section>
 <section><label><input id="videoToggle" type="checkbox">开启机器人摄像头</label>
@@ -204,7 +204,7 @@ async function poll(){
 $('connect').onclick=async()=>{
   haltVideo('正在连接…');connected=false;controls();
   token=$('token').value.trim();
-  if(!/^[0-9a-f]{32}$/.test(token)){message('请粘贴手机显示的32位访问码');return}
+  if(!/^[0-9]{4}$/.test(token)){message('请输入手机显示的4位数字访问码');return}
   try{show(await request('/api/state'));connected=true;controls();message('已连接');startVideo();await poll()}
   catch(e){connected=false;controls();message('连接失败：'+e.message)}
 };
