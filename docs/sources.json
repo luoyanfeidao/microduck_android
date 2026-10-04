@@ -1,7 +1,7 @@
 {
-  "date": "2026-10-04",
-  "android_source_base_commit": "d0c6484c8e2ec05b96d89abfab79b55e644d379c",
-  "android_version": "0.8.1-m81",
+  "date": "2026-10-05",
+  "android_source_base_commit": "be5fea059991b0092ade93f5b112d19da52bc3ef",
+  "android_version": "0.10.0-m10",
   "android_snapshot": "working tree with source hashes",
   "microduck_commit": "a9ec4b2079ef8ee7904014089c885bb07d57d63c",
   "microduck_rl_commit": "cb70b792312d559a4da09064d92009079671815f",
@@ -9,33 +9,45 @@
   "refs": [
     {
       "file": "android-sim/app/build.gradle",
-      "line": 36,
-      "anchor": "tasks.register",
-      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
+      "line": 11,
+      "anchor": "versionName",
+      "sha256": "e7dd620043af5e9c0972526e533fab85f1364cc463361e9fc68e9c869ef43b0b"
     },
     {
       "file": "android-sim/app/src/main/cpp/CMakeLists.txt",
-      "line": 57,
-      "anchor": "add_library(microduck_m1",
-      "sha256": "8ec7bae504cea1158da67ff0e5b6ac1b5215a53bb4d2caeefc84288e12d3ba1c"
+      "line": 62,
+      "anchor": "add_custom_target(duck_rust_build",
+      "sha256": "c9a99ff86d17808c1892e2767dd75169a8302b3db87e5af70b29704dccf89604"
     },
     {
-      "file": "android-sim/scripts/prepare_assets.py",
+      "file": "android-sim/rust/control-core/src/lib.rs",
+      "line": 4,
+      "anchor": "extern crate self",
+      "sha256": "fad721b2aa8ba60b51f42fb266a9e42b2c65c251abd7bfdfa36de15ad79346f5"
+    },
+    {
+      "file": "android-sim/verification/user-M10-feedback.json",
+      "line": 1,
+      "anchor": 1,
+      "sha256": "c7818fdec41142d9f03aa493a362e50fa48df24fb92d245ffb55d2aee08405c6"
+    },
+    {
+      "file": "android-sim/rust/control-core/src/lib.rs",
       "line": 6,
-      "anchor": "SOURCE=",
-      "sha256": "cc280117a30f845489359c53228503021deb0e85f123468e43acd3e2f3f2f2e2"
+      "anchor": "pub mod model;",
+      "sha256": "fad721b2aa8ba60b51f42fb266a9e42b2c65c251abd7bfdfa36de15ad79346f5"
     },
     {
-      "file": "android-sim/app/build.gradle",
-      "line": 11,
-      "anchor": "versionName",
-      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
+      "file": "android-sim/rust/control-core/Cargo.toml",
+      "line": 14,
+      "anchor": "robotd-params =",
+      "sha256": "ad35b383dc1f84782b2fd92c421493ebd1b2843a97770cb3be2b33093856b05c"
     },
     {
-      "file": "Pollen/microduck/Cargo.toml",
-      "line": 7,
-      "anchor": 7,
-      "sha256": "e9d514f3412c168fde38f1ed419bce3ac3913c42fdde8d42b1804b2b3bc2aedd"
+      "file": "android-sim/RUST_CORE.lock.json",
+      "line": 1,
+      "anchor": 1,
+      "sha256": "c89f37110967d2ddb4679383ab790058a20bcf68f3fd7ee27dfb9bdf89a2c3ce"
     },
     {
       "file": "Pollen/microduck_rl/pyproject.toml",
@@ -44,34 +56,28 @@
       "sha256": "e4f73a9f9aff14826463aee558f53900307ba973a287fb3bfc27a8954a131026"
     },
     {
-      "file": "Pollen/microduck_rl/pyproject.toml",
-      "line": 55,
-      "anchor": "duck-body =",
-      "sha256": "e4f73a9f9aff14826463aee558f53900307ba973a287fb3bfc27a8954a131026"
-    },
-    {
       "file": "android-sim/app/build.gradle",
       "line": 21,
       "anchor": "cmake { path",
-      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
+      "sha256": "e7dd620043af5e9c0972526e533fab85f1364cc463361e9fc68e9c869ef43b0b"
     },
     {
       "file": "android-sim/app/build.gradle",
       "line": 40,
       "anchor": "tasks.named('preBuild')",
-      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
+      "sha256": "e7dd620043af5e9c0972526e533fab85f1364cc463361e9fc68e9c869ef43b0b"
     },
     {
       "file": "android-sim/app/build.gradle",
       "line": 30,
       "anchor": "dependencies {",
-      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
+      "sha256": "e7dd620043af5e9c0972526e533fab85f1364cc463361e9fc68e9c869ef43b0b"
     },
     {
       "file": "android-sim/app/build.gradle",
       "line": 12,
       "anchor": "ndk { abiFilters",
-      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
+      "sha256": "e7dd620043af5e9c0972526e533fab85f1364cc463361e9fc68e9c869ef43b0b"
     },
     {
       "file": "android-sim/build.gradle",
@@ -95,19 +101,19 @@
       "file": "android-sim/app/src/main/cpp/CMakeLists.txt",
       "line": 7,
       "anchor": "set(MUJOCO_SOURCE_DIR",
-      "sha256": "8ec7bae504cea1158da67ff0e5b6ac1b5215a53bb4d2caeefc84288e12d3ba1c"
+      "sha256": "c9a99ff86d17808c1892e2767dd75169a8302b3db87e5af70b29704dccf89604"
     },
     {
       "file": "android-sim/app/src/main/cpp/CMakeLists.txt",
       "line": 52,
       "anchor": "add_subdirectory(",
-      "sha256": "8ec7bae504cea1158da67ff0e5b6ac1b5215a53bb4d2caeefc84288e12d3ba1c"
+      "sha256": "c9a99ff86d17808c1892e2767dd75169a8302b3db87e5af70b29704dccf89604"
     },
     {
       "file": "android-sim/README.md",
-      "line": 41,
+      "line": 45,
       "anchor": "该 AAR 的 JNI 库仅有",
-      "sha256": "71cb8a68faaa77a4e3ac60daec37d2b4f4e2a3c5ce65ce84abbb4823b8f7332c"
+      "sha256": "0b20f3d17cdc5c81f96d85583d5ffbee402096c5e8a3483f52e55308e6674de2"
     },
     {
       "file": "android-sim/patches/mujoco-3.10.0-ndk25.patch",
@@ -119,7 +125,7 @@
       "file": "android-sim/app/src/main/cpp/CMakeLists.txt",
       "line": 26,
       "anchor": "set(NDK_PATCH",
-      "sha256": "8ec7bae504cea1158da67ff0e5b6ac1b5215a53bb4d2caeefc84288e12d3ba1c"
+      "sha256": "c9a99ff86d17808c1892e2767dd75169a8302b3db87e5af70b29704dccf89604"
     },
     {
       "file": "Pollen/microduck/.cargo/config.toml",
@@ -129,9 +135,9 @@
     },
     {
       "file": "android-sim/scripts/check_source.py",
-      "line": 99,
+      "line": 105,
       "anchor": "--target=aarch64-linux-android28",
-      "sha256": "c718c704482532bcbef61f437aaf22607f71354a0310dca8f989b95d31b70b12"
+      "sha256": "f39596e00d596b287d750ec2f7b404cbf63ad0c9e9410df7f59ac8ff259f3977"
     },
     {
       "file": "Pollen/microduck/Cargo.toml",
@@ -140,10 +146,28 @@
       "sha256": "e9d514f3412c168fde38f1ed419bce3ac3913c42fdde8d42b1804b2b3bc2aedd"
     },
     {
+      "file": "android-sim/scripts/build_rust_core.py",
+      "line": 28,
+      "anchor": "command=[args.cargo",
+      "sha256": "d2469622c8354b57982873f007b502696aa872bc8261e2f3f019495162fa7c40"
+    },
+    {
+      "file": "android-sim/app/build.gradle",
+      "line": 24,
+      "anchor": "sourceCompatibility",
+      "sha256": "e7dd620043af5e9c0972526e533fab85f1364cc463361e9fc68e9c869ef43b0b"
+    },
+    {
       "file": "android-sim/app/build.gradle",
       "line": 5,
       "anchor": "ndkVersion",
-      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
+      "sha256": "e7dd620043af5e9c0972526e533fab85f1364cc463361e9fc68e9c869ef43b0b"
+    },
+    {
+      "file": "android-sim/RUST_CORE.lock.json",
+      "line": 6,
+      "anchor": "rustc_verified",
+      "sha256": "c89f37110967d2ddb4679383ab790058a20bcf68f3fd7ee27dfb9bdf89a2c3ce"
     },
     {
       "file": "android-sim/scripts/prepare_assets.py",
@@ -155,7 +179,7 @@
       "file": "android-sim/app/build.gradle",
       "line": 31,
       "anchor": "implementation 'com.microsoft.onnxruntime",
-      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
+      "sha256": "e7dd620043af5e9c0972526e533fab85f1364cc463361e9fc68e9c869ef43b0b"
     },
     {
       "file": "android-sim/app/src/main/AndroidManifest.xml",
@@ -167,7 +191,7 @@
       "file": "android-sim/scripts/check_source.py",
       "line": 1,
       "anchor": 1,
-      "sha256": "c718c704482532bcbef61f437aaf22607f71354a0310dca8f989b95d31b70b12"
+      "sha256": "f39596e00d596b287d750ec2f7b404cbf63ad0c9e9410df7f59ac8ff259f3977"
     },
     {
       "file": "Pollen/microduck_rl/pyproject.toml",
@@ -179,7 +203,7 @@
       "file": "android-sim/app/src/main/cpp/CMakeLists.txt",
       "line": 40,
       "anchor": "foreach(DEP",
-      "sha256": "8ec7bae504cea1158da67ff0e5b6ac1b5215a53bb4d2caeefc84288e12d3ba1c"
+      "sha256": "c9a99ff86d17808c1892e2767dd75169a8302b3db87e5af70b29704dccf89604"
     },
     {
       "file": "android-sim/verification/m8-video-dependencies.json",
@@ -249,33 +273,33 @@
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/PolicyRunner.java",
-      "line": 56,
+      "line": 59,
       "anchor": "private static void validate",
-      "sha256": "1a2f1f5f3ca9455f1749ba29293ed0fead0d1fd814d44e9235995d2d1cf35287"
+      "sha256": "144a557da69439d7a55b6af989a28fce3bf4e26b11ac798a8705000f0a157e39"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/PolicyRunner.java",
-      "line": 53,
+      "line": 55,
       "anchor": "if(smokeMaxError>",
-      "sha256": "1a2f1f5f3ca9455f1749ba29293ed0fead0d1fd814d44e9235995d2d1cf35287"
+      "sha256": "144a557da69439d7a55b6af989a28fce3bf4e26b11ac798a8705000f0a157e39"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/NativeSim.java",
       "line": 5,
       "anchor": "static {",
-      "sha256": "ce5c0c6732967dfe294cd55e9656ae3b9a0f11794ab4bbd8867c3ed080b170fa"
+      "sha256": "05d23430bd722a4710e57cf93b1db741d304af8718216ef7de45d5c37c7afe00"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
-      "line": 155,
+      "line": 171,
       "anchor": "File model = ModelAssets.prepare",
-      "sha256": "90adb752bb9a29a238baf32c78a08d77643afa05d1b58bb77f7413117fc81fc1"
+      "sha256": "596df609f8f578706d454496fe32ba3a49b68426a8747fa040fb090b664f1742"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
       "line": 39,
       "anchor": "newSingleThreadScheduledExecutor",
-      "sha256": "90adb752bb9a29a238baf32c78a08d77643afa05d1b58bb77f7413117fc81fc1"
+      "sha256": "596df609f8f578706d454496fe32ba3a49b68426a8747fa040fb090b664f1742"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/ReportDispatcher.java",
@@ -285,45 +309,45 @@
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
-      "line": 267,
+      "line": 284,
       "anchor": "private void controlStep(boolean withVisual)",
-      "sha256": "90adb752bb9a29a238baf32c78a08d77643afa05d1b58bb77f7413117fc81fc1"
+      "sha256": "596df609f8f578706d454496fe32ba3a49b68426a8747fa040fb090b664f1742"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
-      "line": 188,
+      "line": 205,
       "anchor": "private void start()",
-      "sha256": "90adb752bb9a29a238baf32c78a08d77643afa05d1b58bb77f7413117fc81fc1"
+      "sha256": "596df609f8f578706d454496fe32ba3a49b68426a8747fa040fb090b664f1742"
     },
     {
       "file": "android-sim/app/src/main/cpp/native_sim.cpp",
-      "line": 146,
+      "line": 203,
       "anchor": "s->model = mj_loadXML",
-      "sha256": "ddfb92372c4a02f107d203d741e9b08285c8f0158db825e9d5070f66eb57ffdc"
+      "sha256": "46ac1ede5a709bdd3b6b952a1218dacf8a9b06c3436905194ec825a54449f567"
     },
     {
       "file": "android-sim/app/src/main/cpp/native_sim.cpp",
-      "line": 149,
+      "line": 206,
       "anchor": "s->model->opt.timestep =",
-      "sha256": "ddfb92372c4a02f107d203d741e9b08285c8f0158db825e9d5070f66eb57ffdc"
+      "sha256": "46ac1ede5a709bdd3b6b952a1218dacf8a9b06c3436905194ec825a54449f567"
     },
     {
       "file": "android-sim/app/src/main/cpp/native_sim.cpp",
-      "line": 162,
+      "line": 219,
       "anchor": "int joint=mj_name2id",
-      "sha256": "ddfb92372c4a02f107d203d741e9b08285c8f0158db825e9d5070f66eb57ffdc"
+      "sha256": "46ac1ede5a709bdd3b6b952a1218dacf8a9b06c3436905194ec825a54449f567"
+    },
+    {
+      "file": "Pollen/microduck/duck-control/src/obs.rs",
+      "line": 174,
+      "anchor": "pub fn build(",
+      "sha256": "9545dae40e6a324cea153d2dc8d79563ba105c348f96e00128fb2e55d27f26a6"
     },
     {
       "file": "android-sim/app/src/main/cpp/native_sim.cpp",
-      "line": 82,
-      "anchor": "void build_observation(",
-      "sha256": "ddfb92372c4a02f107d203d741e9b08285c8f0158db825e9d5070f66eb57ffdc"
-    },
-    {
-      "file": "android-sim/app/src/main/cpp/native_sim.cpp",
-      "line": 18,
+      "line": 19,
       "anchor": "const char* JOINTS",
-      "sha256": "ddfb92372c4a02f107d203d741e9b08285c8f0158db825e9d5070f66eb57ffdc"
+      "sha256": "46ac1ede5a709bdd3b6b952a1218dacf8a9b06c3436905194ec825a54449f567"
     },
     {
       "file": "Pollen/microduck/duck-control/src/obs.rs",
@@ -333,15 +357,15 @@
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/PolicyRunner.java",
-      "line": 86,
+      "line": 97,
       "anchor": "void tick(long handle)",
-      "sha256": "1a2f1f5f3ca9455f1749ba29293ed0fead0d1fd814d44e9235995d2d1cf35287"
+      "sha256": "144a557da69439d7a55b6af989a28fce3bf4e26b11ac798a8705000f0a157e39"
     },
     {
-      "file": "android-sim/app/src/main/cpp/native_sim.cpp",
-      "line": 91,
-      "anchor": "void apply_scaled_action(",
-      "sha256": "ddfb92372c4a02f107d203d741e9b08285c8f0158db825e9d5070f66eb57ffdc"
+      "file": "android-sim/app/src/main/java/com/microduck/sim/PolicyRunner.java",
+      "line": 90,
+      "anchor": "float[] rustInfer(",
+      "sha256": "144a557da69439d7a55b6af989a28fce3bf4e26b11ac798a8705000f0a157e39"
     },
     {
       "file": "Pollen/microduck_rl/src/mjlab_microduck/robot/microduck/robot_groundcontact.xml",
@@ -356,6 +380,36 @@
       "sha256": "2913f61ce9d755d7d92e67f7cab79c09bf0bf82f7f1c28a962f1cb15b27a668a"
     },
     {
+      "file": "android-sim/app/src/main/cpp/bam_actuator.h",
+      "line": 18,
+      "anchor": "inline double torque(",
+      "sha256": "5e3b570b6445fa4feec98e474b6e46e472ac4d1e26aacfcfb8c4e593a628211a"
+    },
+    {
+      "file": "android-sim/app/src/main/cpp/bam_actuator.h",
+      "line": 100,
+      "anchor": "void update(",
+      "sha256": "5e3b570b6445fa4feec98e474b6e46e472ac4d1e26aacfcfb8c4e593a628211a"
+    },
+    {
+      "file": "android-sim/BAM.lock.json",
+      "line": 1,
+      "anchor": 1,
+      "sha256": "e1e7c4bab8f626c471ee60d5166b58b8834a53f7222dfc3be2eb48d1eeb1dacb"
+    },
+    {
+      "file": "android-sim/app/src/main/cpp/bam_actuator.h",
+      "line": 49,
+      "anchor": "void configure(",
+      "sha256": "5e3b570b6445fa4feec98e474b6e46e472ac4d1e26aacfcfb8c4e593a628211a"
+    },
+    {
+      "file": "android-sim/verification/m9-bam-checks.json",
+      "line": 1,
+      "anchor": 1,
+      "sha256": "e234bd570f03d7ac34b2651a25e385da620ec70af78b28f4dafa09ba16504ebf"
+    },
+    {
       "file": "Pollen/microduck_rl/AGENTS.md",
       "line": 69,
       "anchor": "**Actuators are BAM**",
@@ -368,16 +422,100 @@
       "sha256": "4493d2d72d83c2f9c8486e195c3e3f903406b41046549f8d34dbf561572f2414"
     },
     {
-      "file": "Pollen/microduck_rl/src/mjlab_microduck/robot/microduck_constants.py",
-      "line": 1,
-      "anchor": 1,
-      "sha256": "0e7097afe833ac1259b197f9854d01c1666be03ac0c9b090233b4fbc7619eb94"
+      "file": "android-sim/BAM.lock.json",
+      "line": 32,
+      "anchor": "android_profile",
+      "sha256": "e1e7c4bab8f626c471ee60d5166b58b8834a53f7222dfc3be2eb48d1eeb1dacb"
     },
     {
-      "file": "Pollen/microduck_rl/scripts/infer_policy.py",
-      "line": 891,
-      "anchor": "if self.bam_ctrl is not None:",
-      "sha256": "03bfd0642a880cd379e057536ee819bd1377d4af7b5206a57907d10afd1d4270"
+      "file": "android-sim/rust/control-core/build.rs",
+      "line": 8,
+      "anchor": "let extension=",
+      "sha256": "4040b2f00e52bcc39520e826c574457d9ed56e036f44447ed25d51d5f9c3d7c1"
+    },
+    {
+      "file": "android-sim/app/src/main/cpp/CMakeLists.txt",
+      "line": 71,
+      "anchor": "add_library(microduck_m1",
+      "sha256": "c9a99ff86d17808c1892e2767dd75169a8302b3db87e5af70b29704dccf89604"
+    },
+    {
+      "file": "android-sim/scripts/build_rust_core.py",
+      "line": 10,
+      "anchor": "def verify_sources():",
+      "sha256": "d2469622c8354b57982873f007b502696aa872bc8261e2f3f019495162fa7c40"
+    },
+    {
+      "file": "android-sim/rust/control-core/Cargo.toml",
+      "line": 6,
+      "anchor": "[lib]",
+      "sha256": "ad35b383dc1f84782b2fd92c421493ebd1b2843a97770cb3be2b33093856b05c"
+    },
+    {
+      "file": "android-sim/verification/m10-android-rust-checks.json",
+      "line": 1,
+      "anchor": 1,
+      "sha256": "0344d7a42abac3fb4d600f4efd8e5e1617256ea96a18479ea939d99a98bc131a"
+    },
+    {
+      "file": "android-sim/rust/control-core/src/policy.rs",
+      "line": 18,
+      "anchor": "pub fn infer(",
+      "sha256": "a31602caa6905fb6fa529635d3ee1626b42305b892b7e69f6556c687a7ce2546"
+    },
+    {
+      "file": "android-sim/app/src/main/cpp/rust_control_jni.cpp",
+      "line": 10,
+      "anchor": "int32_t infer(",
+      "sha256": "330d9282e1a92e33d1fd5457c24079f543a5809a8a6d94c312c580c16e9cfd86"
+    },
+    {
+      "file": "android-sim/rust/control-core/src/lib.rs",
+      "line": 62,
+      "anchor": "thread_local!",
+      "sha256": "fad721b2aa8ba60b51f42fb266a9e42b2c65c251abd7bfdfa36de15ad79346f5"
+    },
+    {
+      "file": "android-sim/rust/control-core/src/lib.rs",
+      "line": 105,
+      "anchor": "let (command,_)",
+      "sha256": "fad721b2aa8ba60b51f42fb266a9e42b2c65c251abd7bfdfa36de15ad79346f5"
+    },
+    {
+      "file": "android-sim/app/src/main/java/com/microduck/sim/SimIoServer.java",
+      "line": 50,
+      "anchor": "private String exchange(",
+      "sha256": "f48f00dde3542055a7b05411fd8b44a39186b8fa23bb957cbf856dfe6d22f331"
+    },
+    {
+      "file": "android-sim/app/src/main/java/com/microduck/sim/SimIoBody.java",
+      "line": 18,
+      "anchor": "public String apply(",
+      "sha256": "82628625fe4d15fa7856afc31015cec6d9a096b9cf9af5eff910f8ae5de93704"
+    },
+    {
+      "file": "android-sim/app/src/main/cpp/native_sim.cpp",
+      "line": 116,
+      "anchor": "void body_targets(",
+      "sha256": "46ac1ede5a709bdd3b6b952a1218dacf8a9b06c3436905194ec825a54449f567"
+    },
+    {
+      "file": "android-sim/scripts/android_robotd.py",
+      "line": 29,
+      "anchor": "walk=commands.add_parser",
+      "sha256": "9b24fc160478f7364f050dc069a7f8b1bc54767e7ff484151b66b35ccf30ce51"
+    },
+    {
+      "file": "android-sim/verification/user-M9-simio-feedback.json",
+      "line": 1,
+      "anchor": 1,
+      "sha256": "394afc6ac4d040222202fd71d6bd09efcf19bb1f2cba0bf7321560ce9e986636"
+    },
+    {
+      "file": "android-sim/BAM_SIMIO.md",
+      "line": 1,
+      "anchor": 1,
+      "sha256": "603d9d3f0a3c1a5079979ef52527122cf775f749ff9ebfd0899795601b80f831"
     },
     {
       "file": "android-sim/app/src/main/cpp/visual_snapshot.h",
@@ -453,9 +591,9 @@
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
-      "line": 518,
+      "line": 571,
       "anchor": "protected void onStop()",
-      "sha256": "90adb752bb9a29a238baf32c78a08d77643afa05d1b58bb77f7413117fc81fc1"
+      "sha256": "596df609f8f578706d454496fe32ba3a49b68426a8747fa040fb090b664f1742"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/RtcVideo.java",
@@ -545,61 +683,37 @@
       "file": "android-sim/DEPENDENCIES.md",
       "line": 1,
       "anchor": 1,
-      "sha256": "3d53702bbc2643707494b5b99597a40f988d8c1f279bcf683f68eb605bbfa168"
+      "sha256": "8c2875e297bfaa602defb903b967487a16172e0130a4c9d4e36204bab5c755ad"
     },
     {
       "file": "android-sim/README.md",
-      "line": 34,
-      "anchor": "Gradle JDK 选择",
-      "sha256": "71cb8a68faaa77a4e3ac60daec37d2b4f4e2a3c5ce65ce84abbb4823b8f7332c"
+      "line": 38,
+      "anchor": "Gradle JDK 是",
+      "sha256": "0b20f3d17cdc5c81f96d85583d5ffbee402096c5e8a3483f52e55308e6674de2"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
-      "line": 412,
+      "line": 433,
       "anchor": "private void writeReport",
-      "sha256": "90adb752bb9a29a238baf32c78a08d77643afa05d1b58bb77f7413117fc81fc1"
+      "sha256": "596df609f8f578706d454496fe32ba3a49b68426a8747fa040fb090b664f1742"
     },
     {
       "file": "android-sim/.gitignore",
       "line": 7,
       "anchor": "app/src/main/assets/model/",
-      "sha256": "038f7eed7785d226e3a7472371a70712171066fa7c397cd1f4650c8a4316fd49"
+      "sha256": "eda20faff2aa60421e0dc5b89d8880cc7901fe6afb183ac6e582a7ca6b0c43cb"
     },
     {
-      "file": "android-sim/verification/m81-checks.json",
+      "file": "android-sim/verification/m10-checks.json",
       "line": 1,
       "anchor": 1,
-      "sha256": "9d52ca91940b9cfaf0b57f056fd4b9db2cd51fb123bb9c66a54b96756b0de5b2"
+      "sha256": "369242784063d80d3e3f5567b3457baf2400cfeff87cb65fe782888776cc5d7c"
     },
     {
-      "file": "android-sim/verification/user-M8-video-feedback.json",
+      "file": "android-sim/verification/m10-embedded-rust-checks.json",
       "line": 1,
       "anchor": 1,
-      "sha256": "6d2fb38fbd79ff7e85d2066d84eb524f6b2af3fdcc19b4d4755c1cf8be18c0eb"
-    },
-    {
-      "file": "android-sim/verification/device-M2-policy-benchmark.json",
-      "line": 1,
-      "anchor": 1,
-      "sha256": "344bc43a157d332ea0a8afe3a86daae312e230d0524d024caf982d9e1ea5785f"
-    },
-    {
-      "file": "android-sim/verification/device-M4-realtime-acceptance.json",
-      "line": 1,
-      "anchor": 1,
-      "sha256": "fb4ae9994219e27ab9f37a10657f4e039b1a4a0f9333d4e876e5ac17c65fc0aa"
-    },
-    {
-      "file": "android-sim/verification/device-M54-video-acceptance.json",
-      "line": 1,
-      "anchor": 1,
-      "sha256": "361f5841e55fc4a43c8b924b1426998ed54d1ae0eb7867cf0a95106ff8b0041a"
-    },
-    {
-      "file": "android-sim/verification/user-M7-camera-roll-feedback.json",
-      "line": 1,
-      "anchor": 1,
-      "sha256": "703ea431f0cdce5ae86b972cba2e460e15edb2cfff1ddf85ace1d186cb8add0b"
+      "sha256": "6739dbf6d8dd23384df156db2e221390bd7cbbb43da065e63ce05f9d12683683"
     }
   ],
   "snippets": [
@@ -624,8 +738,8 @@
     {
       "file": "android-sim/app/src/main/cpp/CMakeLists.txt",
       "start": 52,
-      "end": 62,
-      "text": "add_subdirectory(\"${MUJOCO_SOURCE_DIR}\" mujoco-build EXCLUDE_FROM_ALL)\n# Bionic provides localtime_r; upstream 3.10 requires an explicit POSIX feature macro.\ntarget_compile_definitions(mujoco PRIVATE _POSIX_C_SOURCE=200809L)\n# Android packages .so files; keep the bundled library SONAME unversioned.\nset_target_properties(mujoco PROPERTIES VERSION \"\" SOVERSION \"\")\nadd_library(microduck_m1 SHARED native_sim.cpp)\ntarget_compile_features(microduck_m1 PRIVATE cxx_std_20)\ntarget_compile_options(microduck_m1 PRIVATE -Wall -Wextra -Werror)\ntarget_link_options(microduck_m1 PRIVATE -Wl,-z,max-page-size=16384)\ntarget_link_options(mujoco PRIVATE -Wl,-z,max-page-size=16384)\ntarget_link_libraries(microduck_m1 PRIVATE mujoco log)"
+      "end": 56,
+      "text": "add_subdirectory(\"${MUJOCO_SOURCE_DIR}\" mujoco-build EXCLUDE_FROM_ALL)\n# Bionic provides localtime_r; upstream 3.10 requires an explicit POSIX feature macro.\ntarget_compile_definitions(mujoco PRIVATE _POSIX_C_SOURCE=200809L)\n# Android packages .so files; keep the bundled library SONAME unversioned.\nset_target_properties(mujoco PROPERTIES VERSION \"\" SOVERSION \"\")"
     },
     {
       "file": "android-sim/scripts/prepare_assets.py",
@@ -653,27 +767,63 @@
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
-      "start": 267,
-      "end": 279,
+      "start": 284,
+      "end": 296,
       "text": "    private void controlStep(boolean withVisual) {\n        long begin=System.nanoTime();\n        try { if(policyEnabled) policies.tick(handle); }\n        catch(Exception e) { throw new IllegalStateException(\"Policy inference failed\",e); }\n        long physicsBegin=System.nanoTime(); policyTickMs=(physicsBegin-begin)/1e6;\n        NativeSim.advance(handle,4); physicsMs=(System.nanoTime()-physicsBegin)/1e6;\n        if(policyEnabled) policies.afterStep();\n        controlMs=(System.nanoTime()-begin)/1e6;\n        snapshotMs=0;\n        if(withVisual && (renderEnabled || lan!=null) && visualCadence.due(System.nanoTime())) pushVisual();\n        controlWithVisualMs=(System.nanoTime()-begin)/1e6;\n    }\n    private void pushVisual() {"
     },
     {
-      "file": "android-sim/app/src/main/cpp/native_sim.cpp",
-      "start": 82,
-      "end": 91,
-      "text": "void build_observation(const Simulation& s,const float* previous,const float* command,float* obs) {\n    std::copy(previous,previous+N,obs+34); std::copy(command,command+13,obs+48);\n    // Free-joint angular velocity is local; projected gravity is R^T * (0,0,-1).\n    mjtNum rotation[9]; mju_quat2Mat(rotation,s.data->qpos+s.root_qpos+3);\n    for(int i=0;i<3;++i) { obs[i]=s.data->qvel[s.root_dof+3+i]; obs[3+i]=-rotation[6+i]; }\n    for(int i=0;i<N;++i) { obs[6+i]=s.data->qpos[s.qpos[i]]-HOME[i]; obs[20+i]=s.data->qvel[s.qvel[i]]; }\n    obs[55]=obs[56]=obs[60]=0; // Unbound body x/y/yaw.\n    for(int i=0;i<61;++i) if(!std::isfinite(obs[i])) throw std::runtime_error(\"Non-finite observation\");\n}\nvoid apply_scaled_action(Simulation& s,const float* raw,double scale,double gain_ratio,bool filter) {"
+      "file": "Pollen/microduck/duck-control/src/obs.rs",
+      "start": 174,
+      "end": 188,
+      "text": "    pub fn build(\n        imu: &ImuData,\n        joint_positions: &[f64; NUM_JOINTS],\n        joint_velocities: &[f64; NUM_JOINTS],\n        home_pose: &[f64; NUM_JOINTS],\n        last_action: &[f32; ACTION_LEN],\n        command: &Command,\n    ) -> Self {\n        let mut data = [0.0f32; OBS_LEN];\n\n        // Carve the buffer into the blocks of the layout table above, by name — as\n        // *arrays*, so each block's width is in its type and [`fill`] can only be handed a\n        // source of matching length. `expect` cannot fire: the widths are constants that\n        // sum to `OBS_LEN`, which `the_layout_widths_sum_to_the_declared_input` pins.\n        const LAYOUT: &str = \"block widths must sum to OBS_LEN\";"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/PolicyRunner.java",
-      "start": 86,
-      "end": 98,
-      "text": "    void tick(long handle) throws Exception {\n        boolean standing=Math.sqrt(command[0]*command[0]+command[1]*command[1]+command[2]*command[2])<.05;\n        boolean rolling=roulade.active();\n        active=rolling?\"roulade\":standing?\"alpha_stand\":\"alpha_walking\";\n        float[] obs=NativeSim.observation(handle,previous,command);\n        long start=System.nanoTime(); float[] action=infer(sessions.get(active),obs);\n        inferenceMs=(System.nanoTime()-start)/1e6;\n        if(rolling) NativeSim.applyRouladeAction(handle,action,filter);\n        else NativeSim.applyAction(handle,action,standing,filter);\n        System.arraycopy(action,0,previous,0,14); // Feedback remains raw, before scale/filter.\n    }\n    CapturedReport.Fields captureReport() {\n        String policy=active,version=env.getVersion(),hash=hashes.get(active);"
+      "start": 97,
+      "end": 103,
+      "text": "    void tick(long handle) throws Exception {\n        double[] result=RustControl.tick(rustCore,NativeSim.bodySample(handle),\n            new double[]{command[0],command[1],command[2]},filter,this);\n        NativeSim.bodyGain(handle,(int)result[15]);\n        NativeSim.bodyTargets(handle,Arrays.copyOf(result,15));\n        fallen=result[17]!=0;\n    }"
     },
     {
-      "file": "android-sim/app/src/main/cpp/native_sim.cpp",
-      "start": 91,
-      "end": 104,
-      "text": "void apply_scaled_action(Simulation& s,const float* raw,double scale,double gain_ratio,bool filter) {\n    for(int i=0;i<N;++i) if(!std::isfinite(raw[i])) throw std::runtime_error(\"Non-finite policy action\");\n    for(int i=0;i<N;++i) {\n        double target=HOME[i]+scale*raw[i];\n        double alpha=(i>=5 && i<=8)?.5:.7;\n        if(filter && s.has_previous_target) target=alpha*target+(1-alpha)*s.previous_target[i];\n        s.data->ctrl[s.actuators[i]]=target; s.previous_target[i]=target;\n        double gain=s.base_gain[i]*gain_ratio;\n        s.model->actuator_gainprm[s.actuators[i]*mjNGAIN]=gain;\n        s.model->actuator_biasprm[s.actuators[i]*mjNBIAS+1]=-gain;\n    }\n    s.has_previous_target=true;\n}\nvoid apply_policy_action(Simulation& s,const float* raw,bool standing,bool filter) {"
+      "file": "android-sim/app/src/main/java/com/microduck/sim/PolicyRunner.java",
+      "start": 90,
+      "end": 96,
+      "text": "    float[] rustInfer(int net,float[] observation) throws Exception {\n        String[] names={\"alpha_stand\",\"alpha_walking\",\"roulade\"};\n        if(net<0 || net>=names.length) throw new IllegalStateException(\"Unsupported Rust policy\");\n        active=names[net];\n        long start=System.nanoTime();float[] action=infer(sessions.get(active),observation);\n        inferenceMs=(System.nanoTime()-start)/1e6;return action;\n    }"
+    },
+    {
+      "file": "android-sim/app/src/main/cpp/bam_actuator.h",
+      "start": 18,
+      "end": 21,
+      "text": "inline double torque(double target,double q,double velocity,double kp,double volts) {\n    const double duty=std::clamp((target-q)*kp*ERROR_GAIN,-1.0,1.0);\n    return KT*(volts*duty)/R-KT*KT*velocity/R;\n}"
+    },
+    {
+      "file": "android-sim/app/src/main/cpp/bam_actuator.h",
+      "start": 100,
+      "end": 112,
+      "text": "    void update(mjModel* m,mjData* d) {\n        if(!enabled) return;\n        double load=0; for(double t:previous_torque) load+=std::abs(t);\n        effective_volts=std::max(VIN_MIN,VIN-DROP_GAIN*load);\n        for(int i=0;i<14;++i) {\n            const auto& o=original[i]; int v=o.dof;\n            double t=powered?torque(targets[i],d->qpos[o.qpos],d->qvel[v],kp,effective_volts):0;\n            // CPU BAM uses the previous solved forces for the next friction budget.\n            double external=-d->qfrc_bias[v]+d->qfrc_constraint[v];\n            for(int e=0;e<d->nefc;++e)\n                if(d->efc_type[e]==mjCNSTR_FRICTION_DOF && d->efc_id[e]==o.joint) external-=d->efc_force[e];\n            m->dof_frictionloss[v]=friction(d->qfrc_actuator[v],external,d->qvel[v]);\n            m->dof_damping[v]=VISCOUS;"
+    },
+    {
+      "file": "android-sim/rust/control-core/src/lib.rs",
+      "start": 4,
+      "end": 17,
+      "text": "extern crate self as duck_control;\n#[path = \"../../../../Pollen/microduck/duck-control/src/model.rs\"]\npub mod model;\n#[path = \"../../../../Pollen/microduck/duck-control/src/imu.rs\"]\npub mod imu;\n#[path = \"../../../../Pollen/microduck/duck-control/src/io.rs\"]\npub mod io;\n#[path = \"../../../../Pollen/microduck/duck-control/src/obs.rs\"]\npub mod obs;\n#[path = \"../../../../Pollen/microduck/duck-control/src/safety.rs\"]\npub mod safety;\ninclude!(concat!(env!(\"OUT_DIR\"),\"/control_module.rs\"));\npub mod policy;\npub use io::Sensors;"
+    },
+    {
+      "file": "android-sim/app/src/main/cpp/CMakeLists.txt",
+      "start": 62,
+      "end": 71,
+      "text": "add_custom_target(duck_rust_build\n  COMMAND \"${Python3_EXECUTABLE}\" \"${M1_PROJECT_ROOT}/scripts/build_rust_core.py\"\n    --cargo \"${DUCK_CARGO}\" --target-dir \"${DUCK_RUST_TARGET_DIR}\"\n    --linker \"${ANDROID_TOOLCHAIN_ROOT}/bin/aarch64-linux-android28-clang\"\n  BYPRODUCTS \"${DUCK_RUST_ARCHIVE}\"\n  VERBATIM)\nadd_library(duck_rust_core STATIC IMPORTED)\nset_target_properties(duck_rust_core PROPERTIES IMPORTED_LOCATION \"${DUCK_RUST_ARCHIVE}\")\nadd_dependencies(duck_rust_core duck_rust_build)\nadd_library(microduck_m1 SHARED native_sim.cpp rust_control_jni.cpp)"
+    },
+    {
+      "file": "android-sim/app/src/main/cpp/CMakeLists.txt",
+      "start": 71,
+      "end": 76,
+      "text": "add_library(microduck_m1 SHARED native_sim.cpp rust_control_jni.cpp)\ntarget_compile_features(microduck_m1 PRIVATE cxx_std_20)\ntarget_compile_options(microduck_m1 PRIVATE -Wall -Wextra -Werror)\ntarget_link_options(microduck_m1 PRIVATE -Wl,-z,max-page-size=16384)\ntarget_link_options(mujoco PRIVATE -Wl,-z,max-page-size=16384)\ntarget_link_libraries(microduck_m1 PRIVATE mujoco duck_rust_core log dl m)"
+    },
+    {
+      "file": "android-sim/rust/control-core/src/policy.rs",
+      "start": 18,
+      "end": 26,
+      "text": "    pub fn infer(&mut self,obs:&Observation,net:Net)->Result<[f32;ACTION_LEN],PolicyError>{\n        let index=match net{Net::Stand=>0,Net::Walk=>1,Net::Skill(0)=>2,_=>return Err(PolicyError)};\n        let host=self.0.borrow().ok_or(PolicyError)?;\n        let mut action=[f32::NAN;ACTION_LEN];\n        let result=unsafe{(host.callback)(host.context,index,obs.as_slice().as_ptr(),action.as_mut_ptr())};\n        if result!=0 || action.iter().any(|v|!v.is_finite()){return Err(PolicyError)}\n        Ok(action)\n    }\n}"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/VideoCapture.java",
@@ -703,8 +853,14 @@
     "运行时技术架构与线程所有权",
     "控制周期与JNI物理接口",
     "61D观测与14D动作：跨仓库接口契约",
-    "推理、动作滤波与XML位置伺服",
-    "训练BAM与手机XML伺服的差异",
+    "推理、动作滤波与两种执行器",
+    "BAM执行器：移植方案与关键公式",
+    "训练环境与Android物理的剩余差异",
+    "APK内嵌Rust核心：复用范围",
+    "Rust编译与JNI链接的关键代码",
+    "Rust与Android ORT：为什么保留混合链路",
+    "SimIo身体服务：桌面原版控制手机",
+    "两种Rust模式的使用命令",
     "CAD渲染与机器人相机架构",
     "浏览器控制、状态与视频传输",
     "单次前滚翻与当前抬头问题",
@@ -715,7 +871,9 @@
     "变更如何传到Android：重建关系表",
     "检查证据与当前验收边界",
     "常见构建与运行问题定位",
-    "后续方案与开发方法",
+    "阶段性交付与项目价值",
+    "后续方向与优先顺序",
+    "开发方法与接续阅读",
     "附录：源码路径与证据索引"
   ],
   "diagrams": [
@@ -724,6 +882,10 @@
     "model",
     "runtime",
     "camera",
-    "desktop"
+    "desktop",
+    "bam",
+    "embedded",
+    "rust_build",
+    "simio"
   ]
 }

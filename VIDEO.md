@@ -2,9 +2,9 @@
 
 当前源码 `0.10.0-m10` / versionCode=18，手机标题 `Microduck · Android M10`。由用户在Android Studio Sync、编译、安装和运行。两项优先工作均已实现：独立相机 EGL/Surface 与 WebRTC 视频轨道/硬件编码。用户已反馈M8“实机验证正常”，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)。M8.1仅将局域网访问码改为4位数字；实际codec/硬件编码器细节未另取设备报告，性能/温升长测仍延期。
 
-M9增加BAM与Rust身体服务，见 [BAM_SIMIO.md](BAM_SIMIO.md)。视频链路保持；身体服务期间网页只监看，动作控制由Rust接管。M8功能已由用户确认，M9仍待Studio运行。
+M9增加BAM与Rust身体服务，见 [BAM_SIMIO.md](BAM_SIMIO.md)。视频链路保持；身体服务期间网页只监看，动作控制由Rust接管。M8功能和M9 Rust连接已有用户确认。
 
-M10本地动作已由APK内嵌Rust核心执行，不需要电脑。构建与行为边界见 [RUST_CORE.md](RUST_CORE.md)。外部SimIo模式继续保留。
+M10本地动作已由APK内嵌Rust核心执行，不需要电脑；用户已确认M10实机验证通过，见 [user-M10-feedback.json](verification/user-M10-feedback.json)。构建与行为边界见 [RUST_CORE.md](RUST_CORE.md)。外部SimIo模式继续保留。
 
 ## Studio运行与功能验收
 

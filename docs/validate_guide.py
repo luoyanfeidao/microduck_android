@@ -30,7 +30,7 @@ texts, overflow, thumbnails = [], [], []
 preview_dir = OUT / 'previews'
 preview_dir.mkdir(exist_ok=True)
 sections_by_page = {entry[2]: entry[1] for entry in doc.get_toc()}
-review_terms = ['三个项目', '构建链', '线程所有权', '机器人相机架构', '单次前滚翻', '新机器恢复']
+review_terms = ['三个项目', '构建链', '线程所有权', '机器人相机架构', '单次前滚翻', '新机器恢复', 'BAM执行器', 'APK内嵌Rust', 'Rust编译', 'Rust与Android', 'SimIo身体', '阶段性交付']
 review_pages = {1, 2}
 review_pages.update(page for page, title in sections_by_page.items()
                     if any(term in title for term in review_terms))
@@ -50,12 +50,9 @@ for index, page in enumerate(doc, 1):
         page.get_pixmap(matrix=fitz.Matrix(1.2, 1.2), alpha=False).save(preview_dir / f'page-{index:02d}.png')
 assert not overflow, overflow
 all_text = '\n'.join(texts)
-for term in ['prepare_assets.py', 'BAM', 'libmujoco.so', '14D', '61D', '不编译', '抬头', 'NDK', 'SHA', 'preBuild']:
+for term in ['prepare_assets.py', 'BAM', 'libmujoco.so', '14D', '61D', 'duck_rust_build', 'RustControl', '0.10.0-m10', '用户已', '抬头', 'NDK', 'SHA', 'preBuild']:
     # The guide uses several equivalent phrasings; check its substantive concepts.
-    if term == '不编译':
-        assert '不参与' in all_text or '没有把Rust' in all_text
-    else:
-        assert term in all_text, term
+    assert term in all_text, term
 width, height = thumbnails[0].size
 columns = 4
 sheet = Image.new('RGB', (columns * (width + 12), math.ceil(len(doc) / columns) * (height + 28)), '#dbe5eb')

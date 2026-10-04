@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="509.27559055118115" height="248" preserveAspectRatio="xMinYMin meet" viewBox="0 0 509 248" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="509.27559055118115" height="248"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-248)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="176" width="145" height="56" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="42.21923828125" y="215.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,430) scale(1,-1)">Rust关节目标</text>
+			<text x="23.814453125" y="201.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,402) scale(1,-1)">HOME + scale × raw action</text>
+			<text x="33.599609375" y="187.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,374) scale(1,-1)">EMA / Safety / 固件kp</text>
+			<rect x="183" y="176" width="145" height="56" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="229.6650390625" y="215.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,430) scale(1,-1)">BAM位置环</text>
+			<text x="219.576171875" y="201.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,402) scale(1,-1)">误差 → PWM → 电压</text>
+			<text x="218.42578125" y="187.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,374) scale(1,-1)">反电动势 → 电机力矩</text>
+			<rect x="366" y="176" width="143" height="56" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="404.7119140625" y="215.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,430) scale(1,-1)">MuJoCo motor</text>
+			<text x="409.943359375" y="201.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,402) scale(1,-1)">每5ms力矩更新</text>
+			<text x="409.5" y="187.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,374) scale(1,-1)">接触与约束求解</text>
+			<path d="M 145,203 L 182,203 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="182 203, 176.5973 205.6098, 176.5973 200.3902" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 328,203 L 365,203 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="365 203, 359.5973 205.6098, 359.5973 200.3902" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="183" y="65" width="145" height="58" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="226.330078125" y="105.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,210) scale(1,-1)">BAM M6摩擦</text>
+			<text x="218.3828125" y="91.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,182) scale(1,-1)">负载 / 方向 / Stribeck</text>
+			<text x="220.16015625" y="77.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,154) scale(1,-1)">黏性阻尼 / armature</text>
+			<rect x="366" y="65" width="143" height="58" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="403.33251953125" y="105.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,210) scale(1,-1)">关节 / 受力反馈</text>
+			<text x="418.166015625" y="91.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,182) scale(1,-1)">位置 / 速度</text>
+			<text x="405.5" y="77.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,154) scale(1,-1)">上一物理步约束力</text>
+			<path d="M 437,176 L 437,124 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="437 124, 439.6098 129.4027, 434.3902 129.4027" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 366,94 L 329,94 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="329 94, 334.4027 91.39021, 334.4027 96.60979" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 285,123 L 407,175 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="407 175, 401.0067 175.2824, 403.0532 170.4808" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="330.0" y="156.0" style="font-family: CN; font-size: 8px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,312) scale(1,-1)">摩擦参数</text>
+			<text x="150.8687744140625" y="30" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,60) scale(1,-1)">7.4V名义参数；动态电压下垂；训练DR与延迟尚未移植</text>
+			<text x="175.8997802734375" y="10" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,20) scale(1,-1)">XML伺服可切回对照；切换暂停并复位SIT</text>
+		</g>
+	</g>
+</svg>

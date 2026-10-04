@@ -20,8 +20,8 @@
 			<text x="216.716796875" y="232.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,464) scale(1,-1)">ORT + WebRTC AAR</text>
 			<rect x="366" y="223" width="143" height="52" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
 			<text x="411.9384765625" y="260.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,520) scale(1,-1)">Native 分支</text>
-			<text x="413.494140625" y="246.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,492) scale(1,-1)">MuJoCo 源码</text>
-			<text x="406.046875" y="232.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,464) scale(1,-1)">JNI + NDK25补丁</text>
+			<text x="400.15234375" y="246.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,492) scale(1,-1)">MuJoCo / C++ / Rust</text>
+			<text x="397.71484375" y="232.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,464) scale(1,-1)">JNI + BAM + 控制核心</text>
 			<rect x="0" y="134" width="145" height="52" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
 			<text x="32.76611328125" y="171.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,342) scale(1,-1)">preBuild 前置任务</text>
 			<text x="35.814453125" y="157.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,314) scale(1,-1)">prepareModelAssets</text>
@@ -31,7 +31,7 @@
 			<text x="233.751953125" y="157.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,314) scale(1,-1)">Java → DEX</text>
 			<text x="238.1640625" y="143.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,286) scale(1,-1)">AAR 合并</text>
 			<rect x="366" y="134" width="143" height="52" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
-			<text x="404.43115234375" y="171.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,342) scale(1,-1)">CMake / Clang</text>
+			<text x="389.15283203125" y="171.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,342) scale(1,-1)">CMake / NDK / Cargo</text>
 			<text x="403.482421875" y="157.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,314) scale(1,-1)">Android arm64-v8a</text>
 			<text x="387.484375" y="143.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,286) scale(1,-1)">libmujoco / libmicroduck_m1</text>
 			<path d="M 72,223 L 72,187 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>

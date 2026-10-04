@@ -3,46 +3,46 @@
 
 ## 01 方案定位与阅读结论
 
-先确认运行的是什么，再理解如何编译和复用。
+M10已完成功能闭环，并获用户实机确认。
 
-当前Android项目是一个独立原生应用：在手机内部用MuJoCo计算机器人运动，用ONNX Runtime执行站立、步行、前滚翻策略，用GLES3绘制机器人和头部相机，并用局域网HTTP接受另一台设备的浏览器控制。它支持一台Android仿真、另一台Android浏览器控制及看相机。
+当前Android应用在手机内部运行MuJoCo物理、BAM执行器、Rust控制核心、Android ONNX Runtime和独立机器人相机。另一台Android可通过浏览器控制并观看WebRTC/JPEG视频。手机本地站立、步行、整圈前滚翻不再需要电脑或USB。
 
-最重要的构建结论：Android使用两个Pollen仓库提供的模型与策略文件，但没有把Rust控制服务或Python训练框架交叉编译进APK。Android自己实现控制循环和渲染/网络；MuJoCo引擎另从上游C/C++源码编译为Android共享库，ORT Android直接使用Maven AAR。
+构建结论：microduck_rl提供XML/STL，microduck目录提供现成ONNX与直接编译复用的Rust控制源码。Gradle驱动资源收集、Java/AAR与CMake；CMake调用Cargo构建Android ARM64静态库，并将Rust与JNI链接进libmicroduck_m1.so。MuJoCo从固定C/C++源码另编为libmujoco.so，ORT与WebRTC来自Android AAR。
 
 | 问题 | 当前实现 |
 | --- | --- |
-| 是否需要先cargo build？ | Android构建不调用Cargo；microduck主要是本地ONNX的存放来源。 |
-| 是否需要先uv sync或训练？ | 已有XML/STL和三份ONNX时，Android打包无需Python训练环境；资源脚本只用Python标准库。 |
-| 是否需要重新导出CAD？ | Android读取已生成的MJCF/XML/STL，不执行Onshape导出。 |
-| 为何还需要两仓库？ | prepare_assets.py按固定相对路径读取其中资源。目录依赖不等于二进制编译依赖。 |
-| 手机里是否有MuJoCo Warp/PPO？ | 没有；手机运行CPU MuJoCo和CPU ONNX推理，PPO/Warp属于训练端。 |
+| 是否需要Cargo？ | M10构建需要Rust/Cargo和aarch64-linux-android标准库；Studio自动调用，无需先手工编译桌面robotd。 |
+| 是否需要uv sync或训练？ | 已有XML/STL和三份ONNX即可打包；Python标准库负责资源脚本，训练环境只用于训练与主机复演。 |
+| 是否需要重新导出CAD？ | 读取现成MJCF/XML/STL；模型制作与Android构建是两步。 |
+| Rust是否已在APK里？ | 已静态链接控制核心；完整robotd进程、硬件总线与全部服务没有内嵌。 |
+| ONNX是否要改成Rust推理？ | 当前Rust经JNI调用现有Android ORT。改为Rust绑定仍通常调用ORT引擎，现阶段无需更换已验证后端。 |
 
-直接证据：A/app/build.gradle:36；A/app/src/main/cpp/CMakeLists.txt:57；A/scripts/prepare_assets.py:6。当前版本来源：A/app/build.gradle:11。
+源码依据：A/app/build.gradle:11；A/app/src/main/cpp/CMakeLists.txt:62；A/rust/control-core/src/lib.rs:4。
 
-> 本说明核对M8.1源码及已有验证记录。M8落地独立相机EGL/Surface与硬件WebRTC，用户反馈实机验证正常；M8.1把局域网访问码改为4位数字，主机检查通过，待用户Studio重新编译运行。代理没有运行Gradle、打包APK、训练或自动操作手机按钮。
+> 用户已确认M10实机验证通过，见 A/verification/user-M10-feedback.json:1。这是用户功能确认，不附加推断codec、速度跟踪、温升或长期稳定性结论。本次只更新文档；没有新增APK构建、训练或设备操作。
 
 
 ## 02 三个项目的职责与复用类型
 
-文件复用、代码移植、设计借鉴分别列出。
+资源输入、源码编译和运行服务的依赖分别列明。
 
-![三个仓库的输入边界；本地ONNX位于runtime仓库目录，不代表由Rust编译器生成。](diagrams/reuse.svg)
+![M10既读取microduck资源，也直接编译其Rust控制源码。](diagrams/reuse.svg)
 
 | 项目 | 原本职责 | Android实际使用 |
 | --- | --- | --- |
-| microduck | Rust robotd/duck-control、CLI、媒体、板端部署、真实硬件接口 | 读取policies下的三份ONNX；移植观测布局、动作倍率、滤波和单次动作窗口约定。Rust源码不参与当前APK链接。 |
-| microduck_rl | mjlab任务插件、PPO训练、BAM执行器、MJCF模型、导出与CPU仿真 | 复制scene.xml及递归XML/STL依赖；沿用HOME/关节布局/相机方向；其.venv只用于主机对照或训练。 |
-| android-sim | Java控制/状态/网络、JNI物理桥、GLES和相机、Gradle/CMake | 实现手机运行闭环，并独立管理代码、构建配置及验证证据。 |
-| MuJoCo上游 | 通用C/C++物理引擎 | 固定3.10.0源码，经NDK编译为libmujoco.so。 |
+| microduck | Rust robotd、控制核心、媒体、板端部署与硬件接口 | 三份现成ONNX；model/imu/io/obs/safety及Controller源码；params/proto/kinematics path依赖。 |
+| microduck_rl | mjlab插件、PPO训练、BAM、模型生成与CPU复演 | 复制现成XML/STL；采用HOME/关节/相机约定；BAM公式另以C++移植。 |
+| android-sim | Java界面/线程/网络/ORT，Rust适配层，C++身体与GLES | 组织APK内闭环、浏览器视频和桌面SimIo接管。 |
+| MuJoCo上游 | 通用C/C++物理引擎 | 固定3.10.0源码，经NDK编译为Android共享库。 |
 
-Rust工作区服务划分见 R/Cargo.toml:7；训练插件和命令入口见 T/pyproject.toml:40、T/pyproject.toml:55。
+直接复用入口：A/rust/control-core/src/lib.rs:6；A/rust/control-core/Cargo.toml:14；来源锁 A/RUST_CORE.lock.json:1。训练插件入口 T/pyproject.toml:40。
 
-> 相同ONNX和相同几何不保证相同动作表现：执行器、延迟、滤波、初始化及策略交接都会改变闭环。本说明后面单独列出BAM与Android XML伺服差异。
+> 相同权重和模型不保证相同动作：执行器、延迟、初始化、滤波与策略交接都会影响闭环。M10已复用控制源码，但完整训练环境与完整daemon仍有明确边界。
 
 
 ## 03 Android构建链与产物总览
 
-Gradle驱动资源、Java/AAR和NDK三条构建分支。
+资源、Java/AAR、C++与Rust最终汇合为APK。
 
 ![这是逻辑依赖图；Java与原生任务的具体调度由Gradle决定。](diagrams/build.svg)
 
@@ -50,8 +50,8 @@ Gradle驱动资源、Java/AAR和NDK三条构建分支。
 | --- | --- | --- |
 | 资源 | scene.xml/robot_groundcontact.xml/附加XML/STL；三份ONNX | assets/model和assets/policies的副本与摘要清单 |
 | Java | Android Java源码、Android SDK、ORT与WebRTC Android AAR | DEX；AAR的Java/native依赖合并进APK |
-| Native | MuJoCo上游源码、native_sim.cpp/visual_snapshot.h、NDK | libmujoco.so、libmicroduck_m1.so，ABI=arm64-v8a |
-| 打包 | Manifest、DEX、assets、共享库 | APK，由Studio安装运行；不会附带.venv或Rust daemon |
+| Native | MuJoCo/C++ JNI/BAM；Rust控制源码与适配层；NDK/Cargo | libmujoco.so、libmicroduck_m1.so，ABI=arm64-v8a |
+| 打包 | Manifest、DEX、assets、共享库 | APK内含静态链接Rust核心；不附带训练.venv或桌面daemon |
 
 配置入口：A/app/build.gradle:21；A/app/build.gradle:40。
 
@@ -95,7 +95,7 @@ Gradle驱动资源、Java/AAR和NDK三条构建分支。
   22      }
 ```
 
-注解③：abiFilters只打arm64-v8a；externalNativeBuild只请求microduck_m1目标，它通过target_link_libraries带入MuJoCo。ANDROID_STL=c++_static指定应用原生构建所用C++运行库；不能据此推断ORT AAR内部如何构建。
+注解③：abiFilters只打arm64-v8a；externalNativeBuild只请求microduck_m1目标，它通过target_link_libraries带入MuJoCo和Rust静态库。ANDROID_STL=c++_static指定应用原生构建所用C++运行库；不能据此推断ORT AAR内部如何构建。
 
 AGP插件版本与仓库设置：A/build.gradle:3、A/settings.gradle:3；Gradle Wrapper版本：A/gradle/wrapper/gradle-wrapper.properties:3。
 
@@ -132,19 +132,13 @@ Android复用的是引擎源码，不是桌面Python包的二进制。
   54  target_compile_definitions(mujoco PRIVATE _POSIX_C_SOURCE=200809L)
   55  # Android packages .so files; keep the bundled library SONAME unversioned.
   56  set_target_properties(mujoco PROPERTIES VERSION "" SOVERSION "")
-  57  add_library(microduck_m1 SHARED native_sim.cpp)
-  58  target_compile_features(microduck_m1 PRIVATE cxx_std_20)
-  59  target_compile_options(microduck_m1 PRIVATE -Wall -Wextra -Werror)
-  60  target_link_options(microduck_m1 PRIVATE -Wl,-z,max-page-size=16384)
-  61  target_link_options(mujoco PRIVATE -Wl,-z,max-page-size=16384)
-  62  target_link_libraries(microduck_m1 PRIVATE mujoco log)
 ```
 
-注解①：add_subdirectory把MuJoCo C/C++工程纳入当前Android工具链；libmicroduck_m1链接mujoco和Android log。Python wheel里的macOS共享库不能直接作为Android arm64库使用。
+注解①：add_subdirectory把MuJoCo C/C++工程纳入当前Android工具链；libmicroduck_m1链接mujoco、Rust静态库和Android系统库。Python wheel里的macOS共享库不能直接作为Android arm64库使用。
 
 注解②：关闭MuJoCo示例、simulate、测试及Python工具，绘制由Android GLES承担；CMake依赖的底层库按MuJoCo自己的固定版本获取。引擎不等同于桌面MuJoCo GUI。
 
-注解③：JNI和MuJoCo链接设置16KB ELF段对齐，但整个APK仍受ORT AAR影响；当前ORT 1.20.0 native库为4KB对齐，已连接设备为4KB页。当前组合的16KB页设备兼容性尚未解决。依据 A/README.md:41。
+注解③：JNI和MuJoCo链接设置16KB ELF段对齐，但整个APK仍受ORT AAR影响；当前ORT 1.20.0 native库为4KB对齐，已连接设备为4KB页。当前组合的16KB页设备兼容性尚未解决。依据 A/README.md:45。
 
 补丁：A/patches/mujoco-3.10.0-ndk25.patch:1把XML解析的string_view迭代器构造改为指针+长度，适配NDK25 libc++。CMake先反向检查是否已有补丁，再检查并应用，避免重复修改；见 A/app/src/main/cpp/CMakeLists.txt:26。
 
@@ -158,17 +152,17 @@ CPU架构相同，不代表操作系统、libc与二进制ABI相同。
 | XML / STL | 作为数据文件复制，手机MuJoCo重新解析为内存模型 | 相对路径、版本、惯性/碰撞、相机及关节语义 |
 | ONNX | 作为网络数据复制，手机ORT Android重新建立Session | 支持的算子/模型格式、normalizer、61D/14D与关节顺序、smoke |
 | Python源码/.venv | 当前只在主机训练/复演或提供桌面模拟身体 | 没有打入APK；桌面wheel的原生库不是Android库 |
-| Rust板端daemon | 当前不复用其二进制；控制语义手工移植到Java/JNI | 板端目标为Linux GNU ABI；并非Android NDK目标 |
+| Rust板端daemon | 完整daemon二进制不复用；控制源码经Cargo重新编为Android静态库 | 板端目标为Linux GNU ABI；并非Android NDK目标 |
 | MuJoCo C/C++源码 | 经Android NDK工具链重新编译 | NDK兼容补丁、API/ABI、链接依赖、版本及页大小 |
 | ORT Android AAR | 使用厂商为Android构建的Java/native包 | 其版本/ABI/系统兼容性；不是复用板端ORT安装文件 |
 
 microduck的cargo board别名明确使用zigbuild --target aarch64-unknown-linux-gnu.2.31；源码注释指出Apple Silicon aarch64-apple-darwin与板端同CPU却不同OS/libc/ABI。Android当前目标是NDK arm64-v8a，源码检查使用aarch64-linux-android28工具链目标。因此不能把板端可执行文件或桌面Python共享库直接放到APK当Android native库。
 
-证据：R/.cargo/config.toml:24、A/scripts/check_source.py:99。真实板端dev-push是Linux daemon构建、打包与部署流程，不是Studio的APK构建或安装路径。
+证据：R/.cargo/config.toml:24、A/scripts/check_source.py:105。真实板端dev-push是Linux daemon构建、打包与部署流程，不是Studio的APK构建或安装路径。
 
 三套ORT也独立管理：Rust工作区声明板端最低1.23、安装目标1.28.0；RL pyproject声明Python ORT≥1.24.4；Android固定AAR1.20.0。它们不是同一份共享库。现有策略已通过跨版本smoke，不代表未来任意新模型都能由旧Android ORT执行。版本依据 R/Cargo.toml:31、T/pyproject.toml、A/app/build.gradle。
 
-> 将来若复用Rust源码，需要另建Android Rust target与JNI/FFI入口，审查服务、socket、线程和平台依赖；当前Gradle/CMake没有这条链。本文区分现状与可设计的下一阶段，不把“语言能编译到Android”写成“本工程已经复用了Rust”。
+> M10已建立aarch64-linux-android与JNI/FFI编译链。Rust控制源码直接复用，桌面加载器由Android推理适配器替代；完整daemon的服务/硬件驱动仍留在桌面或板端。依据 A/scripts/build_rust_core.py:28。
 
 
 ## 07 依赖清单：按使用阶段区分
@@ -177,8 +171,9 @@ microduck的cargo board别名明确使用zigbuild --target aarch64-unknown-linux
 
 | 阶段 | 依赖/版本 | 用途与依据 |
 | --- | --- | --- |
-| Android构建 | JDK11 / Gradle7.5 / AGP7.2.2 | Java11编译链；A/app/build.gradle、A/build.gradle、Wrapper配置 |
+| Android构建 | JBR17.0.14 / Gradle7.5 / AGP7.2.2 | 运行Gradle的JDK为17，Java源码/字节码兼容级别11；A/app/build.gradle:24 |
 | Android构建 | SDK34 / NDK25.1.8937393 / CMake3.30.3 | compile/target=34、min=28；交叉编译arm64；A/app/build.gradle:5 |
+| Rust构建 | Rust/Cargo；Android ARM64标准库 | 本机验证1.98.1；CMake调用Cargo并校验源文件锁；A/RUST_CORE.lock.json:6 |
 | 资源收集 | Python3.9+，标准库；Git | Path.is_relative_to等用于复制/摘要；不导入torch/mjlab；A/scripts/prepare_assets.py:3 |
 | Android运行 | MuJoCo3.10.0 / ORT Android1.20.0 | 原生物理与Java CPU推理；A/app/build.gradle:31 |
 | Android运行 | Stream WebRTC1.3.9 / GLES3 / JPEG / Socket | SDK平台能力；Manifest要求GLES3及INTERNET；A/app/src/main/AndroidManifest.xml:3 |
@@ -279,7 +274,7 @@ ModelAssets.prepare把打包的model资源安装到应用私有files/model；已
 | alpha_walking.onnx | 速度命令步行 | e36332d383997d51… |
 | roulade.onnx | 单次向前翻滚窗口 | 3d60da08fc13f29c… |
 
-完整摘要见 A/UPSTREAM.lock.json:1。PolicyRunner检查manifest摘要、obs/actions名字、float32及固定[1,61]→[1,14]shape；三策略每个有两组主机smoke输入，启动最大绝对误差必须≤1e-3。入口 A/app/src/main/java/com/microduck/sim/PolicyRunner.java:56、A/app/src/main/java/com/microduck/sim/PolicyRunner.java:53。
+完整摘要见 A/UPSTREAM.lock.json:1。PolicyRunner检查manifest摘要、obs/actions名字、float32及固定[1,61]→[1,14]shape；三策略每个有两组主机smoke输入，启动最大绝对误差必须≤1e-3。入口 A/app/src/main/java/com/microduck/sim/PolicyRunner.java:59、A/app/src/main/java/com/microduck/sim/PolicyRunner.java:55。
 
 > prepare_assets会为新文件重算manifest；真正防止替换模型却沿用旧对照的另一道检查是smoke里的模型摘要。当前Android只支持feedforward，Rust支持的LSTM/更多skill manifest语义没有全部移植。
 
@@ -292,7 +287,7 @@ ModelAssets.prepare把打包的model资源安装到应用私有files/model；已
 | --- | --- | --- |
 | classes.dex | Java源码及AAR依赖 | UI、调度、推理、HTTP与报告逻辑 |
 | lib/arm64-v8a/libmujoco.so | MuJoCo源码经NDK编译 | MJCF解析、刚体/关节/接触求解 |
-| lib/arm64-v8a/libmicroduck_m1.so | native_sim.cpp及头文件经NDK编译 | JNI接口、观测/目标、物理推进、场景快照 |
+| lib/arm64-v8a/libmicroduck_m1.so | C++ JNI/BAM与Rust静态库经NDK链接 | Rust Controller/Safety、身体接口、物理推进与视觉快照 |
 | ORT AAR带入的native库 | Maven依赖合并 | CPU网络算子与推理；实际名称/内容由AAR决定 |
 | assets/model/* | microduck_rl模型副本 | 几何、碰撞、惯性、关键帧、相机 |
 | assets/policies/* | 三份ONNX + manifest/smoke | 网络权重、摘要和数值对照 |
@@ -309,7 +304,7 @@ ModelAssets.prepare把打包的model资源安装到应用私有files/model；已
   10      static native String state(long handle);
 ```
 
-启动时工作线程先ModelAssets.prepare，再NativeSim.open(scene.xml,keyframe)，导出视觉网格，再创建PolicyRunner加载/验证三策略。默认SIT且暂停。策略加载失败时保留基础物理功能并显示错误。见 A/app/src/main/java/com/microduck/sim/MainActivity.java:155。
+启动时工作线程先ModelAssets.prepare，再NativeSim.open(scene.xml,keyframe)，导出视觉网格，再创建PolicyRunner加载/验证三策略并创建Rust状态。默认BAM、SIT且暂停。策略加载失败时保留基础物理功能并显示错误。见 A/app/src/main/java/com/microduck/sim/MainActivity.java:171。
 
 手机所需的是APK内资源和Android共享库；不会远程调用电脑的Python .venv、Rust robotd，也不会从CAD服务器实时取模型。启动后的files/model及last-report.json属于应用私有目录。
 
@@ -318,12 +313,12 @@ ModelAssets.prepare把打包的model资源安装到应用私有files/model；已
 
 20ms控制循环保持串行；渲染、网络和报告消耗在各自线程。
 
-![所有MuJoCo句柄与ORT session只在单仿真工作线程使用。](diagrams/runtime.svg)
+![MuJoCo、Rust句柄、ORT session和同步回调均属于单仿真工作线程。](diagrams/runtime.svg)
 
 | 线程/模块 | 拥有的状态 | 传给其他模块的数据 |
 | --- | --- | --- |
 | UI / MainActivity | 按钮、视图、Activity生命周期 | 任务投递；不直接读mjData |
-| 单worker | Native句柄、策略Session、previous action、速度、翻滚窗口 | 不可变场景快照、已捕获报告字段 |
+| 单worker | MuJoCo/Rust句柄、ORT Session、raw action反馈、速度与技能状态 | 不可变场景快照、已捕获报告字段 |
 | 预览GLES线程 | 独立GPU网格、外部观察视角 | 只消费CPU快照；不访问mjData |
 | 相机GL线程 | 独立EGL/Surface、GPU网格、相机FBO | Surface图像；JPEG模式才RGBA读回 |
 | WebRTC / helper | peer/track/source、OES纹理/引用计数、硬件编码器 | ICE信令与DTLS-SRTP视频；不访问MuJoCo |
@@ -338,33 +333,33 @@ ModelAssets.prepare把打包的model资源安装到应用私有files/model；已
 
 控制50Hz，物理200Hz，场景快照目标30Hz。
 
-来源：A/app/src/main/java/com/microduck/sim/MainActivity.java:267
+来源：A/app/src/main/java/com/microduck/sim/MainActivity.java:284
 
 ```
- 267      private void controlStep(boolean withVisual) {
- 268          long begin=System.nanoTime();
- 269          try { if(policyEnabled) policies.tick(handle); }
- 270          catch(Exception e) { throw new IllegalStateException("Policy inference failed",e); }
- 271          long physicsBegin=System.nanoTime(); policyTickMs=(physicsBegin-begin)/1e6;
- 272          NativeSim.advance(handle,4); physicsMs=(System.nanoTime()-physicsBegin)/1e6;
- 273          if(policyEnabled) policies.afterStep();
- 274          controlMs=(System.nanoTime()-begin)/1e6;
- 275          snapshotMs=0;
- 276          if(withVisual && (renderEnabled || lan!=null) && visualCadence.due(System.nanoTime())) pushVisual();
- 277          controlWithVisualMs=(System.nanoTime()-begin)/1e6;
- 278      }
- 279      private void pushVisual() {
+ 284      private void controlStep(boolean withVisual) {
+ 285          long begin=System.nanoTime();
+ 286          try { if(policyEnabled) policies.tick(handle); }
+ 287          catch(Exception e) { throw new IllegalStateException("Policy inference failed",e); }
+ 288          long physicsBegin=System.nanoTime(); policyTickMs=(physicsBegin-begin)/1e6;
+ 289          NativeSim.advance(handle,4); physicsMs=(System.nanoTime()-physicsBegin)/1e6;
+ 290          if(policyEnabled) policies.afterStep();
+ 291          controlMs=(System.nanoTime()-begin)/1e6;
+ 292          snapshotMs=0;
+ 293          if(withVisual && (renderEnabled || lan!=null) && visualCadence.due(System.nanoTime())) pushVisual();
+ 294          controlWithVisualMs=(System.nanoTime()-begin)/1e6;
+ 295      }
+ 296      private void pushVisual() {
 ```
 
-每次控制先按当前状态推理，写入关节目标，再NativeSim.advance(handle,4)。MuJoCo dt=5ms，四步推进20ms。翻滚窗口只在物理推进成功后计数。control_ms包含策略与物理，control_with_visual_ms再包括本周期可能发生的场景快照。
+每次控制先按当前状态推理，写入关节目标，再NativeSim.advance(handle,4)。MuJoCo dt=5ms，四步推进20ms。Rust在控制步内推进技能时间；界面完成计数在物理推进成功后更新。control_ms包含策略与物理，control_with_visual_ms再包括本周期可能发生的场景快照。
 
-ticker使用scheduleAtFixedRate(...,20ms)，记录期望开始时间与迟到计数；Java/Android调度不是硬实时保证，50Hz是目标。长时间过载不能据配置排除，已有短期样本和基准需分别看待。调度入口 A/app/src/main/java/com/microduck/sim/MainActivity.java:188。
+ticker使用scheduleAtFixedRate(...,20ms)，记录期望开始时间与迟到计数；Java/Android调度不是硬实时保证，50Hz是目标。长时间过载不能据配置排除，已有短期样本和基准需分别看待。调度入口 A/app/src/main/java/com/microduck/sim/MainActivity.java:205。
 
 原生open解析MJCF并强制dt=.005；按名字找到14个hinge、其qpos/qvel地址及唯一joint actuator，不假定浮动根或关节索引恒定。root是freejoint，qpos=21/nv=20/nu=14；关键维度见已有手机报告。
 
-代码入口：A/app/src/main/cpp/native_sim.cpp:146、A/app/src/main/cpp/native_sim.cpp:149、A/app/src/main/cpp/native_sim.cpp:162。
+代码入口：A/app/src/main/cpp/native_sim.cpp:203、A/app/src/main/cpp/native_sim.cpp:206、A/app/src/main/cpp/native_sim.cpp:219。
 
-> 一步失败/非有限值/BADQPOS或BADQVEL或BADQACC会抛错并暂停；这是仿真数值故障处理，不等于完整移植Rust Safety或真实机器人电机保护。
+> 一步失败/非有限值/BADQPOS或BADQVEL或BADQACC会抛错并暂停；仿真数值检查与已复用的Rust Safety共同约束目标；它们不能代替真实机器人机械与电机保护。
 
 
 ## 14 61D观测与14D动作：跨仓库接口契约
@@ -382,67 +377,59 @@ ticker使用scheduleAtFixedRate(...,20ms)，记录期望开始时间与迟到计
 | 51..55 | 4 | neck/head pitch、head yaw/roll姿态命令槽 |
 | 55..61 | 6 | body x/y/z/roll/pitch/yaw；未绑定x/y/yaw强制零 |
 
-来源：A/app/src/main/cpp/native_sim.cpp:82
+来源：R/duck-control/src/obs.rs:174
 
 ```
-  82  void build_observation(const Simulation& s,const float* previous,const float* command,float* obs) {
-  83      std::copy(previous,previous+N,obs+34); std::copy(command,command+13,obs+48);
-  84      // Free-joint angular velocity is local; projected gravity is R^T * (0,0,-1).
-  85      mjtNum rotation[9]; mju_quat2Mat(rotation,s.data->qpos+s.root_qpos+3);
-  86      for(int i=0;i<3;++i) { obs[i]=s.data->qvel[s.root_dof+3+i]; obs[3+i]=-rotation[6+i]; }
-  87      for(int i=0;i<N;++i) { obs[6+i]=s.data->qpos[s.qpos[i]]-HOME[i]; obs[20+i]=s.data->qvel[s.qvel[i]]; }
-  88      obs[55]=obs[56]=obs[60]=0; // Unbound body x/y/yaw.
-  89      for(int i=0;i<61;++i) if(!std::isfinite(obs[i])) throw std::runtime_error("Non-finite observation");
-  90  }
-  91  void apply_scaled_action(Simulation& s,const float* raw,double scale,double gain_ratio,bool filter) {
+ 174      pub fn build(
+ 175          imu: &ImuData,
+ 176          joint_positions: &[f64; NUM_JOINTS],
+ 177          joint_velocities: &[f64; NUM_JOINTS],
+ 178          home_pose: &[f64; NUM_JOINTS],
+ 179          last_action: &[f32; ACTION_LEN],
+ 180          command: &Command,
+ 181      ) -> Self {
+ 182          let mut data = [0.0f32; OBS_LEN];
+ 183
+ 184          // Carve the buffer into the blocks of the layout table above, by name — as
+ 185          // *arrays*, so each block's width is in its type and [`fill`] can only be handed a
+ 186          // source of matching length. `expect` cannot fire: the widths are constants that
+ 187          // sum to `OBS_LEN`, which `the_layout_widths_sum_to_the_declared_input` pins.
+ 188          const LAYOUT: &str = "block widths must sum to OBS_LEN";
 ```
 
 当前Android用户界面只提供速度/单次翻滚；头部与机身命令保留13D布局但不对外提供完整姿态控制。14D输出是关节位置偏移，经过HOME+scale×action得到目标角；不是14个电机转速或14个力矩。
 
-关节顺序：左腿5（hip yaw/roll/pitch、knee、ankle）→头颈4（neck pitch、head pitch/yaw/roll）→右腿5。Android模型无Rust接口的mouth槽，按名字映射主动关节。Android定义 A/app/src/main/cpp/native_sim.cpp:18；Rust布局证据 R/duck-control/src/obs.rs:12。
+关节顺序：左腿5（hip yaw/roll/pitch、knee、ankle）→头颈4（neck pitch、head pitch/yaw/roll）→右腿5。Android模型无Rust接口的mouth槽，按名字映射主动关节。Android定义 A/app/src/main/cpp/native_sim.cpp:19；Rust布局证据 R/duck-control/src/obs.rs:12。
 
 
-## 15 推理、动作滤波与XML位置伺服
+## 15 推理、动作滤波与两种执行器
 
-控制逻辑按上游约定移植，执行器物理尚未等同训练BAM。
+Rust决定目标，Android ORT推理，BAM默认、XML用于对照。
 
-来源：A/app/src/main/java/com/microduck/sim/PolicyRunner.java:86
+来源：A/app/src/main/java/com/microduck/sim/PolicyRunner.java:97
 
 ```
-  86      void tick(long handle) throws Exception {
-  87          boolean standing=Math.sqrt(command[0]*command[0]+command[1]*command[1]+command[2]*command[2])<.05;
-  88          boolean rolling=roulade.active();
-  89          active=rolling?"roulade":standing?"alpha_stand":"alpha_walking";
-  90          float[] obs=NativeSim.observation(handle,previous,command);
-  91          long start=System.nanoTime(); float[] action=infer(sessions.get(active),obs);
-  92          inferenceMs=(System.nanoTime()-start)/1e6;
-  93          if(rolling) NativeSim.applyRouladeAction(handle,action,filter);
-  94          else NativeSim.applyAction(handle,action,standing,filter);
-  95          System.arraycopy(action,0,previous,0,14); // Feedback remains raw, before scale/filter.
+  97      void tick(long handle) throws Exception {
+  98          double[] result=RustControl.tick(rustCore,NativeSim.bodySample(handle),
+  99              new double[]{command[0],command[1],command[2]},filter,this);
+ 100          NativeSim.bodyGain(handle,(int)result[15]);
+ 101          NativeSim.bodyTargets(handle,Arrays.copyOf(result,15));
+ 102          fallen=result[17]!=0;
+ 103      }
+```
+
+选择规则由上游Rust Controller执行：翻滚优先，速度模长≤0.05站立，其余步行。Android ORT继续CPU、单intra/inter-op线程。raw action反馈、缩放和EMA均由Rust执行；NativeSim直接写安全处理后的15槽目标，忽略mouth，无二次滤波。
+
+来源：A/app/src/main/java/com/microduck/sim/PolicyRunner.java:90
+
+```
+  90      float[] rustInfer(int net,float[] observation) throws Exception {
+  91          String[] names={"alpha_stand","alpha_walking","roulade"};
+  92          if(net<0 || net>=names.length) throw new IllegalStateException("Unsupported Rust policy");
+  93          active=names[net];
+  94          long start=System.nanoTime();float[] action=infer(sessions.get(active),observation);
+  95          inferenceMs=(System.nanoTime()-start)/1e6;return action;
   96      }
-  97      CapturedReport.Fields captureReport() {
-  98          String policy=active,version=env.getVersion(),hash=hashes.get(active);
-```
-
-选择规则：翻滚窗口优先；其余速度命令模长<0.05用alpha_stand，否则alpha_walking。ORT只用CPU、单intra/inter-op线程。反馈始终保存raw action；缩放和滤波发生在Native层。
-
-来源：A/app/src/main/cpp/native_sim.cpp:91
-
-```
-  91  void apply_scaled_action(Simulation& s,const float* raw,double scale,double gain_ratio,bool filter) {
-  92      for(int i=0;i<N;++i) if(!std::isfinite(raw[i])) throw std::runtime_error("Non-finite policy action");
-  93      for(int i=0;i<N;++i) {
-  94          double target=HOME[i]+scale*raw[i];
-  95          double alpha=(i>=5 && i<=8)?.5:.7;
-  96          if(filter && s.has_previous_target) target=alpha*target+(1-alpha)*s.previous_target[i];
-  97          s.data->ctrl[s.actuators[i]]=target; s.previous_target[i]=target;
-  98          double gain=s.base_gain[i]*gain_ratio;
-  99          s.model->actuator_gainprm[s.actuators[i]*mjNGAIN]=gain;
- 100          s.model->actuator_biasprm[s.actuators[i]*mjNBIAS+1]=-gain;
- 101      }
- 102      s.has_previous_target=true;
- 103  }
- 104  void apply_policy_action(Simulation& s,const float* raw,bool standing,bool filter) {
 ```
 
 | 策略 | 动作scale | XML kp倍率 | 默认EMA |
@@ -451,30 +438,224 @@ ticker使用scheduleAtFixedRate(...,20ms)，记录期望开始时间与迟到计
 | walk | 0.9 | 1.0 | 头部α=.5 / 腿α=.7 |
 | roulade | 1.0 | 1.0 | 头部α=.5 / 腿α=.7 |
 
-EMA公式是α×新目标+(1−α)×上一目标；α越接近1，滤波越少。XML chosen_actuator的base kp=.55，Android改gainprm与biasprm，stand有效kp约.44。这里的倍率来自运行时调参约定，不能与BAM固件kp数值直接按单位比较。
+EMA为α×新目标+(1−α)×上一目标；第一帧不滤波，切换过滤选项保留状态。Rust给出站立kp160、步行/翻滚kp200；BAM使用固件位置环kp，XML按kp/200缩放原XML gain。XML base kp=.55、站立约.44，不能把这些值与固件kp当同单位比较。
 
 位置伺服源定义 T/src/mjlab_microduck/robot/microduck/robot_groundcontact.xml:41；Rust控制对照 R/robotd/src/control.rs:606。
 
 
-## 16 训练BAM与手机XML伺服的差异
+## 16 BAM执行器：移植方案与关键公式
 
-解释动作僵硬、头部恢复等问题时，先检查执行层。
+M9已经移植，M10继续默认使用；XML保留作对照。
 
-| 环节 | 训练/CPU BAM复演 | 当前Android |
+![20ms关节目标经过BAM每5ms计算力矩，再由MuJoCo求解运动。](diagrams/bam.svg)
+
+来源：A/app/src/main/cpp/bam_actuator.h:18
+
+```
+  18  inline double torque(double target,double q,double velocity,double kp,double volts) {
+  19      const double duty=std::clamp((target-q)*kp*ERROR_GAIN,-1.0,1.0);
+  20      return KT*(volts*duty)/R-KT*KT*velocity/R;
+  21  }
+```
+
+位置误差与固件kp得到PWM占空比，限制在±1；电压提供驱动力矩，速度通过反电动势减小输出。力矩并不等于raw action，raw action先由Rust转成关节位置目标。
+
+来源：A/app/src/main/cpp/bam_actuator.h:100
+
+```
+ 100      void update(mjModel* m,mjData* d) {
+ 101          if(!enabled) return;
+ 102          double load=0; for(double t:previous_torque) load+=std::abs(t);
+ 103          effective_volts=std::max(VIN_MIN,VIN-DROP_GAIN*load);
+ 104          for(int i=0;i<14;++i) {
+ 105              const auto& o=original[i]; int v=o.dof;
+ 106              double t=powered?torque(targets[i],d->qpos[o.qpos],d->qvel[v],kp,effective_volts):0;
+ 107              // CPU BAM uses the previous solved forces for the next friction budget.
+ 108              double external=-d->qfrc_bias[v]+d->qfrc_constraint[v];
+ 109              for(int e=0;e<d->nefc;++e)
+ 110                  if(d->efc_type[e]==mjCNSTR_FRICTION_DOF && d->efc_id[e]==o.joint) external-=d->efc_force[e];
+ 111              m->dof_frictionloss[v]=friction(d->qfrc_actuator[v],external,d->qvel[v]);
+ 112              m->dof_damping[v]=VISCOUS;
+```
+
+BAM M6包含方向/负载相关摩擦、Stribeck低速摩擦、黏性阻尼、转子等效惯量和电压下垂。configure将原position执行器转换为motor，并保存XML参数供切回恢复；复位清理上一力矩与目标。切换BAM/XML暂停并复位SIT。
+
+| 参数/来源 | 当前值或行为 |
+| --- | --- |
+| 名义电压 / 下垂 / 最低电压 | 7.4V / 0.1 / 6V，确定性名义配置 |
+| 固件kp | 站立160；步行/翻滚200 |
+| kt / R | 0.36601349688984386 / 2.8113923539223227 |
+| 来源 | Rhoban BAM mjlab_frictionloss，提交62bd8ce…；Apache-2.0 |
+| 数值证据 | 1000公式对照约1.1e-16；600步Python/C++轨迹最大误差约1.3e-13 |
+
+参数与逐文件来源摘要 A/BAM.lock.json:1；模型转换 A/app/src/main/cpp/bam_actuator.h:49；数值报告 A/verification/m9-bam-checks.json:1。
+
+
+## 17 训练环境与Android物理的剩余差异
+
+CPU BAM对齐已完成，完整训练环境等价尚未成立。
+
+| 环节 | 训练/上游 | 当前Android M10 |
 | --- | --- | --- |
-| 网络 | actor + observation normalizer；61D→14D | 复用导出的ONNX；维度/数值smoke验证 |
-| 执行器 | BAM XL330电压/摩擦模型，训练使用BAM配置 | MJCF <position>执行器；修改XML kp倍率 |
-| 随机化/延迟 | 任务cfg可含延迟、噪声、摩擦、质量等DR | 当前确定性模型，无训练DR/传感器噪声移植 |
-| 动作滤波 | 上游约定策略训练不滤波 | 默认额外EMA头.5/腿.7，可开关 |
-| 任务结束 | 奖励/终止条件衡量训练表现 | 翻滚固定100成功周期后切站立；无严格成功检测 |
-| 安全与总线 | 真实部署另有Rust Safety与RobotIo | 仿真有限值/数值警告处理；没有实体舵机驱动 |
+| 网络 | actor + normalizer；61D→14D | 同ONNX与smoke，Rust组装观测 |
+| 执行器 | BAM XL330 M6 | C++移植CPU BAM；默认开启，XML可对照 |
+| 随机化/延迟 | 电压/摩擦/惯量等DR，3–6步延迟 | 名义确定性参数；delay=0，无训练DR |
+| 动作滤波 | RL约定策略不加low-pass | 保留桌面默认EMA头.5/腿.7，可开关 |
+| 任务完成 | 奖励和终止衡量训练表现 | 2秒翻滚窗口，无严格任意姿态成功判定 |
+| 安全/硬件 | 完整daemon与真实总线另有功能 | Rust Safety目标限制/跌倒报告，无实体舵机驱动 |
 
-上游明确BAM与unfiltered训练约定：T/AGENTS.md:69、T/AGENTS.md:77。BAM配置入口 T/src/mjlab_microduck/robot/microduck_constants.py:1；CPU infer_policy默认BAM，XML模式是另一条执行器路径，见 T/scripts/infer_policy.py:891。
-
-当前Android定位是可用的手机功能仿真与策略复演，不应把已完成一圈推断为所有训练物理一致。后续移植BAM属于实质执行器改造：需要核对电压、摩擦、目标更新节拍与训练参数，并对现有动作重验；没有只替换一个依赖名称就自动一致的捷径。
+上游约定：T/AGENTS.md:69、T/AGENTS.md:77；Android名义配置 A/BAM.lock.json:32。已完成一圈不能推断完整训练环境等价，也不能推断抬头慢或僵硬已经修复。
 
 
-## 17 CAD渲染与机器人相机架构
+## 18 APK内嵌Rust核心：复用范围
+
+直接编译控制源码，平台相关部分通过适配器接入。
+
+![Rust Controller与Safety位于APK内；ORT仍由现有Android后端提供。](diagrams/embedded.svg)
+
+来源：A/rust/control-core/src/lib.rs:4
+
+```
+   4  extern crate self as duck_control;
+   5  #[path = "../../../../Pollen/microduck/duck-control/src/model.rs"]
+   6  pub mod model;
+   7  #[path = "../../../../Pollen/microduck/duck-control/src/imu.rs"]
+   8  pub mod imu;
+   9  #[path = "../../../../Pollen/microduck/duck-control/src/io.rs"]
+  10  pub mod io;
+  11  #[path = "../../../../Pollen/microduck/duck-control/src/obs.rs"]
+  12  pub mod obs;
+  13  #[path = "../../../../Pollen/microduck/duck-control/src/safety.rs"]
+  14  pub mod safety;
+  15  include!(concat!(env!("OUT_DIR"),"/control_module.rs"));
+  16  pub mod policy;
+  17  pub use io::Sensors;
+```
+
+| 组件 | 复用方式 / 范围 |
+| --- | --- |
+| model/imu/io/obs/safety.rs | 通过path直接编译上游源码，保留关节/传感器/61D契约 |
+| robotd/src/control.rs | 构建目录保留原文，追加取消技能与完成窗口后重启两项Android生命周期钩子 |
+| robotd-params/proto/kinematics | Cargo path依赖，复用参数和协议类型 |
+| Android Rust policy.rs | 同步ORT回调适配器；三份FF网络；不包含上游桌面加载器 |
+| 未接入范围 | 完整robotd进程、全部技能、热加载、命令EMA、温控与硬件服务 |
+
+取消技能保留raw action与EMA目标；窗口完成后可立即再次翻滚，在途重复请求不延长。代码 A/rust/control-core/build.rs:8；固定源文件SHA和许可 A/RUST_CORE.lock.json:1。两个Pollen仓库源码未被Android构建改写。
+
+
+## 19 Rust编译与JNI链接的关键代码
+
+Studio构建现在确实调用Cargo，运行期没有桌面daemon。
+
+![Rust源码编译分支与APK产物；不是将桌面可执行文件直接打包。](diagrams/rust_build.svg)
+
+来源：A/app/src/main/cpp/CMakeLists.txt:62
+
+```
+  62  add_custom_target(duck_rust_build
+  63    COMMAND "${Python3_EXECUTABLE}" "${M1_PROJECT_ROOT}/scripts/build_rust_core.py"
+  64      --cargo "${DUCK_CARGO}" --target-dir "${DUCK_RUST_TARGET_DIR}"
+  65      --linker "${ANDROID_TOOLCHAIN_ROOT}/bin/aarch64-linux-android28-clang"
+  66    BYPRODUCTS "${DUCK_RUST_ARCHIVE}"
+  67    VERBATIM)
+  68  add_library(duck_rust_core STATIC IMPORTED)
+  69  set_target_properties(duck_rust_core PROPERTIES IMPORTED_LOCATION "${DUCK_RUST_ARCHIVE}")
+  70  add_dependencies(duck_rust_core duck_rust_build)
+  71  add_library(microduck_m1 SHARED native_sim.cpp rust_control_jni.cpp)
+```
+
+CMake先找到Python和Cargo；build_rust_core.py核对上游逐文件SHA，再cargo build --locked --release --target aarch64-linux-android。静态产物libmicroduck_android_core.a链接进libmicroduck_m1.so，不作为第二个Rust共享库打包。
+
+来源：A/app/src/main/cpp/CMakeLists.txt:71
+
+```
+  71  add_library(microduck_m1 SHARED native_sim.cpp rust_control_jni.cpp)
+  72  target_compile_features(microduck_m1 PRIVATE cxx_std_20)
+  73  target_compile_options(microduck_m1 PRIVATE -Wall -Wextra -Werror)
+  74  target_link_options(microduck_m1 PRIVATE -Wl,-z,max-page-size=16384)
+  75  target_link_options(mujoco PRIVATE -Wl,-z,max-page-size=16384)
+  76  target_link_libraries(microduck_m1 PRIVATE mujoco duck_rust_core log dl m)
+```
+
+NDK链接BAM/JNI、Rust静态库、MuJoCo和Android log/dl/m。实际ARM64共享库链接成功，LOAD段16KB对齐；旧ORT AAR整体页大小兼容限制仍独立存在。
+
+源码校验 A/scripts/build_rust_core.py:10；Cargo入口 A/rust/control-core/Cargo.toml:6；实际原生产物报告 A/verification/m10-android-rust-checks.json:1。源文件锁变化后必须复核并重验，不应直接更新摘要掩盖不兼容变化。
+
+
+## 20 Rust与Android ORT：为什么保留混合链路
+
+控制逻辑归Rust，推理后端通过Android接口提供。
+
+当前调用链：Rust选网络并组装61D → JNI同步调用PolicyRunner.rustInfer → Android ORT返回14D动作 → Rust做HOME/scale/EMA/Safety → JNI身体目标。所有调用在同一仿真worker，不保留跨周期Java对象指针。
+
+来源：A/rust/control-core/src/policy.rs:18
+
+```
+  18      pub fn infer(&mut self,obs:&Observation,net:Net)->Result<[f32;ACTION_LEN],PolicyError>{
+  19          let index=match net{Net::Stand=>0,Net::Walk=>1,Net::Skill(0)=>2,_=>return Err(PolicyError)};
+  20          let host=self.0.borrow().ok_or(PolicyError)?;
+  21          let mut action=[f32::NAN;ACTION_LEN];
+  22          let result=unsafe{(host.callback)(host.context,index,obs.as_slice().as_ptr(),action.as_mut_ptr())};
+  23          if result!=0 || action.iter().any(|v|!v.is_finite()){return Err(PolicyError)}
+  24          Ok(action)
+  25      }
+  26  }
+```
+
+JNI校验sensor40/twist3与action14，Java推理异常保留并返回worker；Rust拒绝非有限传感器/输出，失败不提交身体目标。句柄只在创建线程有效，关闭或跨线程调用拒绝。依据 A/app/src/main/cpp/rust_control_jni.cpp:10、A/rust/control-core/src/lib.rs:62。
+
+Rust直接调用ORT通常也是绑定底层ORT引擎，并非纯Rust推理重写。它可以统一会话/热加载/循环状态管理并减少一次Java回调，但当前没有性能证据证明这一跳是瓶颈。已实机通过的Android ORT继续保留；后续按模型管理或测量结果决定是否迁移。
+
+> Safety跌倒状态只报告，不自动中断翻滚；本地intent_age传0，浏览器断线由Android租期处理。复用Safety并不等于完整daemon跌倒恢复或另加Rust通信死手保护。源码 A/rust/control-core/src/lib.rs:105。
+
+
+## 21 SimIo身体服务：桌面原版控制手机
+
+外部模式保留，用于源码对照与完整daemon联调。
+
+![电脑Rust→USB转发→Android身体；与手机内嵌控制互斥。](diagrams/simio.svg)
+
+| 项目 | 实现 |
+| --- | --- |
+| 监听 / 传输 | 手机127.0.0.1:7801；USB adb forward电脑17801→7801 |
+| 协议 | 换行JSON；hello protocol1 joints15；read/write/gain/torque/slow |
+| 关节映射 | mouth为wire9占位；右腿wire10→model9；14D模型↔15槽协议 |
+| 线程/请求 | 独立IO线程；JNI只在仿真worker；150ms有界等待，超时取消排队操作 |
+| 控制权 | 外部模式停本地策略；HTTP动作409、网页只监看；手机按钮接管关闭服务 |
+| 断线 / 传感器 | 断线关力矩并暂停；gyro/gravity/quat和关节实测；无假电流负载 |
+
+slow里的7.4V/32℃为模拟占位；torque:false在首次释放后表示受物理作用的limp，TCP断线则暂停。没有接入ToF扩展或mediad相机协议，视频仍由Android相机服务提供。
+
+代码 A/app/src/main/java/com/microduck/sim/SimIoServer.java:50、A/app/src/main/java/com/microduck/sim/SimIoBody.java:18、A/app/src/main/cpp/native_sim.cpp:116。
+
+
+## 22 两种Rust模式的使用命令
+
+日常本地运行；需要桌面对照时才开启身体服务。
+
+| 模式 | 手机 | 电脑 |
+| --- | --- | --- |
+| 内嵌Rust（默认） | M10直接点站立/前进/翻滚；可开启LAN和相机 | 无需运行脚本或连接USB |
+| 外部Rust SimIo | 保持前台，开启Rust身体服务 | adb转发，再运行robotd帮助脚本并enable |
+
+执行位置：工作区；手机先手动开启Rust身体服务
+
+```bash
+cd android-sim
+adb -s <SERIAL> forward tcp:17801 tcp:7801
+python3 scripts/android_robotd.py run
+# 另一个终端，同样位于android-sim
+python3 scripts/android_robotd.py enable
+python3 scripts/android_robotd.py walk --seconds 3
+python3 scripts/android_robotd.py disable
+```
+
+walk默认vx=0.30m/s，与手机/网页一致。0.15几乎不走的现象已在早期主机闭环和M9用户反馈出现；脚本只改默认值，显式低速仍原样发送。0.30是命令值，不等于测得速度。证据 A/scripts/android_robotd.py:29、A/verification/user-M9-simio-feedback.json:1。
+
+脚本复用现有桌面robotd；电脑加载完整七策略，坐姿启用需要sitstand。三份Android模型之外的策略不加入APK。结束Ctrl-C退出daemon，手机断线暂停；可adb forward --remove tcp:17801。详情 A/BAM_SIMIO.md:1。
+
+
+## 23 CAD渲染与机器人相机架构
 
 物理模型与视觉数据相同来源，绘制实现由Android完成。
 
@@ -511,7 +692,7 @@ WebRTC目标20FPS，HardwareVideoEncoderFactory优先H.264、上限1.5Mbps；JPE
 独立相机初始化入口 A/app/src/main/java/com/microduck/sim/VideoCapture.java:34；FBO到Surface A/app/src/main/java/com/microduck/sim/SceneRenderer.java:183。两项均为M8源码实现，用户已反馈实机验证正常；反馈未附实际codec或硬件编码器日志。
 
 
-## 18 浏览器控制、状态与视频传输
+## 24 浏览器控制、状态与视频传输
 
 控制用HTTP；WebRTC媒体用ICE/DTLS-SRTP，JPEG作为兼容模式。
 
@@ -534,16 +715,16 @@ WebRTC目标20FPS，HardwareVideoEncoderFactory优先H.264、上限1.5Mbps；JPE
 
 Socket使用2个处理线程、4个等待连接；HTTP头上限4096byte、命令体512byte、RTC信令体32KiB，读阶段2秒、处理起总期限3秒。RemoteMailbox最多一条等待确认命令，1秒超时未执行时可取消；已开始操作不能随断开回滚。HTTP线程不执行JNI/ORT。
 
-浏览器远程运行需3秒租期内心跳；本地按钮释放远程控制。Activity离开前台暂停并关闭LAN，回前台需手动开启新会话。M8.1服务访问码每次用SecureRandom生成4位数字（0000–9999），网页保留前导零；不进入普通状态或验证记录。内部RTC观看者id仍为32位十六进制。JPEG只保留一个在途任务和最新帧，2秒无请求停采集；RTC只允许一个观看者、8秒无poll释放peer。每个回调匹配generation，旧close不关新peer，取消id避免迟到open恢复会话。浏览器关闭/隐藏时关peer并尽力发close。
+浏览器远程运行需3秒租期内心跳；本地按钮释放远程控制。Activity离开前台暂停并关闭LAN，回前台需手动开启新会话。服务访问码每次用SecureRandom生成4位数字（0000–9999），网页保留前导零；不进入普通状态或验证记录。内部RTC观看者id仍为32位十六进制。JPEG只保留一个在途任务和最新帧，2秒无请求停采集；RTC只允许一个观看者、8秒无poll释放peer。每个回调匹配generation，旧close不关新peer，取消id避免迟到open恢复会话。浏览器关闭/隐藏时关peer并尽力发close。
 
-代码：A/app/src/main/java/com/microduck/sim/LanControlServer.java:42、A/app/src/main/java/com/microduck/sim/RemoteMailbox.java:1、A/app/src/main/java/com/microduck/sim/RemoteLease.java:5、A/app/src/main/java/com/microduck/sim/MainActivity.java:518。
+代码：A/app/src/main/java/com/microduck/sim/LanControlServer.java:42、A/app/src/main/java/com/microduck/sim/RemoteMailbox.java:1、A/app/src/main/java/com/microduck/sim/RemoteLease.java:5、A/app/src/main/java/com/microduck/sim/MainActivity.java:571。
 
 RTC信令不经控制串行队列；browser创建recvonly offer并先收集本地ICE，Android异步设置远端/创建answer，poll返回answer及增量候选。没有STUN/TURN或音频，限同一局域网；HTTP连通不证明媒体连通。实际协商与编码器由rtc_codec、rtc_encoder_implementation和接收端framesDecoded验证，不以硬件优先设置代替实测。
 
 入口 A/app/src/main/java/com/microduck/sim/RtcVideo.java:93；会话隔离 A/app/src/main/java/com/microduck/sim/RtcSession.java:9；固定依赖 A/VIDEO_DEPENDENCIES.lock.json:1。
 
 
-## 19 单次前滚翻与当前抬头问题
+## 25 单次前滚翻与当前抬头问题
 
 已通过一圈；动作质量诊断尚未等同修复。
 
@@ -564,7 +745,7 @@ RTC信令不经控制串行队列；browser创建recvonly offer并先收集本�
   16      void cancel() { remaining=0; }
 ```
 
-窗口100个成功完成的20ms周期，即2秒仿真时间；第101周期选择stand。重复点击不延长，暂停冻结，站立/步行取消，reset清空。completed计窗口完成，不是成功翻滚次数。M7曾用旧原型1秒，用户反馈不足一圈；M7.1改为CPU推理入口2秒，策略权重和倍率未变。
+Rust控制器执行100个20ms周期窗口，即2秒仿真时间；第101周期选择stand。Java RouladeWindow仅计数与请求去重，在物理推进成功后更新。重复点击不延长，暂停冻结，站立/步行取消，reset清空。completed计窗口完成，不是成功翻滚次数。M7曾用旧原型1秒，用户反馈不足一圈；M7.1改为CPU推理入口2秒，策略权重和倍率未变。
 
 M7.1用户已确认整圈翻滚，并纠正问题为“抬头慢，整体动作僵硬”。只读设备日志约1.42秒采样已近360°投影、机身直立、双脚接触，仍需等到2秒交接。推理采样约0.81–1.12ms，控制加快照4.44–9.81ms，日志约250ms一份，不能据此排除瞬时卡顿。
 
@@ -575,11 +756,11 @@ M7.1用户已确认整圈翻滚，并纠正问题为“抬头慢，整体动作�
 证据：A/verification/device-M71-roll-acceptance.json:1、A/verification/device-M71-roll-log-samples.json:1、A/scripts/head_recovery_rehearsal.py:1、A/verification/host-M71-head-recovery.json:1。
 
 
-## 20 与桌面duck-sim的编译/运行关系
+## 26 与桌面duck-sim的编译/运行关系
 
 两套方案都复用模型与策略，控制执行主体不同。
 
-![桌面真实Rust daemon通过TCP连接Python身体；Android在应用内完成闭环。](diagrams/desktop.svg)
+![桌面真实Rust daemon通过TCP连接Python身体；Android内嵌同一Rust控制源码；外部SimIo也可让电脑原版daemon接管。](diagrams/desktop.svg)
 
 scripts/duck-sim up会调用cargo build构建robotd等服务，并用microduck_rl/.venv中的Python启动mjlab_microduck.sim.body_server。Rust通过SimIo用TCP JSON read/write/gain等协议访问模拟身体；身体端用CPU MuJoCo推进世界。它不是PPO训练器在实时运行。
 
@@ -587,10 +768,10 @@ scripts/duck-sim up会调用cargo build构建robotd等服务，并用microduck_r
 
 关键证据：R/scripts/duck-sim:196、R/scripts/duck-sim:637、R/duck-control/src/sim.rs:1、T/src/mjlab_microduck/sim/body_server.py:94。
 
-> 当前Android HTTP /api/command不是Rust Unix socket JSON-RPC或SimIo TCP协议；网页控制功能相似，不能宣称与桌面duckctl、robotctl、mediad直接协议兼容。
+> HTTP /api/command、桌面Unix socket JSON-RPC和SimIo TCP是三种不同接口。M9已接入SimIo身体协议，M10本地使用JNI；Android视频仍不走mediad。
 
 
-## 21 训练插件与新策略接入流程
+## 27 训练插件与新策略接入流程
 
 训练环境与应用构建环境分别管理。
 
@@ -611,10 +792,10 @@ uv run scripts/export.py <TASK_ID> --wandb-run-path <entity/project/run_id>
 
 先做64环境/5迭代smoke，再长训，来自上游约定 T/AGENTS.md:26。更换模型需核对61D/14D、关节顺序、command语义、normalizer、支持的feedforward格式；reward修改只有重新训练导出后才影响Android。
 
-接入Android：保存到Pollen/microduck/policies约定文件名 → 运行prepare_assets.py → 在主机用policy_rehearsal.py生成新smoke并复演 → 更新来源/摘要记录 → Studio构建 → 用户验证动作。如果新增第四类动作，还要修改资源收集、PolicyRunner集合/选择逻辑及按钮/远程协议，不能只多放一个ONNX。
+接入Android：保存到Pollen/microduck/policies约定文件名 → 运行prepare_assets.py → 在主机用policy_rehearsal.py生成新smoke并复演 → 更新来源/摘要记录 → Studio构建 → 用户验证动作。如果新增第四类动作，还要修改资源收集、PolicyRunner会话集合、Rust policy适配器/技能配置及按钮/远程协议，不能只多放一个ONNX。
 
 
-## 22 新机器恢复工程与Studio编译
+## 28 新机器恢复工程与Studio编译
 
 三份本地策略必须另行准备；两仓库clone不自动获取它们。
 
@@ -635,16 +816,17 @@ git -C Pollen/microduck_rl checkout cb70b792312d559a4da09064d92009079671815f
 | Studio步骤 | 配置/结果 |
 | --- | --- |
 | 打开工程 | 打开android-sim目录，使用其Gradle Wrapper |
-| Gradle JDK | 选择JDK11；不要按当前Studio内置JBR名称推断版本 |
+| Gradle JDK | 当前JBR17.0.14（JDK17），Java源码/输出仍release11 |
 | SDK Manager | Platform34、NDK25.1.8937393、CMake3.30.3 |
 | local.properties | 由Studio生成本机sdk.dir；不从别人机器照搬绝对路径 |
-| 同步/构建 | 网络可用、Git与Python3.9+在Studio PATH中；首次下载原生源码/依赖及AAR |
+| Rust目标 | rustup target add aarch64-linux-android；本机已安装，验证工具链1.98.1 |
+| 同步/构建 | Git/Python/Cargo可用；首次下载原生源码、Cargo依赖与AAR |
 | Run | 选app和ARM64/API28+设备；本项目当前验证设备是4KB页Android16 |
 
-复用现成模型和策略构建不要求uv sync，不要求安装CUDA/PyTorch/BAM，也不要求Cargo。主机验收/重生成smoke则另需相应Python环境。来源：A/DEPENDENCIES.md:1、A/README.md:34。
+复用现成模型和策略构建不要求uv sync，不要求安装CUDA/PyTorch/BAM，但M10需要Cargo与Android Rust目标。主机验收/重生成smoke则另需相应Python环境。来源：A/DEPENDENCIES.md:1、A/README.md:38。
 
 
-## 23 运行使用与只读排查命令
+## 29 运行使用与只读排查命令
 
 先启用策略，再观察；两台设备分别承担仿真与浏览器控制。
 
@@ -669,7 +851,7 @@ adb -s <SERIAL> shell run-as com.microduck.sim cat files/last-report.json
 adb -s <SERIAL> logcat -d -s MicroduckM1:I "*:S"
 ```
 
-普通last-report可能被后续状态覆盖；已完成测试另存last-policy-benchmark.json/last-physics-benchmark.json/last-realtime-test.json。不要把旧测试当当前动作状态，或把onStop前报告当后台即时证据。写入入口 A/app/src/main/java/com/microduck/sim/MainActivity.java:412。
+普通last-report可能被后续状态覆盖；已完成测试另存last-policy-benchmark.json/last-physics-benchmark.json/last-realtime-test.json。不要把旧测试当当前动作状态，或把onStop前报告当后台即时证据。写入入口 A/app/src/main/java/com/microduck/sim/MainActivity.java:433。
 
 执行位置：可选的电脑辅助链路；手机先手动开启LAN，第二台Android仍使用Wi-Fi地址
 
@@ -680,7 +862,7 @@ adb -s <SERIAL> forward --remove tcp:18080
 ```
 
 
-## 24 变更如何传到Android：重建关系表
+## 30 变更如何传到Android：重建关系表
 
 修改上游文件不等于正在运行的APK已经更新。
 
@@ -690,37 +872,36 @@ adb -s <SERIAL> forward --remove tcp:18080
 | scene或robot XML/STL | Android下次preBuild复制新版本；检查manifest与物理结果 | 重编APK；不一定必须重训 |
 | 任务reward/obs/events | 训练得到新checkpoint、按标准路径导出ONNX，再接入 | 仅改Python不改变APK；通常需重训/重导出/重编 |
 | ONNX权重 | 新manifest与smoke；来源记录及动作闭环重验 | 已有新ONNX时无需在手机训练；重编APK |
-| Rust obs/control/robotd | 核对需要移植的语义，并手工修改Android对应Java/JNI实现 | 当前APK不自动包含Rust改动 |
+| 已复用Rust模块 | 审查上游修改，更新RUST_CORE.lock并重验；Studio自动Cargo编译 | 重编APK；完整daemon未接入模块不自动进入APK |
 | body_server.py/camera.py | 核对节拍、相机等变化是否需同步到Android | Python改动本身不被Android打包 |
 | Android Java/JNI/网页 | 源码检查、Studio构建；浏览器刷新并重连新会话 | 重编APK；通常无需训练 |
 | MuJoCo/ORT版本 | 更新固定来源/补丁/工具链及数值、兼容性验证 | 重编APK并重新验收 |
 
-当前没有APK内热更新策略、在线模型下载或Rust daemon控制Android身体的接入功能。模型路径是build-time资源输入，native模型在启动时加载；已安装APK不跟随电脑文件变化。
+当前已有外部Rust SimIo和内嵌Rust；尚无APK内模型热更新或在线下载。模型路径是build-time资源输入，native模型在启动时加载；已安装APK不跟随电脑文件变化。
 
 三份策略与model副本的Git排除：A/.gitignore:7；固定来源记录 A/UPSTREAM.lock.json:1；编译前复制入口 A/app/build.gradle:40。
 
 
-## 25 检查证据与当前验收边界
+## 31 检查证据与当前验收边界
 
-主机编译/数值对照、用户观察、真机报告分别列出。
+阶段性功能完成；用户确认与自动化证据分开记录。
 
-| 证据 | 可支持的结论 | 不能外推 |
+| 证据 | 支持的结论 | 边界 |
 | --- | --- | --- |
-| verification/m81-checks.json | 实际WebRTC AAR/JDK11编译、Java/JNI/物理对照，RTC及4位配对/前导零/非法格式检查 | 不是本轮APK构建/实机全功能验收 |
-| user-M8-video-feedback.json | 用户反馈M8实机验证正常 | 未附实际codec日志；不是性能、温升或M8.1配对验收 |
-| device-M2-policy-benchmark.json | 手机实际ONNX与物理短基准完成 | 不代表网络视频或持续运行 |
-| device-M4-lan-acceptance及realtime-acceptance | 用户按钮反馈、断连心跳暂停、短期网络实时报告 | 不能代替新版机器人相机性能 |
-| device-M54-video-acceptance与video-off | 旧观察窗口画面的30秒两组预算通过 | 不是M7.1头部相机/长期温升证据 |
-| user-M7-camera-roll-feedback.json | 用户确认机器人摄像头调整正常 | 无代理逐帧图像或APK哈希 |
-| device-M71-roll-acceptance.json | 用户确认一圈；ADB读到0.7.1-m71和翻滚采样 | 无关节日志；不等于动作僵硬已修复 |
-| host-M71-head-recovery.json | 主机复现头颈恢复/相机下沉及参数对照 | 不是手机动作精确重放 |
+| user-M10-feedback.json | 用户已实机验证M10通过 | 无新增日志/codec、温升或细分速度测量 |
+| m10-checks.json | JDK17/release11、真实AAR、ARM64 JNI、HTTP/RTC/SimIo回归 | 主机源码与协议检查 |
+| m10-android-rust-checks.json | 实际NDK/CMake Rust链接，JNI符号与16KB LOAD段 | 原生产物检查；不代表完整APK页大小验收 |
+| m10-embedded-rust-checks.json | 生产Java/JNI/Rust/ORT闭环；3秒前进约0.254m，翻滚約359°恢复 | HOME起始主机复演；非手机动作/速度测量 |
+| m9-bam-checks.json | 1000公式与600步Python/C++ BAM对照，XML恢复 | 确定性CPU BAM，不含训练DR/延迟 |
+| user-M9-simio-feedback.json | USB Rust连接通过；0.30明显行走 | 低速表现仍待解决 |
+| 历史M7/M8与M54证据 | 相机、整圈翻滚及旧30秒预算的已有验收 | 不跨版本推断M10性能与动作质量 |
 
-对应证据入口：A/verification/m81-checks.json:1；A/verification/user-M8-video-feedback.json:1；A/verification/device-M2-policy-benchmark.json:1；A/verification/device-M4-realtime-acceptance.json:1；A/verification/device-M54-video-acceptance.json:1；A/verification/user-M7-camera-roll-feedback.json:1。
+完整来源：A/verification/user-M10-feedback.json:1；A/verification/m10-checks.json:1；A/verification/m10-android-rust-checks.json:1；A/verification/m10-embedded-rust-checks.json:1；A/verification/m9-bam-checks.json:1。
 
-> 尚未完成：M8.1四位访问码设备复验；M8实际codec/Surface编码的详细日志；相机整段性能/持续温升/前后台及资源释放专项；16KB页设备；任意起始姿态完整翻滚；BAM物理一致性；抬头慢和整体僵硬的手机关节级归因。性能相关项目按用户要求延期。
+> 尚未验证：低速速度跟踪、抬头/僵硬的关节级归因、任意起始姿态翻滚、完整训练DR/延迟、完整daemon功能、精确ONNX训练run/checkpoint来源、详细codec/编码器日志、16KB页整APK兼容、长期性能/温升/生命周期。性能相关专项继续按用户要求延期。
 
 
-## 26 常见构建与运行问题定位
+## 32 常见构建与运行问题定位
 
 按失败发生的层次排查，减少误改模型与构建链。
 
@@ -728,6 +909,7 @@ adb -s <SERIAL> forward --remove tcp:18080
 | --- | --- | --- |
 | prepareModelAssets失败 | Studio PATH里的python3、相对Pollen目录、scene/includes/STL存在、三份ONNX存在 | 资源输入/生成 |
 | MuJoCo下载或revision失败 | Git/网络、固定标签/提交、本机.native-cache源码是否被改到另一版本 | CMake源代码准备 |
+| Cargo/源文件锁失败 | Rust/Cargo路径、Android目标、RUST_CORE.lock与当前上游文件是否匹配 | Rust编译/来源校验 |
 | NDK补丁不能应用 | MuJoCo源码是否为固定版本、是否存在额外未审计改动 | 兼容补丁 |
 | smoke checksum或shape失败 | 新模型是否匹配smoke、61D/14D和名字/float类型、是否feedforward | 策略格式/来源 |
 | 模型可见但不能站稳 | HOME/关节顺序/反馈语义、动作倍率/过滤、XML vs BAM执行器 | 控制闭环 |
@@ -740,27 +922,49 @@ adb -s <SERIAL> forward --remove tcp:18080
 重新生成资源的手动命令为python3 scripts/prepare_assets.py（在android-sim），可单独排查Python/文件输入；正常Studio构建会自动执行。不要把pip安装mjlab作为解决缺ONNX/STL的默认手段，也不要把桌面GStreamer报错引入当前Android JPEG链。
 
 
-## 27 后续方案与开发方法
+## 33 阶段性交付与项目价值
 
-当前已实现方案和未来改造分别评估。
+M10可以固定为第一阶段交付基线。
 
-| 方案 | 价值 | 实施前需要的证据 |
+已形成Android独立机器人仿真与控制平台：真实物理模型、三种策略、BAM、Rust核心、机器人相机与双设备控制均接通，并获得用户M10实机功能确认。可以作为可演示、可扩展的工程原型；动作质量与长期稳定性仍有后续目标。
+
+| 价值 | 已有能力 | 下一步积累 |
 | --- | --- | --- |
-| 当前Java/JNI手机内闭环 | 依赖少、可用双Android验证、控制与画面独立 | 持续保留61D/14D契约及动作回归；已有功能基线 |
-| 头颈交接优化 | 减少翻滚后视线先下沉及抬头迟滞 | 50Hz关节目标/实际轨迹与力矩，保留已通过2秒基线做对照 |
-| 移植BAM执行器 | 缩小训练与手机执行物理差异 | 逐项参数/单位/更新率映射；站立/步行/翻滚闭环重验 |
-| 独立相机GL上下文/Surface | M8已实现；用户反馈实机正常 | 主机编译通过，资源释放专项未另验收；GPU成本延期测量 |
-| H.264/WebRTC | M8已接视频轨道与硬件编码、H.264优先；用户反馈实机正常 | AAR/旧D8兼容通过；实际codec日志未另取，预算/延迟延期；非复制mediad |
-| Rust核心复用或SimIo身体服务 | 减少控制逻辑移植差异或联调真实daemon | 先审查crate依赖/平台接口/协议/15槽映射；当前没有这条编译或运行链 |
+| 降低实验门槛 | 无需实体机器人即可观察策略、关节运动与机器人视角 | 场景扰动与可重复任务 |
+| 建立部署路径 | 训练资源/ONNX→Rust→Android原生物理与视频 | 模型导入、版本切换与失败回退 |
+| 验证控制逻辑 | 同一手机身体接受内嵌Rust或桌面原版控制 | 记录/回放观测、动作、目标和实际轨迹 |
 
-方法：先沿调用链确认实际数据和使用方，再做单变量对照。形状正确不代表关节语义正确；推理成功不代表动作成功；产帧成功不代表相机视野正确。每项判断标明代码确认、主机对照或用户/设备实测，避免跨版本挪用性能结论。
-
-接续阅读顺序：app/build.gradle → prepare_assets.py → CMakeLists → ModelAssets/NativeSim.open → MainActivity.controlStep → PolicyRunner.tick → native观测/动作 → visual_snapshot/SceneRenderer → VideoCapture/SurfaceTextureHelper → RtcVideo/RtcSession/LanControlServer。需深挖上游时，继续Rust obs/control或RL任务/执行器/导出，不在生成的Android资源副本里做持久修改。
-
-配套文档：A/README.md（使用入口）、A/DEPENDENCIES.md（恢复工程）、A/NETWORK.md（双设备/HTTP）、A/VIDEO.md（相机）、A/SKILLS.md（前滚翻/动作诊断）、工作区HANDOFF.md（历史交接）。本PDF和Markdown由docs/content.py统一生成，代码摘录由构建脚本读取真实源码。
+M10基线源码 A/app/build.gradle:11；用户验收 A/verification/user-M10-feedback.json:1。仿真能筛查接口和闭环问题，但不能替代实体机器人的机械、电气和实际运动验证。
 
 
-## 28 附录：源码路径与证据索引
+## 34 后续方向与优先顺序
+
+先提升动作质量和可诊断性，再按需求扩展。
+
+| 优先级 | 方向 | 可评估的结果 |
+| --- | --- | --- |
+| 第一 | 低速、头颈恢复与动作自然程度 | 记录关节目标/实际/力矩；量化速度、交接视线与跟踪误差 |
+| 第一 | 调试与回放 | 50Hz观测/raw action/目标/关节/策略切换；两种控制模式可对照 |
+| 第二 | 策略接入与模型管理 | 导入校验、版本切换、失败回退；减少改代码打包 |
+| 第二 | 场景与任务 | 坡面、摩擦、障碍和外力；检验适用范围 |
+| 后续 | 性能与稳定性 | 控制预算、视频并发、温升、生命周期；按既定延期安排 |
+| 按需 | 扩大Rust复用/直接ORT调用 | 更多技能/热加载/循环状态，依据实际需求及性能证据 |
+
+BAM执行器、独立相机GL/Surface、WebRTC以及Rust/SimIo已经实施，属于当前基线，不能继续列为“未做”。建议下一阶段把动作质量与调试回放结合，获得可解释的优化依据。
+
+
+## 35 开发方法与接续阅读
+
+沿数据链确认原因，每个结论绑定版本和证据。
+
+先确认实际调用方、观测、raw action、目标与响应，再做单变量对照。维度正确不代表关节语义正确；推理成功不代表动作成功；产帧成功不代表视野正确。主机对照、用户确认和设备日志分别表述，不把旧版本性能搬到新版本。
+
+阅读顺序：app/build.gradle → CMake/Cargo/build_rust_core → PolicyRunner.tick → Rust适配器 → 上游Controller/obs/Safety → NativeSim.bodyTargets → BAM/物理 → visual_snapshot/SceneRenderer → VideoCapture/RTC/HTTP。资源链另读prepare_assets和ModelAssets。
+
+配套入口：A/RUST_CORE.md、A/BAM_SIMIO.md、A/README.md、A/DEPENDENCIES.md、A/NETWORK.md、A/VIDEO.md和工作区HANDOFF.md。本PDF与Markdown统一从docs/content.py生成；每处file:line及逐字代码摘录从真实源码定位，并保存SHA。
+
+
+## 36 附录：源码路径与证据索引
 
 行号对应本地快照；代码摘录与源码摘要一起保存。
 
@@ -776,38 +980,41 @@ sources.json保存每处引用的完整路径、定位锚点、行号与SHA-256�
 | 文件（工作区相对路径） | 引用行号 |
 | --- | --- |
 | Pollen/microduck/.cargo/config.toml | 24 |
-| Pollen/microduck/Cargo.toml | 7, 31 |
-| Pollen/microduck/duck-control/src/obs.rs | 12 |
+| Pollen/microduck/Cargo.toml | 31 |
+| Pollen/microduck/duck-control/src/obs.rs | 12, 174 |
 | Pollen/microduck/duck-control/src/sim.rs | 1 |
 | Pollen/microduck/mediad/src/main.rs | 229 |
 | Pollen/microduck/robotd/src/control.rs | 606 |
 | Pollen/microduck/scripts/duck-sim | 196, 637 |
 | Pollen/microduck_rl/AGENTS.md | 26, 69, 77 |
-| Pollen/microduck_rl/pyproject.toml | 15, 40, 55 |
-| Pollen/microduck_rl/scripts/infer_policy.py | 891 |
+| Pollen/microduck_rl/pyproject.toml | 15, 40 |
 | Pollen/microduck_rl/src/mjlab_microduck/export.py | 1, 264 |
 | Pollen/microduck_rl/src/mjlab_microduck/robot/microduck/config_mjcf_groundcontact.json | 2 |
 | Pollen/microduck_rl/src/mjlab_microduck/robot/microduck/robot_groundcontact.xml | 2, 41 |
 | Pollen/microduck_rl/src/mjlab_microduck/robot/microduck/scene.xml | 2 |
-| Pollen/microduck_rl/src/mjlab_microduck/robot/microduck_constants.py | 1 |
 | Pollen/microduck_rl/src/mjlab_microduck/sim/body_server.py | 94 |
 | Pollen/microduck_rl/src/mjlab_microduck/sim/camera.py | 94 |
 | Pollen/microduck_rl/src/mjlab_microduck/tasks/__init__.py | 1 |
 | android-sim/.gitignore | 7 |
+| android-sim/BAM.lock.json | 1, 32 |
+| android-sim/BAM_SIMIO.md | 1 |
 | android-sim/DEPENDENCIES.md | 1 |
-| android-sim/README.md | 34, 41 |
+| android-sim/README.md | 38, 45 |
+| android-sim/RUST_CORE.lock.json | 1, 6 |
 | android-sim/UPSTREAM.lock.json | 1 |
 | android-sim/VIDEO_DEPENDENCIES.lock.json | 1 |
-| android-sim/app/build.gradle | 5, 11, 12, 21, 30, 31, 36, 40 |
+| android-sim/app/build.gradle | 5, 11, 12, 21, 24, 30, 31, 40 |
 | android-sim/app/src/main/AndroidManifest.xml | 3 |
-| android-sim/app/src/main/cpp/CMakeLists.txt | 7, 26, 40, 52, 57 |
-| android-sim/app/src/main/cpp/native_sim.cpp | 18, 82, 91, 146, 149, 162 |
+| android-sim/app/src/main/cpp/CMakeLists.txt | 7, 26, 40, 52, 62, 71 |
+| android-sim/app/src/main/cpp/bam_actuator.h | 18, 49, 100 |
+| android-sim/app/src/main/cpp/native_sim.cpp | 19, 116, 203, 206, 219 |
+| android-sim/app/src/main/cpp/rust_control_jni.cpp | 10 |
 | android-sim/app/src/main/cpp/visual_snapshot.h | 14 |
 | android-sim/app/src/main/java/com/microduck/sim/LanControlServer.java | 42 |
-| android-sim/app/src/main/java/com/microduck/sim/MainActivity.java | 39, 155, 188, 267, 412, 518 |
+| android-sim/app/src/main/java/com/microduck/sim/MainActivity.java | 39, 171, 205, 284, 433, 571 |
 | android-sim/app/src/main/java/com/microduck/sim/ModelAssets.java | 16, 41 |
 | android-sim/app/src/main/java/com/microduck/sim/NativeSim.java | 5 |
-| android-sim/app/src/main/java/com/microduck/sim/PolicyRunner.java | 53, 56, 86 |
+| android-sim/app/src/main/java/com/microduck/sim/PolicyRunner.java | 55, 59, 90, 97 |
 | android-sim/app/src/main/java/com/microduck/sim/RemoteLease.java | 5 |
 | android-sim/app/src/main/java/com/microduck/sim/RemoteMailbox.java | 1 |
 | android-sim/app/src/main/java/com/microduck/sim/ReportDispatcher.java | 13 |
@@ -816,21 +1023,29 @@ sources.json保存每处引用的完整路径、定位锚点、行号与SHA-256�
 | android-sim/app/src/main/java/com/microduck/sim/RtcVideo.java | 93 |
 | android-sim/app/src/main/java/com/microduck/sim/SceneFrame.java | 26 |
 | android-sim/app/src/main/java/com/microduck/sim/SceneRenderer.java | 148, 183 |
+| android-sim/app/src/main/java/com/microduck/sim/SimIoBody.java | 18 |
+| android-sim/app/src/main/java/com/microduck/sim/SimIoServer.java | 50 |
 | android-sim/app/src/main/java/com/microduck/sim/VideoCapture.java | 34, 49, 72 |
 | android-sim/build.gradle | 3 |
 | android-sim/gradle/wrapper/gradle-wrapper.properties | 3 |
 | android-sim/patches/mujoco-3.10.0-ndk25.patch | 1 |
-| android-sim/scripts/check_source.py | 1, 99 |
+| android-sim/rust/control-core/Cargo.toml | 6, 14 |
+| android-sim/rust/control-core/build.rs | 8 |
+| android-sim/rust/control-core/src/lib.rs | 4, 6, 62, 105 |
+| android-sim/rust/control-core/src/policy.rs | 18 |
+| android-sim/scripts/android_robotd.py | 29 |
+| android-sim/scripts/build_rust_core.py | 10, 28 |
+| android-sim/scripts/check_source.py | 1, 105 |
 | android-sim/scripts/head_recovery_rehearsal.py | 1 |
-| android-sim/scripts/prepare_assets.py | 3, 6, 9, 36 |
+| android-sim/scripts/prepare_assets.py | 3, 9, 36 |
 | android-sim/settings.gradle | 3 |
-| android-sim/verification/device-M2-policy-benchmark.json | 1 |
-| android-sim/verification/device-M4-realtime-acceptance.json | 1 |
-| android-sim/verification/device-M54-video-acceptance.json | 1 |
 | android-sim/verification/device-M71-roll-acceptance.json | 1 |
 | android-sim/verification/device-M71-roll-log-samples.json | 1 |
 | android-sim/verification/host-M71-head-recovery.json | 1 |
+| android-sim/verification/m10-android-rust-checks.json | 1 |
+| android-sim/verification/m10-checks.json | 1 |
+| android-sim/verification/m10-embedded-rust-checks.json | 1 |
 | android-sim/verification/m8-video-dependencies.json | 1 |
-| android-sim/verification/m81-checks.json | 1 |
-| android-sim/verification/user-M7-camera-roll-feedback.json | 1 |
-| android-sim/verification/user-M8-video-feedback.json | 1 |
+| android-sim/verification/m9-bam-checks.json | 1 |
+| android-sim/verification/user-M10-feedback.json | 1 |
+| android-sim/verification/user-M9-simio-feedback.json | 1 |

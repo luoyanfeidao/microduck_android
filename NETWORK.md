@@ -4,7 +4,7 @@
 
 M9新增 [Rust SimIo身体服务](BAM_SIMIO.md)：通过USB连接桌面robotd。身体服务开启期间，HTTP控制返回409、网页动作按钮禁用；状态与视频仍可查看。手机按钮可接管并关闭身体服务。
 
-M10本地动作已由APK内嵌Rust核心执行，不需要电脑。构建与行为边界见 [RUST_CORE.md](RUST_CORE.md)。外部SimIo模式继续保留。
+M10本地动作已由APK内嵌Rust核心执行，不需要电脑；用户已确认M10实机验证通过，见 [user-M10-feedback.json](verification/user-M10-feedback.json)。构建与行为边界见 [RUST_CORE.md](RUST_CORE.md)。外部SimIo模式继续保留。
 
 ## 双设备操作
 

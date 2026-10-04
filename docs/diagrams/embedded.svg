@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="509.27559055118115" height="346" preserveAspectRatio="xMinYMin meet" viewBox="0 0 509 346" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="509.27559055118115" height="346"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-346)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="279" width="145" height="53" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="38.8818359375" y="316.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,633) scale(1,-1)">MuJoCo传感器</text>
+			<text x="33.58984375" y="302.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,605) scale(1,-1)">pos15 / vel15 / IMU10</text>
+			<text x="49.162109375" y="288.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,577) scale(1,-1)">40D身体样本</text>
+			<rect x="183" y="279" width="145" height="53" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="222.1552734375" y="316.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,633) scale(1,-1)">Rust Controller</text>
+			<text x="228.638671875" y="302.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,605) scale(1,-1)">上游obs → 61D</text>
+			<text x="220.166015625" y="288.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,577) scale(1,-1)">网络选择 / 技能窗口</text>
+			<rect x="366" y="279" width="143" height="53" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="410.0" y="316.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,633) scale(1,-1)">JNI同步回调</text>
+			<text x="397.927734375" y="302.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,605) scale(1,-1)">PolicyRunner.rustInfer</text>
+			<text x="409.498046875" y="288.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,577) scale(1,-1)">同一仿真worker</text>
+			<path d="M 145,305 L 182,305 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="182 305, 176.5973 307.6098, 176.5973 302.3902" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 328,305 L 365,305 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="365 305, 359.5973 307.6098, 359.5973 302.3902" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="366" y="175" width="143" height="59" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="397.2021484375" y="215.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,431) scale(1,-1)">Android ORT 1.20</text>
+			<text x="389.939453125" y="201.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,403) scale(1,-1)">三份FF ONNX / normalizer</text>
+			<text x="410.8203125" y="187.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,375) scale(1,-1)">14D raw action</text>
+			<path d="M 437,279 L 437,235 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="437 235, 439.6098 240.4027, 434.3902 240.4027" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="183" y="175" width="145" height="59" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="216.04443359375" y="215.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,431) scale(1,-1)">Rust动作与Safety</text>
+			<text x="211.267578125" y="201.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,403) scale(1,-1)">HOME / scale / EMA / kp</text>
+			<text x="223.5" y="187.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,375) scale(1,-1)">有限值与行程约束</text>
+			<path d="M 366,205 L 329,205 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="329 205, 334.4027 202.3902, 334.4027 207.6098" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="0" y="175" width="145" height="59" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="45.0" y="215.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,431) scale(1,-1)">JNI身体目标</text>
+			<text x="39.6015625" y="201.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,403) scale(1,-1)">15槽映射到14关节</text>
+			<text x="52.5" y="187.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,375) scale(1,-1)">无重复滤波</text>
+			<path d="M 183,205 L 146,205 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="146 205, 151.4027 202.3902, 151.4027 207.6098" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="0" y="71" width="145" height="59" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="24.43115234375" y="111.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,223) scale(1,-1)">BAM / XML / MuJoCo</text>
+			<text x="44.943359375" y="97.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,195) scale(1,-1)">四个5ms物理步</text>
+			<text x="48.5" y="83.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,167) scale(1,-1)">相机保持独立</text>
+			<path d="M 72,175 L 72,131 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="72 131, 74.60979 136.4027, 69.39021 136.4027" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="267.6259765625" y="103" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,206) scale(1,-1)">本地模式无需电脑 / USB / robotd进程</text>
+			<text x="277.7861328125" y="80" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,160) scale(1,-1)">Rust以静态库链接进现有JNI .so</text>
+			<text x="157.710693359375" y="25" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,50) scale(1,-1)">推理后端保留Android ORT；控制决策与状态在Rust</text>
+		</g>
+	</g>
+</svg>

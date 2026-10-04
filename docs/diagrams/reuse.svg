@@ -16,7 +16,7 @@
 			<text x="38.720703125" y="145.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,290) scale(1,-1)">训练与 ONNX 导出</text>
 			<rect x="183" y="136" width="145" height="52" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
 			<text x="232.716796875" y="173.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,346) scale(1,-1)">microduck</text>
-			<text x="230.1640625" y="159.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,318) scale(1,-1)">Rust 控制服务</text>
+			<text x="230.1640625" y="159.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,318) scale(1,-1)">Rust 控制源码</text>
 			<text x="220.595703125" y="145.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,290) scale(1,-1)">本地 policies/*.onnx</text>
 			<rect x="366" y="136" width="143" height="52" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
 			<text x="407.49267578125" y="166.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,332) scale(1,-1)">MuJoCo 上游</text>
@@ -26,10 +26,10 @@
 			<text x="29.603515625" y="53.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,106) scale(1,-1)">复制 XML / STL / ONNX</text>
 			<rect x="183" y="38" width="145" height="50" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
 			<text x="226.3154296875" y="67.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,134) scale(1,-1)">Android Java</text>
-			<text x="207.939453125" y="53.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,106) scale(1,-1)">ORT / 控制 / GLES / HTTP</text>
+			<text x="211.939453125" y="53.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,106) scale(1,-1)">ORT / UI / GLES / HTTP</text>
 			<rect x="366" y="38" width="143" height="50" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
 			<text x="408.3203125" y="67.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,134) scale(1,-1)">Android NDK</text>
-			<text x="396.48828125" y="53.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,106) scale(1,-1)">MuJoCo + JNI 两份 .so</text>
+			<text x="399.263671875" y="53.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,106) scale(1,-1)">Rust + MuJoCo + JNI</text>
 			<path d="M 72,136 L 72,89 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
 			<polygon points="72 89, 74.60979 94.40268, 69.39021 94.40268" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
 			<text x="64.0" y="119.5" style="font-family: CN; font-size: 8px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,239) scale(1,-1)">模型</text>
@@ -38,12 +38,15 @@
 			<text x="175.5" y="119.5" style="font-family: CN; font-size: 8px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,239) scale(1,-1)">权重</text>
 			<path d="M 437,136 L 437,89 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
 			<polygon points="437 89, 439.6098 94.40268, 434.3902 94.40268" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
-			<text x="413.0" y="119.5" style="font-family: CN; font-size: 8px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,239) scale(1,-1)">源码交叉编译</text>
+			<text x="425.439453125" y="119.5" style="font-family: CN; font-size: 8px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,239) scale(1,-1)">C/C++</text>
+			<path d="M 285,136 L 397,89 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="397 89, 393.0281 93.49707, 391.0083 88.68409" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="324.775390625" y="119.5" style="font-family: CN; font-size: 8px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,239) scale(1,-1)">Rust源码</text>
 			<path d="M 145,63 L 182,63 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
 			<polygon points="182 63, 176.5973 65.60979, 176.5973 60.39021" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
 			<path d="M 366,63 L 329,63 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
 			<polygon points="329 63, 334.4027 60.39021, 334.4027 65.60979" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
-			<text x="154.871826171875" y="12" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,24) scale(1,-1)">复用文件与控制约定；Rust / Python 服务不进入 APK</text>
+			<text x="128.649658203125" y="12" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,24) scale(1,-1)">M10：Rust核心进入APK；Python训练环境与桌面daemon留在主机</text>
 		</g>
 	</g>
 </svg>

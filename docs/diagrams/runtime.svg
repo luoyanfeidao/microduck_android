@@ -19,15 +19,15 @@
 			<text x="398.611328125" y="290.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,580) scale(1,-1)">命令 / 状态 / RTC信令</text>
 			<rect x="183" y="185" width="145" height="64" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
 			<text x="220.5" y="228.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,456) scale(1,-1)">单仿真工作线程</text>
-			<text x="215.3828125" y="214.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,428) scale(1,-1)">20ms控制 / ORT + JNI</text>
-			<text x="220.60546875" y="200.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,400) scale(1,-1)">MuJoCo唯一访问者</text>
+			<text x="210.599609375" y="214.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,428) scale(1,-1)">20ms / Rust + ORT + JNI</text>
+			<text x="211.5" y="200.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,400) scale(1,-1)">所有控制状态属于此线程</text>
 			<path d="M 145,300 L 215,250 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
 			<polygon points="215 250, 212.1206 255.2639, 209.0867 251.0166" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
 			<path d="M 366,300 L 295,250 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
 			<polygon points="295 250, 300.9199 250.977, 297.9146 255.2445" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
 			<rect x="0" y="99" width="145" height="54" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
 			<text x="42.21435546875" y="137.0" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,274) scale(1,-1)">JNI / MuJoCo</text>
-			<text x="36.931640625" y="123.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,246) scale(1,-1)">61D / 14D / 4物理步</text>
+			<text x="32.939453125" y="123.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,246) scale(1,-1)">Rust目标 / BAM / 四步</text>
 			<text x="41.380859375" y="109.0" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,218) scale(1,-1)">mjModel / mjData</text>
 			<path d="M 183,205 L 120,154 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
 			<polygon points="120 154, 125.8413 155.3709, 122.5571 159.4278" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>

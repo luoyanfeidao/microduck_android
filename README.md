@@ -6,13 +6,13 @@
 
 当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。另一台Android浏览器可发站立/步行/前滚翻/暂停/复位命令并读状态；视频来自模型的 `head_camera`，随机器人头部运动。手机保留外部观察视角。控制见 [NETWORK.md](NETWORK.md)，相机见 [VIDEO.md](VIDEO.md)，前滚翻见 [SKILLS.md](SKILLS.md)。
 
-**当前功能开发 M10：** `0.10.0-m10` / versionCode=18。本地站立、步行和翻滚已交给APK内Rust Controller与Safety，运行时不需要电脑或USB。ONNX继续用现有Android ORT，由Rust同步调用；BAM、相机和外部SimIo调试入口保留。Studio构建自动通过Cargo编译Android ARM64静态库并链接进JNI。架构、依赖、使用方法及验证边界见 [RUST_CORE.md](RUST_CORE.md)。已完成原生交叉编译和真实主机闭环，手机M10待用户Studio运行；PDF不更新。
+**当前功能开发 M10：** `0.10.0-m10` / versionCode=18。本地站立、步行和翻滚已交给APK内Rust Controller与Safety，运行时不需要电脑或USB。ONNX继续用现有Android ORT，由Rust同步调用；BAM、相机和外部SimIo调试入口保留。Studio构建自动通过Cargo编译Android ARM64静态库并链接进JNI。架构、依赖、使用方法及验证边界见 [RUST_CORE.md](RUST_CORE.md)。已完成原生交叉编译和真实主机闭环，用户已确认M10实机验证通过，见 [user-M10-feedback.json](verification/user-M10-feedback.json)。PDF已更新到M10。
 
 **历史功能开发 M9：** `0.9.0-m9` / versionCode=17。默认使用BAM XL330 M6执行器，可切回XML伺服；新增USB SimIo身体服务，由桌面原版Rust robotd控制Android MuJoCo身体。APK没有嵌入Rust。方案、架构、控制权和运行命令见 [BAM_SIMIO.md](BAM_SIMIO.md)。JDK17/release11源码回归见 [m9-checks.json](verification/m9-checks.json)，BAM数值对照见 [m9-bam-checks.json](verification/m9-bam-checks.json)，真实Rust/Java/JNI及完整robotd联调见 [m9-simio-checks.json](verification/m9-simio-checks.json)。M9待用户Studio编译运行；主机验证不能代替设备动作质量确认。
 
 **历史功能 M8.1：** `0.8.1-m81` / versionCode=16，标题 `Microduck · Android M8.1`。局域网访问码改为4位数字，每次开启服务重新随机生成，保留前导零。用户已反馈M8实机验证正常，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)。机器人相机拥有独立 EGL 上下文和 Surface，关闭手机“显示3D”后仍能出流。网页提供 WebRTC（目标20FPS、优先H.264硬件编码、单观看者）与JPEG兼容模式（640×360、10FPS、质量70）。在Studio重新Build、Run，保持应用前台，开启LAN并刷新控制网页，输入新4位访问码。保留站立/步行、2秒翻滚、滤波、伺服及50Hz控制基线，抬头慢/僵硬未在这次改动中修复。视频方案、架构和功能验收见 [VIDEO.md](VIDEO.md)。
 
-**详细技术说明（保留M8.1快照，本轮不同步）：** [PDF](docs/Android_Microduck_方案架构与编译复用说明.pdf) / [Markdown](docs/Android_Microduck_方案架构与编译复用说明.md)，重点说明Android与两个Pollen仓库的资源复用、构建边界、NDK引擎编译、训练BAM差异，并包含架构图、关键源码注解、依赖及使用方法。生成与源码引用检查见 [docs/README.md](docs/README.md)。
+**详细技术说明（M10）：** [PDF](docs/Android_Microduck_方案架构与编译复用说明.pdf) / [Markdown](docs/Android_Microduck_方案架构与编译复用说明.md)，重点说明Android与两个Pollen仓库的资源复用、构建边界、NDK引擎编译、训练BAM差异，并包含架构图、关键源码注解、依赖及使用方法。生成与源码引用检查见 [docs/README.md](docs/README.md)。
 
 **历史检查边界（M8.1）：** [verification/m81-checks.json](verification/m81-checks.json)验证实际WebRTC AAR/JDK11 Java编译、JNI/物理/相机对照、动作窗口及网页/HTTP协议，覆盖4位访问码、前导零保留、非法格式拒绝、信令大小、会话替换、迟到回调、关闭与offer乱序检查。依赖AAR、arm64库及原AGP7.2.2 D8的转换检查见 [m8-video-dependencies.json](verification/m8-video-dependencies.json)。M8设备功能已获用户确认，尚无这次实际codec及性能的新增ADB证据；M8.1访问码修改待用户Studio编译运行。用户已确认M7摄像头正常、M7.1整圈翻滚通过，反馈抬头慢、整体动作僵硬；只读手机日志证据见 [device-M71-roll-acceptance.json](verification/device-M71-roll-acceptance.json)。采样未见推理瓶颈，主机对照发现交接时头颈恢复不同步、视线先向下再恢复；关闭恢复阶段头部滤波仅小幅改善，诊断见 [SKILLS.md](SKILLS.md)。当前保留已通过的2秒配置，不宣称任意起始姿态成功或动作质量已修复。代理未打包/安装/运行APK。性能、温升及前后台验收按用户要求延期。下面M5/M5.4数据是外部观察窗口画面的历史结果。
 

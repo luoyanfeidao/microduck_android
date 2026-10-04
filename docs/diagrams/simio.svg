@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="509.27559055118115" height="296" preserveAspectRatio="xMinYMin meet" viewBox="0 0 509 296" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="509.27559055118115" height="296"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-296)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="226" width="145" height="55" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="38.32275390625" y="264.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,529) scale(1,-1)">电脑原版robotd</text>
+			<text x="30.267578125" y="250.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,501) scale(1,-1)">Rust策略 / 控制 / Safety</text>
+			<text x="35.826171875" y="236.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,473) scale(1,-1)">Unix socket命令入口</text>
+			<rect x="183" y="226" width="145" height="55" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="217.42626953125" y="264.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,529) scale(1,-1)">USB adb forward</text>
+			<text x="214.404296875" y="250.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,501) scale(1,-1)">电脑17801 → 手机7801</text>
+			<text x="227.93359375" y="236.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,473) scale(1,-1)">RemoteIo协议1</text>
+			<rect x="366" y="226" width="143" height="55" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="391.36962890625" y="264.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,529) scale(1,-1)">Android SimIoServer</text>
+			<text x="398.154296875" y="250.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,501) scale(1,-1)">仅loopback / 单客户端</text>
+			<text x="402.423828125" y="236.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,473) scale(1,-1)">有界IO→worker请求</text>
+			<path d="M 145,254 L 182,254 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="182 254, 176.5973 256.6098, 176.5973 251.3902" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<path d="M 328,254 L 365,254 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="365 254, 359.5973 256.6098, 359.5973 251.3902" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="366" y="122" width="143" height="59" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="401.6552734375" y="162.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,325) scale(1,-1)">SimIoBody / JNI</text>
+			<text x="403.265625" y="148.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,297) scale(1,-1)">wire15 / mouth占位</text>
+			<text x="392.142578125" y="134.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,269) scale(1,-1)">read / write / gain / torque</text>
+			<path d="M 437,226 L 437,182 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="437 182, 439.6098 187.4027, 434.3902 187.4027" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="183" y="122" width="145" height="59" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="208.2587890625" y="162.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,325) scale(1,-1)">Android MuJoCo身体</text>
+			<text x="234.607421875" y="148.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,297) scale(1,-1)">BAM或XML</text>
+			<text x="227.5" y="134.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,269) scale(1,-1)">物理步与传感器</text>
+			<path d="M 366,152 L 329,152 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="329 152, 334.4027 149.3902, 334.4027 154.6098" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<rect x="0" y="122" width="145" height="59" rx="6" ry="6" style="stroke: rgb(77%,85%,88%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(92%,95%,96%); fill-rule: evenodd;"/>
+			<text x="47.5" y="162.5" style="font-family: CN; font-size: 10px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,325) scale(1,-1)">浏览器监看</text>
+			<text x="30.939453125" y="148.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,297) scale(1,-1)">状态 / WebRTC / JPEG</text>
+			<text x="31.3828125" y="134.5" style="font-family: CN; font-size: 8px;fill: rgb(9%,20%,29%); stroke:none;" transform="translate(0,269) scale(1,-1)">外部模式HTTP动作409</text>
+			<path d="M 183,152 L 146,152 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
+			<polygon points="146 152, 151.4027 149.3902, 151.4027 154.6098" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
+			<text x="157.0113525390625" y="76" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,152) scale(1,-1)">手机本地按钮接管：关闭外部服务，再运行内嵌Rust</text>
+			<text x="182.75" y="49" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,98) scale(1,-1)">断线暂停并关闭力矩；两种控制器互斥</text>
+			<text x="155.336669921875" y="22" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,44) scale(1,-1)">相机仍走Android视频链，无mediad / GStreamer依赖</text>
+		</g>
+	</g>
+</svg>

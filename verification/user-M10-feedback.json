@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-05",
+  "source": "User message in current project conversation",
+  "statement": "已实机验证通过。ONNX 推理先继续使用 APK 已有的 Android Runtime，这个要改成Rust的么？",
+  "stage": "M10 / embedded Rust control core",
+  "result": "User-confirmed device functional validation passed",
+  "boundary": "User confirmation; no additional device logs, measured codec, performance, temperature, or detailed acceptance checklist collected."
+}

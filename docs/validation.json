@@ -1,22 +1,28 @@
 {
   "scope": "Document checks only; no Gradle/APK/device or training execution",
-  "pages": 32,
-  "sections_and_bookmarks": 28,
-  "source_references": 99,
-  "exact_source_snippets": 14,
-  "vector_diagrams": 6,
+  "pages": 44,
+  "sections_and_bookmarks": 36,
+  "source_references": 118,
+  "exact_source_snippets": 20,
+  "vector_diagrams": 10,
   "source_sha256_and_snippets_match": true,
   "out_of_bounds_text": [],
-  "pdf_bytes": 430218,
-  "text_characters": 42217,
+  "pdf_bytes": 475571,
+  "text_characters": 51461,
   "review_pages": [
     1,
     2,
-    4,
     5,
-    14,
+    6,
+    15,
     19,
     22,
-    25
+    24,
+    25,
+    26,
+    28,
+    31,
+    34,
+    39
   ]
 }

@@ -1,6 +1,6 @@
 # M10：APK 内嵌 Rust 控制核心
 
-版本 `0.10.0-m10` / versionCode=18，手机标题 `Microduck · Android M10`。本地站立、前进、翻滚及浏览器动作控制，默认走APK内的Rust核心。运行时不需要电脑、USB、Python或桌面robotd。用户继续在Android Studio编译、安装、运行；PDF保持旧快照。
+版本 `0.10.0-m10` / versionCode=18，手机标题 `Microduck · Android M10`。本地站立、前进、翻滚及浏览器动作控制，默认走APK内的Rust核心。运行时不需要电脑、USB、Python或桌面robotd。用户继续在Android Studio编译、安装、运行；PDF已同步M10，见 [详细技术说明](docs/Android_Microduck_方案架构与编译复用说明.pdf)。
 
 ## 现在怎样使用
 
@@ -8,7 +8,7 @@
 
 **本地内嵌模式不用开启“Rust身体服务”。** 那个按钮仍用于电脑robotd经USB接管，命令见 [BAM_SIMIO.md](BAM_SIMIO.md)。服务开启期间本地Rust策略停用、网页只监看；手机动作按钮会关闭该服务并接管。两种控制器不会同时写身体。
 
-当前设备只需你重新Studio Build/Run。本机已经安装 `aarch64-linux-android` Rust标准库并验证原生编译。换电脑时，在已有Rust工具链的环境执行：
+用户已确认M10实机验证通过，见 [user-M10-feedback.json](verification/user-M10-feedback.json)；没有另取性能/codec/细分动作验收日志。本机已经安装 `aarch64-linux-android` Rust标准库并验证原生编译。换电脑时，在已有Rust工具链的环境执行：
 
 ```bash
 rustup target add aarch64-linux-android
@@ -103,7 +103,7 @@ flowchart LR
 - [m10-android-rust-checks.json](verification/m10-android-rust-checks.json)：实际CMake/NDK链接成功；ARM64 `.so`含Rust及JNI入口、LOAD段16KB对齐，动态依赖仅MuJoCo和Android系统库。该结果不改变旧ORT AAR的对齐限制，也不代表APK整体16KB验收。
 - [m10-embedded-rust-checks.json](verification/m10-embedded-rust-checks.json)：生产PolicyRunner、真实Java ORT 1.20.0、JNI、Rust核心、MuJoCo/BAM主机闭环。站立5秒稳定，0.30指令3秒前进约0.254m，翻滚约359°后站立恢复；XML回退及JNI回调异常通过。Rust测试覆盖61D反馈、缩放/滤波/kp、100周期窗口、取消/复位、线程归属、异常和Safety限制。
 
-这些结果不替代Android运行验收。待你Studio运行M10，确认本地动作、浏览器控制和相机；无需电脑robotd。性能/温升/30秒专项继续延期。未执行Gradle/APK构建、安装或设备操作，PDF未更新。
+这些自动化结果来自主机。用户另已确认M10实机验证通过；这是功能确认，不扩展为实测速度、性能或长期稳定性结论。性能/温升/30秒专项继续延期。未执行Gradle/APK构建、安装或设备操作，PDF已更新到M10。
 
 主机闭环检查命令（本机JAR路径按实际填写；桌面ORT JAR只用于验证，不加入APK）：
 
