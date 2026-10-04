@@ -1,0 +1,4083 @@
+[
+  {
+    "scope": "CPU XML servos matching Android action scale/gain/filter; not BAM or device acceptance",
+    "mujoco": "3.10.0",
+    "onnxruntime": "1.24.4",
+    "roulade_sha256": "3d60da08fc13f29c1b57f41977aa898132c0d60042100149d8e775affcbca32b",
+    "action_scale": 1.0,
+    "gain_ratio": 1.0,
+    "duration_s": 1,
+    "command": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "rollouts": [
+      {
+        "initial_state": "HOME",
+        "filter": true,
+        "roll_ticks": 50,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.39155443427027686,
+            0.009269981055540695,
+            0.04954942821000882
+          ],
+          "quaternion": [
+            -0.6213776136583419,
+            -0.05639990565426552,
+            0.7812160153888836,
+            -0.020259545561766446
+          ],
+          "pitch_integral_degrees": 253.98516258799899,
+          "projected_pitch_degrees": 256.872034644897,
+          "tilt_degrees": 103.11809085238698
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 256.872034644897,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 67.48387464512561,
+            "projected_pitch_degrees": 68.58999436398815,
+            "root_z": 0.1033936702627047,
+            "tilt_degrees": 68.59080530406688
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.68244570389946,
+            "projected_pitch_degrees": 114.69707882885974,
+            "root_z": 0.10620879654050389,
+            "tilt_degrees": 114.69603296715134
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 164.1505245920928,
+            "projected_pitch_degrees": 164.7272567649962,
+            "root_z": 0.182139219211337,
+            "tilt_degrees": 164.69627079043144
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 185.56230906918034,
+            "projected_pitch_degrees": 186.98742961152846,
+            "root_z": 0.1515778713446979,
+            "tilt_degrees": 171.78277533790006
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 253.98516258799899,
+            "projected_pitch_degrees": 256.872034644897,
+            "root_z": 0.04954942821000882,
+            "tilt_degrees": 103.11809085238698
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 299.40848368381927,
+        "max_lateral_rate_rad_s": 6.027830433423005,
+        "min_root_height_m": 0.04804620755775334,
+        "final_root_xyz": [
+          0.45128577441670786,
+          0.18145207424260762,
+          0.11586726649774877
+        ],
+        "final_quaternion": [
+          0.38935548514313495,
+          0.0019181999394260576,
+          8.973729395104451e-05,
+          -0.9210855653223334
+        ],
+        "final_tilt_degrees": 0.22005005840699782
+      },
+      {
+        "initial_state": "HOME",
+        "filter": false,
+        "roll_ticks": 50,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.08753959898886861,
+            0.00852055937277088,
+            0.15982570564532045
+          ],
+          "quaternion": [
+            0.2394525392996913,
+            0.21567233481140663,
+            0.9460750579979161,
+            -0.033013785819962914
+          ],
+          "pitch_integral_degrees": 151.6250872936934,
+          "projected_pitch_degrees": 152.11423109800674,
+          "tilt_degrees": 152.0241191541215
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 152.11423109800674,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.401330090481686,
+            "projected_pitch_degrees": 64.55261238632754,
+            "root_z": 0.10381697485675924,
+            "tilt_degrees": 64.55304646433875
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 111.67406617101472,
+            "projected_pitch_degrees": 112.54018532380344,
+            "root_z": 0.10622105592586911,
+            "tilt_degrees": 112.54017990665932
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 127.59659136705052,
+            "projected_pitch_degrees": 126.71105149397509,
+            "root_z": 0.17431895469560302,
+            "tilt_degrees": 126.70772897890777
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 91.36324562128304,
+            "projected_pitch_degrees": 92.95107732035649,
+            "root_z": 0.10038000234847402,
+            "tilt_degrees": 92.95051997324988
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 151.6250872936934,
+            "projected_pitch_degrees": 152.11423109800674,
+            "root_z": 0.15982570564532045,
+            "tilt_degrees": 152.0241191541215
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 152.0021551568416,
+        "max_lateral_rate_rad_s": 11.318773239702102,
+        "min_root_height_m": 0.034058083133775854,
+        "final_root_xyz": [
+          0.10402056161410207,
+          0.0026708187232425263,
+          0.11585032694779196
+        ],
+        "final_quaternion": [
+          0.9988370714635638,
+          0.0008697550776289248,
+          0.0017028999306354959,
+          0.048175183736259876
+        ],
+        "final_tilt_degrees": 0.21911711563515338
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": true,
+        "roll_ticks": 50,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.39409845160486695,
+            -0.005665712254981126,
+            0.04955793451390378
+          ],
+          "quaternion": [
+            -0.49189564497783367,
+            0.03412149077194298,
+            0.8691871187195288,
+            0.03725789810742562
+          ],
+          "pitch_integral_degrees": 235.83300721029724,
+          "projected_pitch_degrees": 239.0993451363736,
+          "tilt_degrees": 120.883962068988
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 239.0993451363736,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.43073011713121,
+            "projected_pitch_degrees": 65.01928689707292,
+            "root_z": 0.10639081844267323,
+            "tilt_degrees": 65.02004709150646
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.04374541818098,
+            "projected_pitch_degrees": 114.50848120462057,
+            "root_z": 0.10558073352543937,
+            "tilt_degrees": 114.45749397343415
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 162.3521112443121,
+            "projected_pitch_degrees": 163.41201557384645,
+            "root_z": 0.18059045635126827,
+            "tilt_degrees": 162.59802784039726
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 178.0892869894968,
+            "projected_pitch_degrees": 179.3791485377687,
+            "root_z": 0.16840479571691885,
+            "tilt_degrees": 172.87155724996282
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 235.83300721029724,
+            "projected_pitch_degrees": 239.0993451363736,
+            "root_z": 0.04955793451390378,
+            "tilt_degrees": 120.883962068988
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 289.98746751485527,
+        "max_lateral_rate_rad_s": 9.505666772510063,
+        "min_root_height_m": 0.04709309753266911,
+        "final_root_xyz": [
+          0.6594959475413019,
+          0.050735883989822726,
+          0.11583934579552109
+        ],
+        "final_quaternion": [
+          0.05540394397651618,
+          0.0021671367066720664,
+          -0.0006651043928571454,
+          -0.99846144850289
+        ],
+        "final_tilt_degrees": 0.25976807403043295
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": false,
+        "roll_ticks": 50,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.12864338225154676,
+            0.004759427000697763,
+            0.18450574824868454
+          ],
+          "quaternion": [
+            0.11808643770352814,
+            -0.0026829888049697084,
+            0.9927831465730683,
+            0.020736891812422456
+          ],
+          "pitch_integral_degrees": 166.0971556548284,
+          "projected_pitch_degrees": 166.42177335007807,
+          "tilt_degrees": 166.22810005477535
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 166.42177335007807,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 64.35027592353012,
+            "projected_pitch_degrees": 65.79850647888554,
+            "root_z": 0.10565211874916544,
+            "tilt_degrees": 65.79920890946781
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 112.03702170508616,
+            "projected_pitch_degrees": 112.8022603250288,
+            "root_z": 0.10551923315953668,
+            "tilt_degrees": 112.7764798445738
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 107.9880779397885,
+            "projected_pitch_degrees": 106.45995996819495,
+            "root_z": 0.14873575554609175,
+            "tilt_degrees": 106.45140714661132
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 120.25445154468397,
+            "projected_pitch_degrees": 122.47007432424203,
+            "root_z": 0.11541683336423912,
+            "tilt_degrees": 122.46975005437552
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 166.0971556548284,
+            "projected_pitch_degrees": 166.42177335007807,
+            "root_z": 0.18450574824868454,
+            "tilt_degrees": 166.22810005477535
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 263.91773722976956,
+        "max_lateral_rate_rad_s": 7.9954910511160255,
+        "min_root_height_m": 0.04808720740553791,
+        "final_root_xyz": [
+          0.36784164218538407,
+          0.18376460006984802,
+          0.1158515804387519
+        ],
+        "final_quaternion": [
+          0.6186168283152552,
+          0.002091184865919305,
+          0.0008437940266457391,
+          -0.7856895918126137
+        ],
+        "final_tilt_degrees": 0.25840462931902886
+      }
+    ],
+    "limitations": [
+      "Pitch-rate integral describes motion and is not a contact-gated success detector.",
+      "Unwrapped projected pitch can count shoulder rotation; head contact alone does not prove head-top support.",
+      "No guarantee that arbitrary walking/fallen starting states complete a roll."
+    ]
+  },
+  {
+    "scope": "CPU XML servos matching Android action scale/gain/filter; not BAM or device acceptance",
+    "mujoco": "3.10.0",
+    "onnxruntime": "1.24.4",
+    "roulade_sha256": "3d60da08fc13f29c1b57f41977aa898132c0d60042100149d8e775affcbca32b",
+    "action_scale": 1.0,
+    "gain_ratio": 1.0,
+    "duration_s": 1.5,
+    "command": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "rollouts": [
+      {
+        "initial_state": "HOME",
+        "filter": true,
+        "roll_ticks": 75,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5463649384999204,
+            0.03208255815139826,
+            0.11734864198385463
+          ],
+          "quaternion": [
+            -0.9976079749755029,
+            0.013543343527076703,
+            -0.024052403550989608,
+            -0.06337497924894812
+          ],
+          "pitch_integral_degrees": 361.8380676969644,
+          "projected_pitch_degrees": 362.84995830944115,
+          "tilt_degrees": 3.163503056750665
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 362.84995830944115,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 67.48387464512561,
+            "projected_pitch_degrees": 68.58999436398815,
+            "root_z": 0.1033936702627047,
+            "tilt_degrees": 68.59080530406688
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.68244570389946,
+            "projected_pitch_degrees": 114.69707882885974,
+            "root_z": 0.10620879654050389,
+            "tilt_degrees": 114.69603296715134
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 164.1505245920928,
+            "projected_pitch_degrees": 164.7272567649962,
+            "root_z": 0.182139219211337,
+            "tilt_degrees": 164.69627079043144
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 185.56230906918034,
+            "projected_pitch_degrees": 186.98742961152846,
+            "root_z": 0.1515778713446979,
+            "tilt_degrees": 171.78277533790006
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 253.98516258799899,
+            "projected_pitch_degrees": 256.872034644897,
+            "root_z": 0.04954942821000882,
+            "tilt_degrees": 103.11809085238698
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 325.5116673574398,
+            "projected_pitch_degrees": 328.16554461097724,
+            "root_z": 0.05873655629957985,
+            "tilt_degrees": 31.83680992535663
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 358.6571658469269,
+            "projected_pitch_degrees": 359.66093162124236,
+            "root_z": 0.11136395178046228,
+            "tilt_degrees": 1.8301610481296864
+          },
+          {
+            "roll_s": 1.5,
+            "pitch_integral_degrees": 361.8380676969644,
+            "projected_pitch_degrees": 362.84995830944115,
+            "root_z": 0.11734864198385463,
+            "tilt_degrees": 3.163503056750665
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 362.3326623597195,
+        "max_lateral_rate_rad_s": 0.84182211422478,
+        "min_root_height_m": 0.04709417957885404,
+        "final_root_xyz": [
+          0.5715201567153109,
+          0.022251768639641723,
+          0.11586610530646185
+        ],
+        "final_quaternion": [
+          -0.9824214519584807,
+          -0.0003269386325744254,
+          -0.0021959248585353146,
+          -0.18666323086493866
+        ],
+        "final_tilt_degrees": 0.2544083059415267
+      },
+      {
+        "initial_state": "HOME",
+        "filter": false,
+        "roll_ticks": 75,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.29532842573080575,
+            -0.07431629998110638,
+            0.08137304354770081
+          ],
+          "quaternion": [
+            -0.43921278505370576,
+            0.1076058572672925,
+            0.8919021473542295,
+            0.004865025390610102
+          ],
+          "pitch_integral_degrees": 226.68472823703826,
+          "projected_pitch_degrees": 231.9453780945,
+          "tilt_degrees": 127.88923423849653
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 231.9453780945,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.401330090481686,
+            "projected_pitch_degrees": 64.55261238632754,
+            "root_z": 0.10381697485675924,
+            "tilt_degrees": 64.55304646433875
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 111.67406617101472,
+            "projected_pitch_degrees": 112.54018532380344,
+            "root_z": 0.10622105592586911,
+            "tilt_degrees": 112.54017990665932
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 127.59659136705052,
+            "projected_pitch_degrees": 126.71105149397509,
+            "root_z": 0.17431895469560302,
+            "tilt_degrees": 126.70772897890777
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 91.36324562128304,
+            "projected_pitch_degrees": 92.95107732035649,
+            "root_z": 0.10038000234847402,
+            "tilt_degrees": 92.95051997324988
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 151.6250872936934,
+            "projected_pitch_degrees": 152.11423109800674,
+            "root_z": 0.15982570564532045,
+            "tilt_degrees": 152.0241191541215
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 162.11225052429242,
+            "projected_pitch_degrees": 162.76214010195977,
+            "root_z": 0.1847845677438274,
+            "tilt_degrees": 162.33061101015852
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 197.5178929375735,
+            "projected_pitch_degrees": 201.27479262519518,
+            "root_z": 0.14133394057716728,
+            "tilt_degrees": 155.89587678722685
+          },
+          {
+            "roll_s": 1.5,
+            "pitch_integral_degrees": 226.68472823703826,
+            "projected_pitch_degrees": 231.9453780945,
+            "root_z": 0.08137304354770081,
+            "tilt_degrees": 127.88923423849653
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 287.42911401780617,
+        "max_lateral_rate_rad_s": 3.322157101105126,
+        "min_root_height_m": 0.03821336953309763,
+        "final_root_xyz": [
+          0.38956520732103656,
+          -0.14219678394992952,
+          0.0404451851567867
+        ],
+        "final_quaternion": [
+          -0.17790277162967796,
+          0.22680022161057917,
+          0.8840502761804574,
+          -0.36792305242961804
+        ],
+        "final_tilt_degrees": 131.75651255273726
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": true,
+        "roll_ticks": 75,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5585477191513211,
+            -0.019518238372246508,
+            0.11542259371996665
+          ],
+          "quaternion": [
+            -0.9974353782217045,
+            0.009295720753324006,
+            0.004778287106774664,
+            0.0708055352336767
+          ],
+          "pitch_integral_degrees": 357.8985943002476,
+          "projected_pitch_degrees": 359.3783186135454,
+          "tilt_degrees": 1.1977226302949358
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 359.3783186135454,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.43073011713121,
+            "projected_pitch_degrees": 65.01928689707292,
+            "root_z": 0.10639081844267323,
+            "tilt_degrees": 65.02004709150646
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.04374541818098,
+            "projected_pitch_degrees": 114.50848120462057,
+            "root_z": 0.10558073352543937,
+            "tilt_degrees": 114.45749397343415
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 162.3521112443121,
+            "projected_pitch_degrees": 163.41201557384645,
+            "root_z": 0.18059045635126827,
+            "tilt_degrees": 162.59802784039726
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 178.0892869894968,
+            "projected_pitch_degrees": 179.3791485377687,
+            "root_z": 0.16840479571691885,
+            "tilt_degrees": 172.87155724996282
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 235.83300721029724,
+            "projected_pitch_degrees": 239.0993451363736,
+            "root_z": 0.04955793451390378,
+            "tilt_degrees": 120.883962068988
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 312.9323047209064,
+            "projected_pitch_degrees": 315.81595294930344,
+            "root_z": 0.0613103512134376,
+            "tilt_degrees": 44.377473090733595
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 356.1105146276511,
+            "projected_pitch_degrees": 357.6419602917805,
+            "root_z": 0.10521570853229488,
+            "tilt_degrees": 2.9453468312289037
+          },
+          {
+            "roll_s": 1.5,
+            "pitch_integral_degrees": 357.8985943002476,
+            "projected_pitch_degrees": 359.3783186135454,
+            "root_z": 0.11542259371996665,
+            "tilt_degrees": 1.1977226302949358
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 359.57238636619184,
+        "max_lateral_rate_rad_s": 1.819164879834926,
+        "min_root_height_m": 0.04609927135570128,
+        "final_root_xyz": [
+          0.5953395865443082,
+          -0.04833672019851341,
+          0.1158903896574925
+        ],
+        "final_quaternion": [
+          -0.9914354282251772,
+          -0.000668764123716061,
+          -0.0015140795193532939,
+          -0.13058733467574454
+        ],
+        "final_tilt_degrees": 0.18967186910424574
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": false,
+        "roll_ticks": 75,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.41323850363860204,
+            0.05098165100053173,
+            0.0600845848583191
+          ],
+          "quaternion": [
+            -0.8665194636046027,
+            -0.02134960704480557,
+            0.49614338547270287,
+            -0.05029865331307864
+          ],
+          "pitch_integral_degrees": 299.540407588749,
+          "projected_pitch_degrees": 300.45185149091424,
+          "tilt_degrees": 59.5509561204371
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 300.45185149091424,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 64.35027592353012,
+            "projected_pitch_degrees": 65.79850647888554,
+            "root_z": 0.10565211874916544,
+            "tilt_degrees": 65.79920890946781
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 112.03702170508616,
+            "projected_pitch_degrees": 112.8022603250288,
+            "root_z": 0.10551923315953668,
+            "tilt_degrees": 112.7764798445738
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 107.9880779397885,
+            "projected_pitch_degrees": 106.45995996819495,
+            "root_z": 0.14873575554609175,
+            "tilt_degrees": 106.45140714661132
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 120.25445154468397,
+            "projected_pitch_degrees": 122.47007432424203,
+            "root_z": 0.11541683336423912,
+            "tilt_degrees": 122.46975005437552
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 166.0971556548284,
+            "projected_pitch_degrees": 166.42177335007807,
+            "root_z": 0.18450574824868454,
+            "tilt_degrees": 166.22810005477535
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 194.8701573130566,
+            "projected_pitch_degrees": 196.47397196232703,
+            "root_z": 0.11765483068391064,
+            "tilt_degrees": 163.4685256080369
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 273.49914173305325,
+            "projected_pitch_degrees": 275.10817074697127,
+            "root_z": 0.047754653310647426,
+            "tilt_degrees": 84.89192038237319
+          },
+          {
+            "roll_s": 1.5,
+            "pitch_integral_degrees": 299.540407588749,
+            "projected_pitch_degrees": 300.45185149091424,
+            "root_z": 0.0600845848583191,
+            "tilt_degrees": 59.5509561204371
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 356.9406315421405,
+        "max_lateral_rate_rad_s": 8.764805384263305,
+        "min_root_height_m": 0.03717954230467158,
+        "final_root_xyz": [
+          0.48415150071076396,
+          0.2643617521706907,
+          0.11583724915658092
+        ],
+        "final_quaternion": [
+          -0.013511811587065634,
+          0.0022604934063323832,
+          -0.0007738254830959273,
+          -0.9999058567241808
+        ],
+        "final_tilt_degrees": 0.2737910386810377
+      }
+    ],
+    "limitations": [
+      "Pitch-rate integral describes motion and is not a contact-gated success detector.",
+      "Unwrapped projected pitch can count shoulder rotation; head contact alone does not prove head-top support.",
+      "No guarantee that arbitrary walking/fallen starting states complete a roll."
+    ]
+  },
+  {
+    "scope": "CPU XML servos matching Android action scale/gain/filter; not BAM or device acceptance",
+    "mujoco": "3.10.0",
+    "onnxruntime": "1.24.4",
+    "roulade_sha256": "3d60da08fc13f29c1b57f41977aa898132c0d60042100149d8e775affcbca32b",
+    "action_scale": 1.0,
+    "gain_ratio": 1.0,
+    "duration_s": 2,
+    "command": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "rollouts": [
+      {
+        "initial_state": "HOME",
+        "filter": true,
+        "roll_ticks": 100,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5496734759304958,
+            0.029496044885088495,
+            0.11517055927820344
+          ],
+          "quaternion": [
+            -0.9983669288513347,
+            0.0016674651750032082,
+            0.02404587196790369,
+            -0.05179276954504456
+          ],
+          "pitch_integral_degrees": 356.39637444673195,
+          "projected_pitch_degrees": 357.25784918269443,
+          "tilt_degrees": 2.762338683639234
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 363.9843375424338,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 67.48387464512561,
+            "projected_pitch_degrees": 68.58999436398815,
+            "root_z": 0.1033936702627047,
+            "tilt_degrees": 68.59080530406688
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.68244570389946,
+            "projected_pitch_degrees": 114.69707882885974,
+            "root_z": 0.10620879654050389,
+            "tilt_degrees": 114.69603296715134
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 164.1505245920928,
+            "projected_pitch_degrees": 164.7272567649962,
+            "root_z": 0.182139219211337,
+            "tilt_degrees": 164.69627079043144
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 185.56230906918034,
+            "projected_pitch_degrees": 186.98742961152846,
+            "root_z": 0.1515778713446979,
+            "tilt_degrees": 171.78277533790006
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 253.98516258799899,
+            "projected_pitch_degrees": 256.872034644897,
+            "root_z": 0.04954942821000882,
+            "tilt_degrees": 103.11809085238698
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 325.5116673574398,
+            "projected_pitch_degrees": 328.16554461097724,
+            "root_z": 0.05873655629957985,
+            "tilt_degrees": 31.83680992535663
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 358.6571658469269,
+            "projected_pitch_degrees": 359.66093162124236,
+            "root_z": 0.11136395178046228,
+            "tilt_degrees": 1.8301610481296864
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 363.1095757080545,
+            "projected_pitch_degrees": 363.9723959683933,
+            "root_z": 0.11757764640639483,
+            "tilt_degrees": 4.158637989453815
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 359.8597199584635,
+            "projected_pitch_degrees": 360.5729772442504,
+            "root_z": 0.11551434851318937,
+            "tilt_degrees": 1.112828041604765
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 356.39637444673195,
+            "projected_pitch_degrees": 357.25784918269443,
+            "root_z": 0.11517055927820344,
+            "tilt_degrees": 2.762338683639234
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 363.1156869738244,
+        "max_lateral_rate_rad_s": 0.84182211422478,
+        "min_root_height_m": 0.04709417957885404,
+        "final_root_xyz": [
+          0.5622700921512722,
+          0.03030695990589374,
+          0.1158733496778866
+        ],
+        "final_quaternion": [
+          -0.9985320223793773,
+          -0.0005351088164767021,
+          -0.0021124964185661225,
+          -0.05412071045715248
+        ],
+        "final_tilt_degrees": 0.2497199615207946
+      },
+      {
+        "initial_state": "HOME",
+        "filter": false,
+        "roll_ticks": 100,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.4466290836302646,
+            -0.13284624268604733,
+            0.07090268184121033
+          ],
+          "quaternion": [
+            -0.9887167026117935,
+            -0.01747705043484234,
+            -0.028226082009731413,
+            0.14607232105686235
+          ],
+          "pitch_integral_degrees": 357.9689918607867,
+          "projected_pitch_degrees": 363.4938915859218,
+          "tilt_degrees": 3.8049991356595645
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 363.4938915859218,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.401330090481686,
+            "projected_pitch_degrees": 64.55261238632754,
+            "root_z": 0.10381697485675924,
+            "tilt_degrees": 64.55304646433875
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 111.67406617101472,
+            "projected_pitch_degrees": 112.54018532380344,
+            "root_z": 0.10622105592586911,
+            "tilt_degrees": 112.54017990665932
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 127.59659136705052,
+            "projected_pitch_degrees": 126.71105149397509,
+            "root_z": 0.17431895469560302,
+            "tilt_degrees": 126.70772897890777
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 91.36324562128304,
+            "projected_pitch_degrees": 92.95107732035649,
+            "root_z": 0.10038000234847402,
+            "tilt_degrees": 92.95051997324988
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 151.6250872936934,
+            "projected_pitch_degrees": 152.11423109800674,
+            "root_z": 0.15982570564532045,
+            "tilt_degrees": 152.0241191541215
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 162.11225052429242,
+            "projected_pitch_degrees": 162.76214010195977,
+            "root_z": 0.1847845677438274,
+            "tilt_degrees": 162.33061101015852
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 197.5178929375735,
+            "projected_pitch_degrees": 201.27479262519518,
+            "root_z": 0.14133394057716728,
+            "tilt_degrees": 155.89587678722685
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 261.04308684595946,
+            "projected_pitch_degrees": 267.7326950089251,
+            "root_z": 0.04850373406655164,
+            "tilt_degrees": 92.26125270594832
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 332.2193371146964,
+            "projected_pitch_degrees": 338.2147235695446,
+            "root_z": 0.06976676951866768,
+            "tilt_degrees": 21.805855546698197
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 357.9689918607867,
+            "projected_pitch_degrees": 363.4938915859218,
+            "root_z": 0.07090268184121033,
+            "tilt_degrees": 3.8049991356595645
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 359.55612559356126,
+        "max_lateral_rate_rad_s": 2.0273488746905297,
+        "min_root_height_m": 0.04850373406655164,
+        "final_root_xyz": [
+          0.5943019604943979,
+          -0.15909436217760903,
+          0.11585238011013425
+        ],
+        "final_quaternion": [
+          -0.996249994756513,
+          -0.0008879758600922263,
+          -0.002122814418507503,
+          0.08649076890318151
+        ],
+        "final_tilt_degrees": 0.2636814155135582
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": true,
+        "roll_ticks": 100,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5773842287980759,
+            -0.023197060135454983,
+            0.11576686246139255
+          ],
+          "quaternion": [
+            -0.9975177593312535,
+            0.008155235652553992,
+            -0.013446400421112897,
+            0.06863677050911934
+          ],
+          "pitch_integral_degrees": 360.33646010405533,
+          "projected_pitch_degrees": 361.47328082056436,
+          "tilt_degrees": 1.8021647431516867
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 365.69477215265107,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.43073011713121,
+            "projected_pitch_degrees": 65.01928689707292,
+            "root_z": 0.10639081844267323,
+            "tilt_degrees": 65.02004709150646
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.04374541818098,
+            "projected_pitch_degrees": 114.50848120462057,
+            "root_z": 0.10558073352543937,
+            "tilt_degrees": 114.45749397343415
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 162.3521112443121,
+            "projected_pitch_degrees": 163.41201557384645,
+            "root_z": 0.18059045635126827,
+            "tilt_degrees": 162.59802784039726
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 178.0892869894968,
+            "projected_pitch_degrees": 179.3791485377687,
+            "root_z": 0.16840479571691885,
+            "tilt_degrees": 172.87155724996282
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 235.83300721029724,
+            "projected_pitch_degrees": 239.0993451363736,
+            "root_z": 0.04955793451390378,
+            "tilt_degrees": 120.883962068988
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 312.9323047209064,
+            "projected_pitch_degrees": 315.81595294930344,
+            "root_z": 0.0613103512134376,
+            "tilt_degrees": 44.377473090733595
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 356.1105146276511,
+            "projected_pitch_degrees": 357.6419602917805,
+            "root_z": 0.10521570853229488,
+            "tilt_degrees": 2.9453468312289037
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 362.1337559164684,
+            "projected_pitch_degrees": 363.6295222897621,
+            "root_z": 0.1178860642793102,
+            "tilt_degrees": 3.825641028816687
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 364.2791632201357,
+            "projected_pitch_degrees": 365.562948848571,
+            "root_z": 0.11799580600117535,
+            "tilt_degrees": 5.660370326459972
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 360.33646010405533,
+            "projected_pitch_degrees": 361.47328082056436,
+            "root_z": 0.11576686246139255,
+            "tilt_degrees": 1.8021647431516867
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 364.37978236244095,
+        "max_lateral_rate_rad_s": 1.5988525382626138,
+        "min_root_height_m": 0.04609927135570128,
+        "final_root_xyz": [
+          0.5819492411194108,
+          -0.025611570912518308,
+          0.11587758240065454
+        ],
+        "final_quaternion": [
+          -0.997563454818594,
+          -0.0007830221599573223,
+          -0.001983339275404484,
+          0.06973239456670559
+        ],
+        "final_tilt_degrees": 0.24434524687824763
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": false,
+        "roll_ticks": 100,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5404149963999197,
+            0.06720542722261523,
+            0.11792032698277141
+          ],
+          "quaternion": [
+            -0.9956591154074294,
+            0.017514378486370663,
+            -0.03991955973472252,
+            -0.08223503634654113
+          ],
+          "pitch_integral_degrees": 364.54729997574765,
+          "projected_pitch_degrees": 364.7268859410257,
+          "tilt_degrees": 4.996940533254864
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 364.7268859410257,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 64.35027592353012,
+            "projected_pitch_degrees": 65.79850647888554,
+            "root_z": 0.10565211874916544,
+            "tilt_degrees": 65.79920890946781
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 112.03702170508616,
+            "projected_pitch_degrees": 112.8022603250288,
+            "root_z": 0.10551923315953668,
+            "tilt_degrees": 112.7764798445738
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 107.9880779397885,
+            "projected_pitch_degrees": 106.45995996819495,
+            "root_z": 0.14873575554609175,
+            "tilt_degrees": 106.45140714661132
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 120.25445154468397,
+            "projected_pitch_degrees": 122.47007432424203,
+            "root_z": 0.11541683336423912,
+            "tilt_degrees": 122.46975005437552
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 166.0971556548284,
+            "projected_pitch_degrees": 166.42177335007807,
+            "root_z": 0.18450574824868454,
+            "tilt_degrees": 166.22810005477535
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 194.8701573130566,
+            "projected_pitch_degrees": 196.47397196232703,
+            "root_z": 0.11765483068391064,
+            "tilt_degrees": 163.4685256080369
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 273.49914173305325,
+            "projected_pitch_degrees": 275.10817074697127,
+            "root_z": 0.047754653310647426,
+            "tilt_degrees": 84.89192038237319
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 325.8555196099269,
+            "projected_pitch_degrees": 327.5314236430002,
+            "root_z": 0.05869173325839575,
+            "tilt_degrees": 32.46898669091829
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 356.8153731339128,
+            "projected_pitch_degrees": 356.9812598169727,
+            "root_z": 0.11041781625269521,
+            "tilt_degrees": 3.7234605634386146
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 364.54729997574765,
+            "projected_pitch_degrees": 364.7268859410257,
+            "root_z": 0.11792032698277141,
+            "tilt_degrees": 4.996940533254864
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 365.0746003051372,
+        "max_lateral_rate_rad_s": 1.925433002865781,
+        "min_root_height_m": 0.047125112142139554,
+        "final_root_xyz": [
+          0.5843324084660452,
+          0.07462714429679673,
+          0.11585803654041432
+        ],
+        "final_quaternion": [
+          -0.9959886350308504,
+          -0.00048005965203804586,
+          -0.00217372800562118,
+          -0.08945212875428125
+        ],
+        "final_tilt_degrees": 0.2550932395476417
+      }
+    ],
+    "limitations": [
+      "Pitch-rate integral describes motion and is not a contact-gated success detector.",
+      "Unwrapped projected pitch can count shoulder rotation; head contact alone does not prove head-top support.",
+      "No guarantee that arbitrary walking/fallen starting states complete a roll."
+    ]
+  },
+  {
+    "scope": "CPU XML servos matching Android action scale/gain/filter; not BAM or device acceptance",
+    "mujoco": "3.10.0",
+    "onnxruntime": "1.24.4",
+    "roulade_sha256": "3d60da08fc13f29c1b57f41977aa898132c0d60042100149d8e775affcbca32b",
+    "action_scale": 1.0,
+    "gain_ratio": 1.0,
+    "duration_s": 2.5,
+    "command": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "rollouts": [
+      {
+        "initial_state": "HOME",
+        "filter": true,
+        "roll_ticks": 125,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5494804914907085,
+            0.030477106109148683,
+            0.11503414211911339
+          ],
+          "quaternion": [
+            -0.9984619764156157,
+            0.0028309335048978487,
+            0.021616707896854683,
+            -0.0509743602943317
+          ],
+          "pitch_integral_degrees": 356.6842033903799,
+          "projected_pitch_degrees": 357.542424370357,
+          "tilt_degrees": 2.4984417509509793
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 363.9843375424338,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 67.48387464512561,
+            "projected_pitch_degrees": 68.58999436398815,
+            "root_z": 0.1033936702627047,
+            "tilt_degrees": 68.59080530406688
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.68244570389946,
+            "projected_pitch_degrees": 114.69707882885974,
+            "root_z": 0.10620879654050389,
+            "tilt_degrees": 114.69603296715134
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 164.1505245920928,
+            "projected_pitch_degrees": 164.7272567649962,
+            "root_z": 0.182139219211337,
+            "tilt_degrees": 164.69627079043144
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 185.56230906918034,
+            "projected_pitch_degrees": 186.98742961152846,
+            "root_z": 0.1515778713446979,
+            "tilt_degrees": 171.78277533790006
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 253.98516258799899,
+            "projected_pitch_degrees": 256.872034644897,
+            "root_z": 0.04954942821000882,
+            "tilt_degrees": 103.11809085238698
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 325.5116673574398,
+            "projected_pitch_degrees": 328.16554461097724,
+            "root_z": 0.05873655629957985,
+            "tilt_degrees": 31.83680992535663
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 358.6571658469269,
+            "projected_pitch_degrees": 359.66093162124236,
+            "root_z": 0.11136395178046228,
+            "tilt_degrees": 1.8301610481296864
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 363.1095757080545,
+            "projected_pitch_degrees": 363.9723959683933,
+            "root_z": 0.11757764640639483,
+            "tilt_degrees": 4.158637989453815
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 359.8597199584635,
+            "projected_pitch_degrees": 360.5729772442504,
+            "root_z": 0.11551434851318937,
+            "tilt_degrees": 1.112828041604765
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 356.39637444673195,
+            "projected_pitch_degrees": 357.25784918269443,
+            "root_z": 0.11517055927820344,
+            "tilt_degrees": 2.762338683639234
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 356.5842770824565,
+            "projected_pitch_degrees": 357.4413284259833,
+            "root_z": 0.11512984503159605,
+            "tilt_degrees": 2.5897241293019007
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 356.65212904423737,
+            "projected_pitch_degrees": 357.5125937666131,
+            "root_z": 0.11505187547445193,
+            "tilt_degrees": 2.525949763352724
+          },
+          {
+            "roll_s": 2.5,
+            "pitch_integral_degrees": 356.6842033903799,
+            "projected_pitch_degrees": 357.542424370357,
+            "root_z": 0.11503414211911339,
+            "tilt_degrees": 2.4984417509509793
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 363.1156869738244,
+        "max_lateral_rate_rad_s": 0.84182211422478,
+        "min_root_height_m": 0.04709417957885404,
+        "final_root_xyz": [
+          0.561926839270763,
+          0.030869606760807224,
+          0.11587394630657893
+        ],
+        "final_quaternion": [
+          -0.998409438556212,
+          -0.0005689595314447043,
+          -0.002163414192411248,
+          -0.05633461569898592
+        ],
+        "final_tilt_degrees": 0.25633914719895085
+      },
+      {
+        "initial_state": "HOME",
+        "filter": false,
+        "roll_ticks": 125,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.500301133052546,
+            -0.14990365545463297,
+            0.11485834655953439
+          ],
+          "quaternion": [
+            -0.9890462480067761,
+            0.008864511704444994,
+            0.012517528954429443,
+            0.1468068499928906
+          ],
+          "pitch_integral_degrees": 353.39165800957375,
+          "projected_pitch_degrees": 358.43183642572944,
+          "tilt_degrees": 1.757726014517761
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 364.343565118946,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.401330090481686,
+            "projected_pitch_degrees": 64.55261238632754,
+            "root_z": 0.10381697485675924,
+            "tilt_degrees": 64.55304646433875
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 111.67406617101472,
+            "projected_pitch_degrees": 112.54018532380344,
+            "root_z": 0.10622105592586911,
+            "tilt_degrees": 112.54017990665932
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 127.59659136705052,
+            "projected_pitch_degrees": 126.71105149397509,
+            "root_z": 0.17431895469560302,
+            "tilt_degrees": 126.70772897890777
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 91.36324562128304,
+            "projected_pitch_degrees": 92.95107732035649,
+            "root_z": 0.10038000234847402,
+            "tilt_degrees": 92.95051997324988
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 151.6250872936934,
+            "projected_pitch_degrees": 152.11423109800674,
+            "root_z": 0.15982570564532045,
+            "tilt_degrees": 152.0241191541215
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 162.11225052429242,
+            "projected_pitch_degrees": 162.76214010195977,
+            "root_z": 0.1847845677438274,
+            "tilt_degrees": 162.33061101015852
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 197.5178929375735,
+            "projected_pitch_degrees": 201.27479262519518,
+            "root_z": 0.14133394057716728,
+            "tilt_degrees": 155.89587678722685
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 261.04308684595946,
+            "projected_pitch_degrees": 267.7326950089251,
+            "root_z": 0.04850373406655164,
+            "tilt_degrees": 92.26125270594832
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 332.2193371146964,
+            "projected_pitch_degrees": 338.2147235695446,
+            "root_z": 0.06976676951866768,
+            "tilt_degrees": 21.805855546698197
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 357.9689918607867,
+            "projected_pitch_degrees": 363.4938915859218,
+            "root_z": 0.07090268184121033,
+            "tilt_degrees": 3.8049991356595645
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 352.57969677395045,
+            "projected_pitch_degrees": 357.95150664724184,
+            "root_z": 0.11444921670837505,
+            "tilt_degrees": 2.650871696873149
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 354.48590321954725,
+            "projected_pitch_degrees": 359.5292564990118,
+            "root_z": 0.11506383513872012,
+            "tilt_degrees": 1.292575849166644
+          },
+          {
+            "roll_s": 2.5,
+            "pitch_integral_degrees": 353.39165800957375,
+            "projected_pitch_degrees": 358.43183642572944,
+            "root_z": 0.11485834655953439,
+            "tilt_degrees": 1.757726014517761
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 359.28882056718675,
+        "max_lateral_rate_rad_s": 2.0273488746905297,
+        "min_root_height_m": 0.04850373406655164,
+        "final_root_xyz": [
+          0.5107668615750731,
+          -0.15306184117863644,
+          0.1158713849688237
+        ],
+        "final_quaternion": [
+          -0.9870190468744315,
+          -0.0011394807674314068,
+          -0.002374417853421531,
+          0.1605816453724636
+        ],
+        "final_tilt_degrees": 0.3017979813659432
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": true,
+        "roll_ticks": 125,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5697917371686547,
+            -0.02282500952834162,
+            0.11508039339103487
+          ],
+          "quaternion": [
+            -0.9967334481597758,
+            0.005087953322717726,
+            0.021926348967002445,
+            0.07756146769811467
+          ],
+          "pitch_integral_degrees": 356.1431061233302,
+          "projected_pitch_degrees": 357.44951160981765,
+          "tilt_degrees": 2.579551535608968
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 365.69477215265107,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.43073011713121,
+            "projected_pitch_degrees": 65.01928689707292,
+            "root_z": 0.10639081844267323,
+            "tilt_degrees": 65.02004709150646
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.04374541818098,
+            "projected_pitch_degrees": 114.50848120462057,
+            "root_z": 0.10558073352543937,
+            "tilt_degrees": 114.45749397343415
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 162.3521112443121,
+            "projected_pitch_degrees": 163.41201557384645,
+            "root_z": 0.18059045635126827,
+            "tilt_degrees": 162.59802784039726
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 178.0892869894968,
+            "projected_pitch_degrees": 179.3791485377687,
+            "root_z": 0.16840479571691885,
+            "tilt_degrees": 172.87155724996282
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 235.83300721029724,
+            "projected_pitch_degrees": 239.0993451363736,
+            "root_z": 0.04955793451390378,
+            "tilt_degrees": 120.883962068988
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 312.9323047209064,
+            "projected_pitch_degrees": 315.81595294930344,
+            "root_z": 0.0613103512134376,
+            "tilt_degrees": 44.377473090733595
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 356.1105146276511,
+            "projected_pitch_degrees": 357.6419602917805,
+            "root_z": 0.10521570853229488,
+            "tilt_degrees": 2.9453468312289037
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 362.1337559164684,
+            "projected_pitch_degrees": 363.6295222897621,
+            "root_z": 0.1178860642793102,
+            "tilt_degrees": 3.825641028816687
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 364.2791632201357,
+            "projected_pitch_degrees": 365.562948848571,
+            "root_z": 0.11799580600117535,
+            "tilt_degrees": 5.660370326459972
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 360.33646010405533,
+            "projected_pitch_degrees": 361.47328082056436,
+            "root_z": 0.11576686246139255,
+            "tilt_degrees": 1.8021647431516867
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 355.903618745668,
+            "projected_pitch_degrees": 357.21244262247285,
+            "root_z": 0.11514528227692147,
+            "tilt_degrees": 2.8027257448596035
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 356.10529243617447,
+            "projected_pitch_degrees": 357.4094553439932,
+            "root_z": 0.11511904972605476,
+            "tilt_degrees": 2.6179531505164673
+          },
+          {
+            "roll_s": 2.5,
+            "pitch_integral_degrees": 356.1431061233302,
+            "projected_pitch_degrees": 357.44951160981765,
+            "root_z": 0.11508039339103487,
+            "tilt_degrees": 2.579551535608968
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 364.37978236244095,
+        "max_lateral_rate_rad_s": 1.5988525382626138,
+        "min_root_height_m": 0.04609927135570128,
+        "final_root_xyz": [
+          0.5819852942215306,
+          -0.025538494827017925,
+          0.11586767937995432
+        ],
+        "final_quaternion": [
+          -0.9973621796970462,
+          -0.0008660208308119956,
+          -0.002072438381200925,
+          0.07255093050425675
+        ],
+        "final_tilt_degrees": 0.2573850240859999
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": false,
+        "roll_ticks": 125,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5463498902531881,
+            0.06762253428162207,
+            0.11740681526688668
+          ],
+          "quaternion": [
+            -0.9972911613129214,
+            0.01162276622340549,
+            -0.045124711141574354,
+            -0.05691231252400101
+          ],
+          "pitch_integral_degrees": 365.39165853545927,
+          "projected_pitch_degrees": 365.2408611189154,
+          "tilt_degrees": 5.341615958894877
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 367.93326175641135,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 64.35027592353012,
+            "projected_pitch_degrees": 65.79850647888554,
+            "root_z": 0.10565211874916544,
+            "tilt_degrees": 65.79920890946781
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 112.03702170508616,
+            "projected_pitch_degrees": 112.8022603250288,
+            "root_z": 0.10551923315953668,
+            "tilt_degrees": 112.7764798445738
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 107.9880779397885,
+            "projected_pitch_degrees": 106.45995996819495,
+            "root_z": 0.14873575554609175,
+            "tilt_degrees": 106.45140714661132
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 120.25445154468397,
+            "projected_pitch_degrees": 122.47007432424203,
+            "root_z": 0.11541683336423912,
+            "tilt_degrees": 122.46975005437552
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 166.0971556548284,
+            "projected_pitch_degrees": 166.42177335007807,
+            "root_z": 0.18450574824868454,
+            "tilt_degrees": 166.22810005477535
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 194.8701573130566,
+            "projected_pitch_degrees": 196.47397196232703,
+            "root_z": 0.11765483068391064,
+            "tilt_degrees": 163.4685256080369
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 273.49914173305325,
+            "projected_pitch_degrees": 275.10817074697127,
+            "root_z": 0.047754653310647426,
+            "tilt_degrees": 84.89192038237319
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 325.8555196099269,
+            "projected_pitch_degrees": 327.5314236430002,
+            "root_z": 0.05869173325839575,
+            "tilt_degrees": 32.46898669091829
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 356.8153731339128,
+            "projected_pitch_degrees": 356.9812598169727,
+            "root_z": 0.11041781625269521,
+            "tilt_degrees": 3.7234605634386146
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 364.54729997574765,
+            "projected_pitch_degrees": 364.7268859410257,
+            "root_z": 0.11792032698277141,
+            "tilt_degrees": 4.996940533254864
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 367.636759137025,
+            "projected_pitch_degrees": 367.6704931766964,
+            "root_z": 0.11833217355824006,
+            "tilt_degrees": 7.777883829068371
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 367.26478186538736,
+            "projected_pitch_degrees": 367.1745496847323,
+            "root_z": 0.11808922853357937,
+            "tilt_degrees": 7.25395273143129
+          },
+          {
+            "roll_s": 2.5,
+            "pitch_integral_degrees": 365.39165853545927,
+            "projected_pitch_degrees": 365.2408611189154,
+            "root_z": 0.11740681526688668,
+            "tilt_degrees": 5.341615958894877
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 367.9460658728725,
+        "max_lateral_rate_rad_s": 1.925433002865781,
+        "min_root_height_m": 0.047125112142139554,
+        "final_root_xyz": [
+          0.5465750061326221,
+          0.06546936240542882,
+          0.11587046449547947
+        ],
+        "final_quaternion": [
+          -0.9971726192637896,
+          -0.0005512523053485587,
+          -0.0022035371347490455,
+          -0.07511063796549924
+        ],
+        "final_tilt_degrees": 0.2602884614759728
+      }
+    ],
+    "limitations": [
+      "Pitch-rate integral describes motion and is not a contact-gated success detector.",
+      "Unwrapped projected pitch can count shoulder rotation; head contact alone does not prove head-top support.",
+      "No guarantee that arbitrary walking/fallen starting states complete a roll."
+    ]
+  },
+  {
+    "scope": "CPU XML servos matching Android action scale/gain/filter; not BAM or device acceptance",
+    "mujoco": "3.10.0",
+    "onnxruntime": "1.24.4",
+    "roulade_sha256": "3d60da08fc13f29c1b57f41977aa898132c0d60042100149d8e775affcbca32b",
+    "action_scale": 1.0,
+    "gain_ratio": 1.0,
+    "duration_s": 3,
+    "command": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "rollouts": [
+      {
+        "initial_state": "HOME",
+        "filter": true,
+        "roll_ticks": 150,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5497548205741817,
+            0.030067291984364097,
+            0.11489069652494581
+          ],
+          "quaternion": [
+            -0.998504030191423,
+            0.0020044308061955797,
+            0.020683415656133162,
+            -0.05057549075811068
+          ],
+          "pitch_integral_degrees": 356.78556058135683,
+          "projected_pitch_degrees": 357.64431018009094,
+          "tilt_degrees": 2.3814199248117567
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 363.9843375424338,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 67.48387464512561,
+            "projected_pitch_degrees": 68.58999436398815,
+            "root_z": 0.1033936702627047,
+            "tilt_degrees": 68.59080530406688
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.68244570389946,
+            "projected_pitch_degrees": 114.69707882885974,
+            "root_z": 0.10620879654050389,
+            "tilt_degrees": 114.69603296715134
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 164.1505245920928,
+            "projected_pitch_degrees": 164.7272567649962,
+            "root_z": 0.182139219211337,
+            "tilt_degrees": 164.69627079043144
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 185.56230906918034,
+            "projected_pitch_degrees": 186.98742961152846,
+            "root_z": 0.1515778713446979,
+            "tilt_degrees": 171.78277533790006
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 253.98516258799899,
+            "projected_pitch_degrees": 256.872034644897,
+            "root_z": 0.04954942821000882,
+            "tilt_degrees": 103.11809085238698
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 325.5116673574398,
+            "projected_pitch_degrees": 328.16554461097724,
+            "root_z": 0.05873655629957985,
+            "tilt_degrees": 31.83680992535663
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 358.6571658469269,
+            "projected_pitch_degrees": 359.66093162124236,
+            "root_z": 0.11136395178046228,
+            "tilt_degrees": 1.8301610481296864
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 363.1095757080545,
+            "projected_pitch_degrees": 363.9723959683933,
+            "root_z": 0.11757764640639483,
+            "tilt_degrees": 4.158637989453815
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 359.8597199584635,
+            "projected_pitch_degrees": 360.5729772442504,
+            "root_z": 0.11551434851318937,
+            "tilt_degrees": 1.112828041604765
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 356.39637444673195,
+            "projected_pitch_degrees": 357.25784918269443,
+            "root_z": 0.11517055927820344,
+            "tilt_degrees": 2.762338683639234
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 356.5842770824565,
+            "projected_pitch_degrees": 357.4413284259833,
+            "root_z": 0.11512984503159605,
+            "tilt_degrees": 2.5897241293019007
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 356.65212904423737,
+            "projected_pitch_degrees": 357.5125937666131,
+            "root_z": 0.11505187547445193,
+            "tilt_degrees": 2.525949763352724
+          },
+          {
+            "roll_s": 2.6,
+            "pitch_integral_degrees": 356.69122577267797,
+            "projected_pitch_degrees": 357.5509305836684,
+            "root_z": 0.11500333007908348,
+            "tilt_degrees": 2.48979387004838
+          },
+          {
+            "roll_s": 2.8000000000000003,
+            "pitch_integral_degrees": 356.75106458392105,
+            "projected_pitch_degrees": 357.6089958121299,
+            "root_z": 0.11491435736000581,
+            "tilt_degrees": 2.4194796131748704
+          },
+          {
+            "roll_s": 3.0,
+            "pitch_integral_degrees": 356.78556058135683,
+            "projected_pitch_degrees": 357.64431018009094,
+            "root_z": 0.11489069652494581,
+            "tilt_degrees": 2.3814199248117567
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 363.1156869738244,
+        "max_lateral_rate_rad_s": 0.84182211422478,
+        "min_root_height_m": 0.04709417957885404,
+        "final_root_xyz": [
+          0.5619160170227784,
+          0.031204480054416877,
+          0.11586944018999026
+        ],
+        "final_quaternion": [
+          -0.9983368569147482,
+          -0.0005822855251207059,
+          -0.0023294448960681077,
+          -0.057599954475893424
+        ],
+        "final_tilt_degrees": 0.27514817445851497
+      },
+      {
+        "initial_state": "HOME",
+        "filter": false,
+        "roll_ticks": 150,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.49920973662643775,
+            -0.1498870732742767,
+            0.1148480376376093
+          ],
+          "quaternion": [
+            -0.9854510012415623,
+            0.00597526963949903,
+            0.01952655287114476,
+            0.16872858097461985
+          ],
+          "pitch_integral_degrees": 352.61554174071057,
+          "projected_pitch_degrees": 357.67877917826775,
+          "tilt_degrees": 2.340160772003447
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 364.343565118946,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.401330090481686,
+            "projected_pitch_degrees": 64.55261238632754,
+            "root_z": 0.10381697485675924,
+            "tilt_degrees": 64.55304646433875
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 111.67406617101472,
+            "projected_pitch_degrees": 112.54018532380344,
+            "root_z": 0.10622105592586911,
+            "tilt_degrees": 112.54017990665932
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 127.59659136705052,
+            "projected_pitch_degrees": 126.71105149397509,
+            "root_z": 0.17431895469560302,
+            "tilt_degrees": 126.70772897890777
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 91.36324562128304,
+            "projected_pitch_degrees": 92.95107732035649,
+            "root_z": 0.10038000234847402,
+            "tilt_degrees": 92.95051997324988
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 151.6250872936934,
+            "projected_pitch_degrees": 152.11423109800674,
+            "root_z": 0.15982570564532045,
+            "tilt_degrees": 152.0241191541215
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 162.11225052429242,
+            "projected_pitch_degrees": 162.76214010195977,
+            "root_z": 0.1847845677438274,
+            "tilt_degrees": 162.33061101015852
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 197.5178929375735,
+            "projected_pitch_degrees": 201.27479262519518,
+            "root_z": 0.14133394057716728,
+            "tilt_degrees": 155.89587678722685
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 261.04308684595946,
+            "projected_pitch_degrees": 267.7326950089251,
+            "root_z": 0.04850373406655164,
+            "tilt_degrees": 92.26125270594832
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 332.2193371146964,
+            "projected_pitch_degrees": 338.2147235695446,
+            "root_z": 0.06976676951866768,
+            "tilt_degrees": 21.805855546698197
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 357.9689918607867,
+            "projected_pitch_degrees": 363.4938915859218,
+            "root_z": 0.07090268184121033,
+            "tilt_degrees": 3.8049991356595645
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 352.57969677395045,
+            "projected_pitch_degrees": 357.95150664724184,
+            "root_z": 0.11444921670837505,
+            "tilt_degrees": 2.650871696873149
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 354.48590321954725,
+            "projected_pitch_degrees": 359.5292564990118,
+            "root_z": 0.11506383513872012,
+            "tilt_degrees": 1.292575849166644
+          },
+          {
+            "roll_s": 2.6,
+            "pitch_integral_degrees": 352.6820058805291,
+            "projected_pitch_degrees": 357.73854392763513,
+            "root_z": 0.11481910846089999,
+            "tilt_degrees": 2.287999588448951
+          },
+          {
+            "roll_s": 2.8000000000000003,
+            "pitch_integral_degrees": 352.6272861652723,
+            "projected_pitch_degrees": 357.69187640174044,
+            "root_z": 0.11485962795455049,
+            "tilt_degrees": 2.325949528987446
+          },
+          {
+            "roll_s": 3.0,
+            "pitch_integral_degrees": 352.61554174071057,
+            "projected_pitch_degrees": 357.67877917826775,
+            "root_z": 0.1148480376376093,
+            "tilt_degrees": 2.340160772003447
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 359.28882056718675,
+        "max_lateral_rate_rad_s": 2.0273488746905297,
+        "min_root_height_m": 0.04850373406655164,
+        "final_root_xyz": [
+          0.5107049977482121,
+          -0.15313756250198668,
+          0.11587005047771617
+        ],
+        "final_quaternion": [
+          -0.9869000604193973,
+          -0.001124621993512448,
+          -0.0022734487973757236,
+          0.1613128556567252
+        ],
+        "final_tilt_degrees": 0.2906507734730542
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": true,
+        "roll_ticks": 150,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5699816792663294,
+            -0.023024074415807283,
+            0.11491202198478119
+          ],
+          "quaternion": [
+            -0.9968439564876066,
+            0.0047541438752146,
+            0.020463708287271107,
+            0.0765556083724878
+          ],
+          "pitch_integral_degrees": 356.31629076840557,
+          "projected_pitch_degrees": 357.6199939766323,
+          "tilt_degrees": 2.4075961726855777
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 365.69477215265107,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.43073011713121,
+            "projected_pitch_degrees": 65.01928689707292,
+            "root_z": 0.10639081844267323,
+            "tilt_degrees": 65.02004709150646
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.04374541818098,
+            "projected_pitch_degrees": 114.50848120462057,
+            "root_z": 0.10558073352543937,
+            "tilt_degrees": 114.45749397343415
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 162.3521112443121,
+            "projected_pitch_degrees": 163.41201557384645,
+            "root_z": 0.18059045635126827,
+            "tilt_degrees": 162.59802784039726
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 178.0892869894968,
+            "projected_pitch_degrees": 179.3791485377687,
+            "root_z": 0.16840479571691885,
+            "tilt_degrees": 172.87155724996282
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 235.83300721029724,
+            "projected_pitch_degrees": 239.0993451363736,
+            "root_z": 0.04955793451390378,
+            "tilt_degrees": 120.883962068988
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 312.9323047209064,
+            "projected_pitch_degrees": 315.81595294930344,
+            "root_z": 0.0613103512134376,
+            "tilt_degrees": 44.377473090733595
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 356.1105146276511,
+            "projected_pitch_degrees": 357.6419602917805,
+            "root_z": 0.10521570853229488,
+            "tilt_degrees": 2.9453468312289037
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 362.1337559164684,
+            "projected_pitch_degrees": 363.6295222897621,
+            "root_z": 0.1178860642793102,
+            "tilt_degrees": 3.825641028816687
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 364.2791632201357,
+            "projected_pitch_degrees": 365.562948848571,
+            "root_z": 0.11799580600117535,
+            "tilt_degrees": 5.660370326459972
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 360.33646010405533,
+            "projected_pitch_degrees": 361.47328082056436,
+            "root_z": 0.11576686246139255,
+            "tilt_degrees": 1.8021647431516867
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 355.903618745668,
+            "projected_pitch_degrees": 357.21244262247285,
+            "root_z": 0.11514528227692147,
+            "tilt_degrees": 2.8027257448596035
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 356.10529243617447,
+            "projected_pitch_degrees": 357.4094553439932,
+            "root_z": 0.11511904972605476,
+            "tilt_degrees": 2.6179531505164673
+          },
+          {
+            "roll_s": 2.6,
+            "pitch_integral_degrees": 356.17755808187184,
+            "projected_pitch_degrees": 357.4832619513944,
+            "root_z": 0.11504789394327225,
+            "tilt_degrees": 2.5503764099344934
+          },
+          {
+            "roll_s": 2.8000000000000003,
+            "pitch_integral_degrees": 356.2653464150659,
+            "projected_pitch_degrees": 357.5714472482774,
+            "root_z": 0.11495379293537705,
+            "tilt_degrees": 2.4537321079286882
+          },
+          {
+            "roll_s": 3.0,
+            "pitch_integral_degrees": 356.31629076840557,
+            "projected_pitch_degrees": 357.6199939766323,
+            "root_z": 0.11491202198478119,
+            "tilt_degrees": 2.4075961726855777
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 364.37978236244095,
+        "max_lateral_rate_rad_s": 1.5988525382626138,
+        "min_root_height_m": 0.04609927135570128,
+        "final_root_xyz": [
+          0.5819530359250102,
+          -0.025035946365609976,
+          0.11587188913596752
+        ],
+        "final_quaternion": [
+          -0.997416603496112,
+          -0.0008855069791020457,
+          -0.002130952867352274,
+          0.07179689399651097
+        ],
+        "final_tilt_degrees": 0.2644333295215552
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": false,
+        "roll_ticks": 150,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5327192163120054,
+            0.06508311295761056,
+            0.11510042205307684
+          ],
+          "quaternion": [
+            -0.9979424122368573,
+            0.00222096811169292,
+            0.023016244441937863,
+            -0.05980185324316963
+          ],
+          "pitch_integral_degrees": 357.3956462300193,
+          "projected_pitch_degrees": 357.38220106712834,
+          "tilt_degrees": 2.649954341204397
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 367.93326175641135,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 64.35027592353012,
+            "projected_pitch_degrees": 65.79850647888554,
+            "root_z": 0.10565211874916544,
+            "tilt_degrees": 65.79920890946781
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 112.03702170508616,
+            "projected_pitch_degrees": 112.8022603250288,
+            "root_z": 0.10551923315953668,
+            "tilt_degrees": 112.7764798445738
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 107.9880779397885,
+            "projected_pitch_degrees": 106.45995996819495,
+            "root_z": 0.14873575554609175,
+            "tilt_degrees": 106.45140714661132
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 120.25445154468397,
+            "projected_pitch_degrees": 122.47007432424203,
+            "root_z": 0.11541683336423912,
+            "tilt_degrees": 122.46975005437552
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 166.0971556548284,
+            "projected_pitch_degrees": 166.42177335007807,
+            "root_z": 0.18450574824868454,
+            "tilt_degrees": 166.22810005477535
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 194.8701573130566,
+            "projected_pitch_degrees": 196.47397196232703,
+            "root_z": 0.11765483068391064,
+            "tilt_degrees": 163.4685256080369
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 273.49914173305325,
+            "projected_pitch_degrees": 275.10817074697127,
+            "root_z": 0.047754653310647426,
+            "tilt_degrees": 84.89192038237319
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 325.8555196099269,
+            "projected_pitch_degrees": 327.5314236430002,
+            "root_z": 0.05869173325839575,
+            "tilt_degrees": 32.46898669091829
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 356.8153731339128,
+            "projected_pitch_degrees": 356.9812598169727,
+            "root_z": 0.11041781625269521,
+            "tilt_degrees": 3.7234605634386146
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 364.54729997574765,
+            "projected_pitch_degrees": 364.7268859410257,
+            "root_z": 0.11792032698277141,
+            "tilt_degrees": 4.996940533254864
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 367.636759137025,
+            "projected_pitch_degrees": 367.6704931766964,
+            "root_z": 0.11833217355824006,
+            "tilt_degrees": 7.777883829068371
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 367.26478186538736,
+            "projected_pitch_degrees": 367.1745496847323,
+            "root_z": 0.11808922853357937,
+            "tilt_degrees": 7.25395273143129
+          },
+          {
+            "roll_s": 2.6,
+            "pitch_integral_degrees": 362.49718868983734,
+            "projected_pitch_degrees": 362.3070786304894,
+            "root_z": 0.11617107273568443,
+            "tilt_degrees": 2.5140078809438484
+          },
+          {
+            "roll_s": 2.8000000000000003,
+            "pitch_integral_degrees": 357.33893701568854,
+            "projected_pitch_degrees": 357.3025343396669,
+            "root_z": 0.11511390554689649,
+            "tilt_degrees": 2.7236988275307885
+          },
+          {
+            "roll_s": 3.0,
+            "pitch_integral_degrees": 357.3956462300193,
+            "projected_pitch_degrees": 357.38220106712834,
+            "root_z": 0.11510042205307684,
+            "tilt_degrees": 2.649954341204397
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 367.9460658728725,
+        "max_lateral_rate_rad_s": 1.925433002865781,
+        "min_root_height_m": 0.047125112142139554,
+        "final_root_xyz": [
+          0.5450934509063133,
+          0.06599827490534228,
+          0.11586888741375516
+        ],
+        "final_quaternion": [
+          -0.997631791145636,
+          -0.0005680671515134153,
+          -0.0023192451678077145,
+          -0.06873941880109723
+        ],
+        "final_tilt_degrees": 0.273622214944215
+      }
+    ],
+    "limitations": [
+      "Pitch-rate integral describes motion and is not a contact-gated success detector.",
+      "Unwrapped projected pitch can count shoulder rotation; head contact alone does not prove head-top support.",
+      "No guarantee that arbitrary walking/fallen starting states complete a roll."
+    ]
+  },
+  {
+    "scope": "CPU XML servos matching Android action scale/gain/filter; not BAM or device acceptance",
+    "mujoco": "3.10.0",
+    "onnxruntime": "1.24.4",
+    "roulade_sha256": "3d60da08fc13f29c1b57f41977aa898132c0d60042100149d8e775affcbca32b",
+    "action_scale": 1.0,
+    "gain_ratio": 1.0,
+    "duration_s": 4,
+    "command": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "rollouts": [
+      {
+        "initial_state": "HOME",
+        "filter": true,
+        "roll_ticks": 200,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5498355940433737,
+            0.030028309984364326,
+            0.11484888382495743
+          ],
+          "quaternion": [
+            -0.9985901104584403,
+            0.0019340204884403759,
+            0.02067790322570648,
+            -0.04885156269291259
+          ],
+          "pitch_integral_degrees": 356.78486959777814,
+          "projected_pitch_degrees": 357.64394949982665,
+          "tilt_degrees": 2.380025970904477
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 363.9843375424338,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 67.48387464512561,
+            "projected_pitch_degrees": 68.58999436398815,
+            "root_z": 0.1033936702627047,
+            "tilt_degrees": 68.59080530406688
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.68244570389946,
+            "projected_pitch_degrees": 114.69707882885974,
+            "root_z": 0.10620879654050389,
+            "tilt_degrees": 114.69603296715134
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 164.1505245920928,
+            "projected_pitch_degrees": 164.7272567649962,
+            "root_z": 0.182139219211337,
+            "tilt_degrees": 164.69627079043144
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 185.56230906918034,
+            "projected_pitch_degrees": 186.98742961152846,
+            "root_z": 0.1515778713446979,
+            "tilt_degrees": 171.78277533790006
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 253.98516258799899,
+            "projected_pitch_degrees": 256.872034644897,
+            "root_z": 0.04954942821000882,
+            "tilt_degrees": 103.11809085238698
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 325.5116673574398,
+            "projected_pitch_degrees": 328.16554461097724,
+            "root_z": 0.05873655629957985,
+            "tilt_degrees": 31.83680992535663
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 358.6571658469269,
+            "projected_pitch_degrees": 359.66093162124236,
+            "root_z": 0.11136395178046228,
+            "tilt_degrees": 1.8301610481296864
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 363.1095757080545,
+            "projected_pitch_degrees": 363.9723959683933,
+            "root_z": 0.11757764640639483,
+            "tilt_degrees": 4.158637989453815
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 359.8597199584635,
+            "projected_pitch_degrees": 360.5729772442504,
+            "root_z": 0.11551434851318937,
+            "tilt_degrees": 1.112828041604765
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 356.39637444673195,
+            "projected_pitch_degrees": 357.25784918269443,
+            "root_z": 0.11517055927820344,
+            "tilt_degrees": 2.762338683639234
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 356.5842770824565,
+            "projected_pitch_degrees": 357.4413284259833,
+            "root_z": 0.11512984503159605,
+            "tilt_degrees": 2.5897241293019007
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 356.65212904423737,
+            "projected_pitch_degrees": 357.5125937666131,
+            "root_z": 0.11505187547445193,
+            "tilt_degrees": 2.525949763352724
+          },
+          {
+            "roll_s": 2.6,
+            "pitch_integral_degrees": 356.69122577267797,
+            "projected_pitch_degrees": 357.5509305836684,
+            "root_z": 0.11500333007908348,
+            "tilt_degrees": 2.48979387004838
+          },
+          {
+            "roll_s": 2.8000000000000003,
+            "pitch_integral_degrees": 356.75106458392105,
+            "projected_pitch_degrees": 357.6089958121299,
+            "root_z": 0.11491435736000581,
+            "tilt_degrees": 2.4194796131748704
+          },
+          {
+            "roll_s": 3.0,
+            "pitch_integral_degrees": 356.78556058135683,
+            "projected_pitch_degrees": 357.64431018009094,
+            "root_z": 0.11489069652494581,
+            "tilt_degrees": 2.3814199248117567
+          },
+          {
+            "roll_s": 3.2,
+            "pitch_integral_degrees": 356.78534463393316,
+            "projected_pitch_degrees": 357.6410018150344,
+            "root_z": 0.11487378892182627,
+            "tilt_degrees": 2.3838134545789926
+          },
+          {
+            "roll_s": 3.4,
+            "pitch_integral_degrees": 356.78720343713405,
+            "projected_pitch_degrees": 357.6458630032835,
+            "root_z": 0.11486635812032585,
+            "tilt_degrees": 2.3782311435616346
+          },
+          {
+            "roll_s": 3.6,
+            "pitch_integral_degrees": 356.7838681478878,
+            "projected_pitch_degrees": 357.63782594722767,
+            "root_z": 0.11485194858793454,
+            "tilt_degrees": 2.385858686284048
+          },
+          {
+            "roll_s": 3.8000000000000003,
+            "pitch_integral_degrees": 356.76976311543064,
+            "projected_pitch_degrees": 357.6278056420415,
+            "root_z": 0.11484809626272201,
+            "tilt_degrees": 2.3956251430339677
+          },
+          {
+            "roll_s": 4.0,
+            "pitch_integral_degrees": 356.78486959777814,
+            "projected_pitch_degrees": 357.64394949982665,
+            "root_z": 0.11484888382495743,
+            "tilt_degrees": 2.380025970904477
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 363.1156869738244,
+        "max_lateral_rate_rad_s": 0.84182211422478,
+        "min_root_height_m": 0.04709417957885404,
+        "final_root_xyz": [
+          0.5619039475409415,
+          0.03142717201964699,
+          0.11587325779973134
+        ],
+        "final_quaternion": [
+          -0.9982825263994665,
+          -0.0005529999420144531,
+          -0.002474840108734643,
+          -0.05852834221980371
+        ],
+        "final_tilt_degrees": 0.2905897402506642
+      },
+      {
+        "initial_state": "HOME",
+        "filter": false,
+        "roll_ticks": 200,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.4993669478442415,
+            -0.14954515754286812,
+            0.11484040311507428
+          ],
+          "quaternion": [
+            -0.9849773428818712,
+            0.0062374743358191475,
+            0.019429021457342214,
+            0.171473732823687
+          ],
+          "pitch_integral_degrees": 352.6213987412791,
+          "projected_pitch_degrees": 357.68381429983657,
+          "tilt_degrees": 2.3384843176150807
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 364.343565118946,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.401330090481686,
+            "projected_pitch_degrees": 64.55261238632754,
+            "root_z": 0.10381697485675924,
+            "tilt_degrees": 64.55304646433875
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 111.67406617101472,
+            "projected_pitch_degrees": 112.54018532380344,
+            "root_z": 0.10622105592586911,
+            "tilt_degrees": 112.54017990665932
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 127.59659136705052,
+            "projected_pitch_degrees": 126.71105149397509,
+            "root_z": 0.17431895469560302,
+            "tilt_degrees": 126.70772897890777
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 91.36324562128304,
+            "projected_pitch_degrees": 92.95107732035649,
+            "root_z": 0.10038000234847402,
+            "tilt_degrees": 92.95051997324988
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 151.6250872936934,
+            "projected_pitch_degrees": 152.11423109800674,
+            "root_z": 0.15982570564532045,
+            "tilt_degrees": 152.0241191541215
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 162.11225052429242,
+            "projected_pitch_degrees": 162.76214010195977,
+            "root_z": 0.1847845677438274,
+            "tilt_degrees": 162.33061101015852
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 197.5178929375735,
+            "projected_pitch_degrees": 201.27479262519518,
+            "root_z": 0.14133394057716728,
+            "tilt_degrees": 155.89587678722685
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 261.04308684595946,
+            "projected_pitch_degrees": 267.7326950089251,
+            "root_z": 0.04850373406655164,
+            "tilt_degrees": 92.26125270594832
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 332.2193371146964,
+            "projected_pitch_degrees": 338.2147235695446,
+            "root_z": 0.06976676951866768,
+            "tilt_degrees": 21.805855546698197
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 357.9689918607867,
+            "projected_pitch_degrees": 363.4938915859218,
+            "root_z": 0.07090268184121033,
+            "tilt_degrees": 3.8049991356595645
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 352.57969677395045,
+            "projected_pitch_degrees": 357.95150664724184,
+            "root_z": 0.11444921670837505,
+            "tilt_degrees": 2.650871696873149
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 354.48590321954725,
+            "projected_pitch_degrees": 359.5292564990118,
+            "root_z": 0.11506383513872012,
+            "tilt_degrees": 1.292575849166644
+          },
+          {
+            "roll_s": 2.6,
+            "pitch_integral_degrees": 352.6820058805291,
+            "projected_pitch_degrees": 357.73854392763513,
+            "root_z": 0.11481910846089999,
+            "tilt_degrees": 2.287999588448951
+          },
+          {
+            "roll_s": 2.8000000000000003,
+            "pitch_integral_degrees": 352.6272861652723,
+            "projected_pitch_degrees": 357.69187640174044,
+            "root_z": 0.11485962795455049,
+            "tilt_degrees": 2.325949528987446
+          },
+          {
+            "roll_s": 3.0,
+            "pitch_integral_degrees": 352.61554174071057,
+            "projected_pitch_degrees": 357.67877917826775,
+            "root_z": 0.1148480376376093,
+            "tilt_degrees": 2.340160772003447
+          },
+          {
+            "roll_s": 3.2,
+            "pitch_integral_degrees": 352.61351564810724,
+            "projected_pitch_degrees": 357.67563371526046,
+            "root_z": 0.11484705760254114,
+            "tilt_degrees": 2.3433421263662884
+          },
+          {
+            "roll_s": 3.4,
+            "pitch_integral_degrees": 352.61644047785995,
+            "projected_pitch_degrees": 357.67894880365645,
+            "root_z": 0.11484393876004652,
+            "tilt_degrees": 2.340857075391128
+          },
+          {
+            "roll_s": 3.6,
+            "pitch_integral_degrees": 352.61389868607824,
+            "projected_pitch_degrees": 357.6753361051777,
+            "root_z": 0.11484399412179676,
+            "tilt_degrees": 2.3451137104611637
+          },
+          {
+            "roll_s": 3.8000000000000003,
+            "pitch_integral_degrees": 352.62388360703176,
+            "projected_pitch_degrees": 357.68822451913275,
+            "root_z": 0.11485004688396266,
+            "tilt_degrees": 2.333075758031995
+          },
+          {
+            "roll_s": 4.0,
+            "pitch_integral_degrees": 352.6213987412791,
+            "projected_pitch_degrees": 357.68381429983657,
+            "root_z": 0.11484040311507428,
+            "tilt_degrees": 2.3384843176150807
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 359.28882056718675,
+        "max_lateral_rate_rad_s": 2.0273488746905297,
+        "min_root_height_m": 0.04850373406655164,
+        "final_root_xyz": [
+          0.5107157567076642,
+          -0.1532462361621688,
+          0.1158683955180007
+        ],
+        "final_quaternion": [
+          -0.9868522492369918,
+          -0.0011511493914496344,
+          -0.002348401448060442,
+          0.1616038305288843
+        ],
+        "final_tilt_degrees": 0.2996990987983561
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": true,
+        "roll_ticks": 200,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5700646015551467,
+            -0.023117250132961894,
+            0.11484596384752704
+          ],
+          "quaternion": [
+            -0.9967173588886482,
+            0.004569077285828018,
+            0.020352186836426363,
+            0.07822671227763371
+          ],
+          "pitch_integral_degrees": 356.3303002359938,
+          "projected_pitch_degrees": 357.6337951021948,
+          "tilt_degrees": 2.390411484381232
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 365.69477215265107,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.43073011713121,
+            "projected_pitch_degrees": 65.01928689707292,
+            "root_z": 0.10639081844267323,
+            "tilt_degrees": 65.02004709150646
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.04374541818098,
+            "projected_pitch_degrees": 114.50848120462057,
+            "root_z": 0.10558073352543937,
+            "tilt_degrees": 114.45749397343415
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 162.3521112443121,
+            "projected_pitch_degrees": 163.41201557384645,
+            "root_z": 0.18059045635126827,
+            "tilt_degrees": 162.59802784039726
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 178.0892869894968,
+            "projected_pitch_degrees": 179.3791485377687,
+            "root_z": 0.16840479571691885,
+            "tilt_degrees": 172.87155724996282
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 235.83300721029724,
+            "projected_pitch_degrees": 239.0993451363736,
+            "root_z": 0.04955793451390378,
+            "tilt_degrees": 120.883962068988
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 312.9323047209064,
+            "projected_pitch_degrees": 315.81595294930344,
+            "root_z": 0.0613103512134376,
+            "tilt_degrees": 44.377473090733595
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 356.1105146276511,
+            "projected_pitch_degrees": 357.6419602917805,
+            "root_z": 0.10521570853229488,
+            "tilt_degrees": 2.9453468312289037
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 362.1337559164684,
+            "projected_pitch_degrees": 363.6295222897621,
+            "root_z": 0.1178860642793102,
+            "tilt_degrees": 3.825641028816687
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 364.2791632201357,
+            "projected_pitch_degrees": 365.562948848571,
+            "root_z": 0.11799580600117535,
+            "tilt_degrees": 5.660370326459972
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 360.33646010405533,
+            "projected_pitch_degrees": 361.47328082056436,
+            "root_z": 0.11576686246139255,
+            "tilt_degrees": 1.8021647431516867
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 355.903618745668,
+            "projected_pitch_degrees": 357.21244262247285,
+            "root_z": 0.11514528227692147,
+            "tilt_degrees": 2.8027257448596035
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 356.10529243617447,
+            "projected_pitch_degrees": 357.4094553439932,
+            "root_z": 0.11511904972605476,
+            "tilt_degrees": 2.6179531505164673
+          },
+          {
+            "roll_s": 2.6,
+            "pitch_integral_degrees": 356.17755808187184,
+            "projected_pitch_degrees": 357.4832619513944,
+            "root_z": 0.11504789394327225,
+            "tilt_degrees": 2.5503764099344934
+          },
+          {
+            "roll_s": 2.8000000000000003,
+            "pitch_integral_degrees": 356.2653464150659,
+            "projected_pitch_degrees": 357.5714472482774,
+            "root_z": 0.11495379293537705,
+            "tilt_degrees": 2.4537321079286882
+          },
+          {
+            "roll_s": 3.0,
+            "pitch_integral_degrees": 356.31629076840557,
+            "projected_pitch_degrees": 357.6199939766323,
+            "root_z": 0.11491202198478119,
+            "tilt_degrees": 2.4075961726855777
+          },
+          {
+            "roll_s": 3.2,
+            "pitch_integral_degrees": 356.33547530910965,
+            "projected_pitch_degrees": 357.6348581293607,
+            "root_z": 0.11488722930916173,
+            "tilt_degrees": 2.391145977887158
+          },
+          {
+            "roll_s": 3.4,
+            "pitch_integral_degrees": 356.3491458218822,
+            "projected_pitch_degrees": 357.6545306753305,
+            "root_z": 0.11487422459829617,
+            "tilt_degrees": 2.370773156604373
+          },
+          {
+            "roll_s": 3.6,
+            "pitch_integral_degrees": 356.3353315800638,
+            "projected_pitch_degrees": 357.63749437623903,
+            "root_z": 0.11485541298758437,
+            "tilt_degrees": 2.3869211268265715
+          },
+          {
+            "roll_s": 3.8000000000000003,
+            "pitch_integral_degrees": 356.33492060276535,
+            "projected_pitch_degrees": 357.6362627889669,
+            "root_z": 0.11484933565850697,
+            "tilt_degrees": 2.387833840735892
+          },
+          {
+            "roll_s": 4.0,
+            "pitch_integral_degrees": 356.3303002359938,
+            "projected_pitch_degrees": 357.6337951021948,
+            "root_z": 0.11484596384752704,
+            "tilt_degrees": 2.390411484381232
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 364.37978236244095,
+        "max_lateral_rate_rad_s": 1.5988525382626138,
+        "min_root_height_m": 0.04609927135570128,
+        "final_root_xyz": [
+          0.5819525810248696,
+          -0.024646923218572276,
+          0.11586861098056808
+        ],
+        "final_quaternion": [
+          -0.9974416910190059,
+          -0.0008934345725226842,
+          -0.0022069043295430903,
+          0.07144511435422973
+        ],
+        "final_tilt_degrees": 0.2728305124319972
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": false,
+        "roll_ticks": 200,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.533067624078503,
+            0.06478746100041742,
+            0.11485939183219511
+          ],
+          "quaternion": [
+            -0.9980289631437113,
+            0.001743581507626255,
+            0.020720595385973966,
+            -0.059209843579143086
+          ],
+          "pitch_integral_degrees": 357.6577833598572,
+          "projected_pitch_degrees": 357.6413972194762,
+          "tilt_degrees": 2.382968548374107
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 367.93326175641135,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 64.35027592353012,
+            "projected_pitch_degrees": 65.79850647888554,
+            "root_z": 0.10565211874916544,
+            "tilt_degrees": 65.79920890946781
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 112.03702170508616,
+            "projected_pitch_degrees": 112.8022603250288,
+            "root_z": 0.10551923315953668,
+            "tilt_degrees": 112.7764798445738
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 107.9880779397885,
+            "projected_pitch_degrees": 106.45995996819495,
+            "root_z": 0.14873575554609175,
+            "tilt_degrees": 106.45140714661132
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 120.25445154468397,
+            "projected_pitch_degrees": 122.47007432424203,
+            "root_z": 0.11541683336423912,
+            "tilt_degrees": 122.46975005437552
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 166.0971556548284,
+            "projected_pitch_degrees": 166.42177335007807,
+            "root_z": 0.18450574824868454,
+            "tilt_degrees": 166.22810005477535
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 194.8701573130566,
+            "projected_pitch_degrees": 196.47397196232703,
+            "root_z": 0.11765483068391064,
+            "tilt_degrees": 163.4685256080369
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 273.49914173305325,
+            "projected_pitch_degrees": 275.10817074697127,
+            "root_z": 0.047754653310647426,
+            "tilt_degrees": 84.89192038237319
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 325.8555196099269,
+            "projected_pitch_degrees": 327.5314236430002,
+            "root_z": 0.05869173325839575,
+            "tilt_degrees": 32.46898669091829
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 356.8153731339128,
+            "projected_pitch_degrees": 356.9812598169727,
+            "root_z": 0.11041781625269521,
+            "tilt_degrees": 3.7234605634386146
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 364.54729997574765,
+            "projected_pitch_degrees": 364.7268859410257,
+            "root_z": 0.11792032698277141,
+            "tilt_degrees": 4.996940533254864
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 367.636759137025,
+            "projected_pitch_degrees": 367.6704931766964,
+            "root_z": 0.11833217355824006,
+            "tilt_degrees": 7.777883829068371
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 367.26478186538736,
+            "projected_pitch_degrees": 367.1745496847323,
+            "root_z": 0.11808922853357937,
+            "tilt_degrees": 7.25395273143129
+          },
+          {
+            "roll_s": 2.6,
+            "pitch_integral_degrees": 362.49718868983734,
+            "projected_pitch_degrees": 362.3070786304894,
+            "root_z": 0.11617107273568443,
+            "tilt_degrees": 2.5140078809438484
+          },
+          {
+            "roll_s": 2.8000000000000003,
+            "pitch_integral_degrees": 357.33893701568854,
+            "projected_pitch_degrees": 357.3025343396669,
+            "root_z": 0.11511390554689649,
+            "tilt_degrees": 2.7236988275307885
+          },
+          {
+            "roll_s": 3.0,
+            "pitch_integral_degrees": 357.3956462300193,
+            "projected_pitch_degrees": 357.38220106712834,
+            "root_z": 0.11510042205307684,
+            "tilt_degrees": 2.649954341204397
+          },
+          {
+            "roll_s": 3.2,
+            "pitch_integral_degrees": 357.5380201576623,
+            "projected_pitch_degrees": 357.52124584164125,
+            "root_z": 0.11498509776271011,
+            "tilt_degrees": 2.502653554485346
+          },
+          {
+            "roll_s": 3.4,
+            "pitch_integral_degrees": 357.61753714122307,
+            "projected_pitch_degrees": 357.5997888010157,
+            "root_z": 0.11493301838161109,
+            "tilt_degrees": 2.427861974437844
+          },
+          {
+            "roll_s": 3.6,
+            "pitch_integral_degrees": 357.6428912849432,
+            "projected_pitch_degrees": 357.6281925621237,
+            "root_z": 0.11489938189915605,
+            "tilt_degrees": 2.3984913585454604
+          },
+          {
+            "roll_s": 3.8000000000000003,
+            "pitch_integral_degrees": 357.657340003453,
+            "projected_pitch_degrees": 357.64212601253786,
+            "root_z": 0.11487604936728979,
+            "tilt_degrees": 2.3834566341249452
+          },
+          {
+            "roll_s": 4.0,
+            "pitch_integral_degrees": 357.6577833598572,
+            "projected_pitch_degrees": 357.6413972194762,
+            "root_z": 0.11485939183219511,
+            "tilt_degrees": 2.382968548374107
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 367.9460658728725,
+        "max_lateral_rate_rad_s": 1.925433002865781,
+        "min_root_height_m": 0.047125112142139554,
+        "final_root_xyz": [
+          0.5451077293859111,
+          0.06617853303976977,
+          0.11587212672617629
+        ],
+        "final_quaternion": [
+          -0.9975088547416342,
+          -0.0005246321173098285,
+          -0.002616427133045529,
+          -0.07049087729793231
+        ],
+        "final_tilt_degrees": 0.30578874444432746
+      }
+    ],
+    "limitations": [
+      "Pitch-rate integral describes motion and is not a contact-gated success detector.",
+      "Unwrapped projected pitch can count shoulder rotation; head contact alone does not prove head-top support.",
+      "No guarantee that arbitrary walking/fallen starting states complete a roll."
+    ]
+  },
+  {
+    "scope": "CPU XML servos matching Android action scale/gain/filter; not BAM or device acceptance",
+    "mujoco": "3.10.0",
+    "onnxruntime": "1.24.4",
+    "roulade_sha256": "3d60da08fc13f29c1b57f41977aa898132c0d60042100149d8e775affcbca32b",
+    "action_scale": 1.0,
+    "gain_ratio": 1.0,
+    "duration_s": 5,
+    "command": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "rollouts": [
+      {
+        "initial_state": "HOME",
+        "filter": true,
+        "roll_ticks": 250,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5498467856200017,
+            0.030081991553893753,
+            0.11483912972030909
+          ],
+          "quaternion": [
+            -0.998615809619674,
+            0.0020121288804054254,
+            0.020585305411721478,
+            -0.04835970756856656
+          ],
+          "pitch_integral_degrees": 356.7955054145872,
+          "projected_pitch_degrees": 357.6548162499962,
+          "tilt_degrees": 2.370313257135205
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 363.9843375424338,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 67.48387464512561,
+            "projected_pitch_degrees": 68.58999436398815,
+            "root_z": 0.1033936702627047,
+            "tilt_degrees": 68.59080530406688
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.68244570389946,
+            "projected_pitch_degrees": 114.69707882885974,
+            "root_z": 0.10620879654050389,
+            "tilt_degrees": 114.69603296715134
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 164.1505245920928,
+            "projected_pitch_degrees": 164.7272567649962,
+            "root_z": 0.182139219211337,
+            "tilt_degrees": 164.69627079043144
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 185.56230906918034,
+            "projected_pitch_degrees": 186.98742961152846,
+            "root_z": 0.1515778713446979,
+            "tilt_degrees": 171.78277533790006
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 253.98516258799899,
+            "projected_pitch_degrees": 256.872034644897,
+            "root_z": 0.04954942821000882,
+            "tilt_degrees": 103.11809085238698
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 325.5116673574398,
+            "projected_pitch_degrees": 328.16554461097724,
+            "root_z": 0.05873655629957985,
+            "tilt_degrees": 31.83680992535663
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 358.6571658469269,
+            "projected_pitch_degrees": 359.66093162124236,
+            "root_z": 0.11136395178046228,
+            "tilt_degrees": 1.8301610481296864
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 363.1095757080545,
+            "projected_pitch_degrees": 363.9723959683933,
+            "root_z": 0.11757764640639483,
+            "tilt_degrees": 4.158637989453815
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 359.8597199584635,
+            "projected_pitch_degrees": 360.5729772442504,
+            "root_z": 0.11551434851318937,
+            "tilt_degrees": 1.112828041604765
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 356.39637444673195,
+            "projected_pitch_degrees": 357.25784918269443,
+            "root_z": 0.11517055927820344,
+            "tilt_degrees": 2.762338683639234
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 356.5842770824565,
+            "projected_pitch_degrees": 357.4413284259833,
+            "root_z": 0.11512984503159605,
+            "tilt_degrees": 2.5897241293019007
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 356.65212904423737,
+            "projected_pitch_degrees": 357.5125937666131,
+            "root_z": 0.11505187547445193,
+            "tilt_degrees": 2.525949763352724
+          },
+          {
+            "roll_s": 2.6,
+            "pitch_integral_degrees": 356.69122577267797,
+            "projected_pitch_degrees": 357.5509305836684,
+            "root_z": 0.11500333007908348,
+            "tilt_degrees": 2.48979387004838
+          },
+          {
+            "roll_s": 2.8000000000000003,
+            "pitch_integral_degrees": 356.75106458392105,
+            "projected_pitch_degrees": 357.6089958121299,
+            "root_z": 0.11491435736000581,
+            "tilt_degrees": 2.4194796131748704
+          },
+          {
+            "roll_s": 3.0,
+            "pitch_integral_degrees": 356.78556058135683,
+            "projected_pitch_degrees": 357.64431018009094,
+            "root_z": 0.11489069652494581,
+            "tilt_degrees": 2.3814199248117567
+          },
+          {
+            "roll_s": 3.2,
+            "pitch_integral_degrees": 356.78534463393316,
+            "projected_pitch_degrees": 357.6410018150344,
+            "root_z": 0.11487378892182627,
+            "tilt_degrees": 2.3838134545789926
+          },
+          {
+            "roll_s": 3.4,
+            "pitch_integral_degrees": 356.78720343713405,
+            "projected_pitch_degrees": 357.6458630032835,
+            "root_z": 0.11486635812032585,
+            "tilt_degrees": 2.3782311435616346
+          },
+          {
+            "roll_s": 3.6,
+            "pitch_integral_degrees": 356.7838681478878,
+            "projected_pitch_degrees": 357.63782594722767,
+            "root_z": 0.11485194858793454,
+            "tilt_degrees": 2.385858686284048
+          },
+          {
+            "roll_s": 3.8000000000000003,
+            "pitch_integral_degrees": 356.76976311543064,
+            "projected_pitch_degrees": 357.6278056420415,
+            "root_z": 0.11484809626272201,
+            "tilt_degrees": 2.3956251430339677
+          },
+          {
+            "roll_s": 4.0,
+            "pitch_integral_degrees": 356.78486959777814,
+            "projected_pitch_degrees": 357.64394949982665,
+            "root_z": 0.11484888382495743,
+            "tilt_degrees": 2.380025970904477
+          },
+          {
+            "roll_s": 4.2,
+            "pitch_integral_degrees": 356.7755604993487,
+            "projected_pitch_degrees": 357.63407102728587,
+            "root_z": 0.11484465932797487,
+            "tilt_degrees": 2.3899841920123013
+          },
+          {
+            "roll_s": 4.4,
+            "pitch_integral_degrees": 356.7795298187549,
+            "projected_pitch_degrees": 357.634831335667,
+            "root_z": 0.11484198226668418,
+            "tilt_degrees": 2.3897727664499375
+          },
+          {
+            "roll_s": 4.6000000000000005,
+            "pitch_integral_degrees": 356.774091498749,
+            "projected_pitch_degrees": 357.63190193431416,
+            "root_z": 0.11483772204864022,
+            "tilt_degrees": 2.393273342875181
+          },
+          {
+            "roll_s": 4.8,
+            "pitch_integral_degrees": 356.7779441776747,
+            "projected_pitch_degrees": 357.635394489326,
+            "root_z": 0.11483532150703021,
+            "tilt_degrees": 2.3898383788178164
+          },
+          {
+            "roll_s": 5.0,
+            "pitch_integral_degrees": 356.7955054145872,
+            "projected_pitch_degrees": 357.6548162499962,
+            "root_z": 0.11483912972030909,
+            "tilt_degrees": 2.370313257135205
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 363.1156869738244,
+        "max_lateral_rate_rad_s": 0.84182211422478,
+        "min_root_height_m": 0.04709417957885404,
+        "final_root_xyz": [
+          0.5618524793294264,
+          0.03165625764376357,
+          0.11587120565439535
+        ],
+        "final_quaternion": [
+          -0.9982699789244336,
+          -0.000576258957885196,
+          -0.00249369551271977,
+          -0.058740944719280375
+        ],
+        "final_tilt_degrees": 0.2932873742582197
+      },
+      {
+        "initial_state": "HOME",
+        "filter": false,
+        "roll_ticks": 250,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.49945694896375364,
+            -0.14940543479622614,
+            0.11484071464899785
+          ],
+          "quaternion": [
+            -0.9849090949610905,
+            0.006408311208250225,
+            0.01932452887788947,
+            0.17187079680396913
+          ],
+          "pitch_integral_degrees": 352.6288633166141,
+          "projected_pitch_degrees": 357.69211320682757,
+          "tilt_degrees": 2.3331729336573312
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 364.343565118946,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.401330090481686,
+            "projected_pitch_degrees": 64.55261238632754,
+            "root_z": 0.10381697485675924,
+            "tilt_degrees": 64.55304646433875
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 111.67406617101472,
+            "projected_pitch_degrees": 112.54018532380344,
+            "root_z": 0.10622105592586911,
+            "tilt_degrees": 112.54017990665932
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 127.59659136705052,
+            "projected_pitch_degrees": 126.71105149397509,
+            "root_z": 0.17431895469560302,
+            "tilt_degrees": 126.70772897890777
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 91.36324562128304,
+            "projected_pitch_degrees": 92.95107732035649,
+            "root_z": 0.10038000234847402,
+            "tilt_degrees": 92.95051997324988
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 151.6250872936934,
+            "projected_pitch_degrees": 152.11423109800674,
+            "root_z": 0.15982570564532045,
+            "tilt_degrees": 152.0241191541215
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 162.11225052429242,
+            "projected_pitch_degrees": 162.76214010195977,
+            "root_z": 0.1847845677438274,
+            "tilt_degrees": 162.33061101015852
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 197.5178929375735,
+            "projected_pitch_degrees": 201.27479262519518,
+            "root_z": 0.14133394057716728,
+            "tilt_degrees": 155.89587678722685
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 261.04308684595946,
+            "projected_pitch_degrees": 267.7326950089251,
+            "root_z": 0.04850373406655164,
+            "tilt_degrees": 92.26125270594832
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 332.2193371146964,
+            "projected_pitch_degrees": 338.2147235695446,
+            "root_z": 0.06976676951866768,
+            "tilt_degrees": 21.805855546698197
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 357.9689918607867,
+            "projected_pitch_degrees": 363.4938915859218,
+            "root_z": 0.07090268184121033,
+            "tilt_degrees": 3.8049991356595645
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 352.57969677395045,
+            "projected_pitch_degrees": 357.95150664724184,
+            "root_z": 0.11444921670837505,
+            "tilt_degrees": 2.650871696873149
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 354.48590321954725,
+            "projected_pitch_degrees": 359.5292564990118,
+            "root_z": 0.11506383513872012,
+            "tilt_degrees": 1.292575849166644
+          },
+          {
+            "roll_s": 2.6,
+            "pitch_integral_degrees": 352.6820058805291,
+            "projected_pitch_degrees": 357.73854392763513,
+            "root_z": 0.11481910846089999,
+            "tilt_degrees": 2.287999588448951
+          },
+          {
+            "roll_s": 2.8000000000000003,
+            "pitch_integral_degrees": 352.6272861652723,
+            "projected_pitch_degrees": 357.69187640174044,
+            "root_z": 0.11485962795455049,
+            "tilt_degrees": 2.325949528987446
+          },
+          {
+            "roll_s": 3.0,
+            "pitch_integral_degrees": 352.61554174071057,
+            "projected_pitch_degrees": 357.67877917826775,
+            "root_z": 0.1148480376376093,
+            "tilt_degrees": 2.340160772003447
+          },
+          {
+            "roll_s": 3.2,
+            "pitch_integral_degrees": 352.61351564810724,
+            "projected_pitch_degrees": 357.67563371526046,
+            "root_z": 0.11484705760254114,
+            "tilt_degrees": 2.3433421263662884
+          },
+          {
+            "roll_s": 3.4,
+            "pitch_integral_degrees": 352.61644047785995,
+            "projected_pitch_degrees": 357.67894880365645,
+            "root_z": 0.11484393876004652,
+            "tilt_degrees": 2.340857075391128
+          },
+          {
+            "roll_s": 3.6,
+            "pitch_integral_degrees": 352.61389868607824,
+            "projected_pitch_degrees": 357.6753361051777,
+            "root_z": 0.11484399412179676,
+            "tilt_degrees": 2.3451137104611637
+          },
+          {
+            "roll_s": 3.8000000000000003,
+            "pitch_integral_degrees": 352.62388360703176,
+            "projected_pitch_degrees": 357.68822451913275,
+            "root_z": 0.11485004688396266,
+            "tilt_degrees": 2.333075758031995
+          },
+          {
+            "roll_s": 4.0,
+            "pitch_integral_degrees": 352.6213987412791,
+            "projected_pitch_degrees": 357.68381429983657,
+            "root_z": 0.11484040311507428,
+            "tilt_degrees": 2.3384843176150807
+          },
+          {
+            "roll_s": 4.2,
+            "pitch_integral_degrees": 352.61113396511615,
+            "projected_pitch_degrees": 357.67328767089293,
+            "root_z": 0.11484041391242479,
+            "tilt_degrees": 2.3505327058817644
+          },
+          {
+            "roll_s": 4.4,
+            "pitch_integral_degrees": 352.60814173764084,
+            "projected_pitch_degrees": 357.67246270508423,
+            "root_z": 0.11483744682952912,
+            "tilt_degrees": 2.351998405389732
+          },
+          {
+            "roll_s": 4.6000000000000005,
+            "pitch_integral_degrees": 352.6152852307225,
+            "projected_pitch_degrees": 357.6756535167671,
+            "root_z": 0.11483602123805395,
+            "tilt_degrees": 2.3486752911481616
+          },
+          {
+            "roll_s": 4.8,
+            "pitch_integral_degrees": 352.6163823393736,
+            "projected_pitch_degrees": 357.68037421650223,
+            "root_z": 0.11483515477339189,
+            "tilt_degrees": 2.344969270116037
+          },
+          {
+            "roll_s": 5.0,
+            "pitch_integral_degrees": 352.6288633166141,
+            "projected_pitch_degrees": 357.69211320682757,
+            "root_z": 0.11484071464899785,
+            "tilt_degrees": 2.3331729336573312
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 359.28882056718675,
+        "max_lateral_rate_rad_s": 2.0273488746905297,
+        "min_root_height_m": 0.04850373406655164,
+        "final_root_xyz": [
+          0.5106795414064641,
+          -0.15314364974656763,
+          0.11587167791070503
+        ],
+        "final_quaternion": [
+          -0.9868934198028249,
+          -0.0011373381421929797,
+          -0.002298223062686799,
+          0.16135303710370624
+        ],
+        "final_tilt_degrees": 0.2938414866711173
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": true,
+        "roll_ticks": 250,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5700909075351775,
+            -0.023082234120624604,
+            0.11483721202380985
+          ],
+          "quaternion": [
+            -0.9966705795048876,
+            0.004606162194480561,
+            0.020304495797290503,
+            0.07883062012725413
+          ],
+          "pitch_integral_degrees": 356.3380910249494,
+          "projected_pitch_degrees": 357.63870327251726,
+          "tilt_degrees": 2.386015117337267
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 365.69477215265107,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 63.43073011713121,
+            "projected_pitch_degrees": 65.01928689707292,
+            "root_z": 0.10639081844267323,
+            "tilt_degrees": 65.02004709150646
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 113.04374541818098,
+            "projected_pitch_degrees": 114.50848120462057,
+            "root_z": 0.10558073352543937,
+            "tilt_degrees": 114.45749397343415
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 162.3521112443121,
+            "projected_pitch_degrees": 163.41201557384645,
+            "root_z": 0.18059045635126827,
+            "tilt_degrees": 162.59802784039726
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 178.0892869894968,
+            "projected_pitch_degrees": 179.3791485377687,
+            "root_z": 0.16840479571691885,
+            "tilt_degrees": 172.87155724996282
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 235.83300721029724,
+            "projected_pitch_degrees": 239.0993451363736,
+            "root_z": 0.04955793451390378,
+            "tilt_degrees": 120.883962068988
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 312.9323047209064,
+            "projected_pitch_degrees": 315.81595294930344,
+            "root_z": 0.0613103512134376,
+            "tilt_degrees": 44.377473090733595
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 356.1105146276511,
+            "projected_pitch_degrees": 357.6419602917805,
+            "root_z": 0.10521570853229488,
+            "tilt_degrees": 2.9453468312289037
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 362.1337559164684,
+            "projected_pitch_degrees": 363.6295222897621,
+            "root_z": 0.1178860642793102,
+            "tilt_degrees": 3.825641028816687
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 364.2791632201357,
+            "projected_pitch_degrees": 365.562948848571,
+            "root_z": 0.11799580600117535,
+            "tilt_degrees": 5.660370326459972
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 360.33646010405533,
+            "projected_pitch_degrees": 361.47328082056436,
+            "root_z": 0.11576686246139255,
+            "tilt_degrees": 1.8021647431516867
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 355.903618745668,
+            "projected_pitch_degrees": 357.21244262247285,
+            "root_z": 0.11514528227692147,
+            "tilt_degrees": 2.8027257448596035
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 356.10529243617447,
+            "projected_pitch_degrees": 357.4094553439932,
+            "root_z": 0.11511904972605476,
+            "tilt_degrees": 2.6179531505164673
+          },
+          {
+            "roll_s": 2.6,
+            "pitch_integral_degrees": 356.17755808187184,
+            "projected_pitch_degrees": 357.4832619513944,
+            "root_z": 0.11504789394327225,
+            "tilt_degrees": 2.5503764099344934
+          },
+          {
+            "roll_s": 2.8000000000000003,
+            "pitch_integral_degrees": 356.2653464150659,
+            "projected_pitch_degrees": 357.5714472482774,
+            "root_z": 0.11495379293537705,
+            "tilt_degrees": 2.4537321079286882
+          },
+          {
+            "roll_s": 3.0,
+            "pitch_integral_degrees": 356.31629076840557,
+            "projected_pitch_degrees": 357.6199939766323,
+            "root_z": 0.11491202198478119,
+            "tilt_degrees": 2.4075961726855777
+          },
+          {
+            "roll_s": 3.2,
+            "pitch_integral_degrees": 356.33547530910965,
+            "projected_pitch_degrees": 357.6348581293607,
+            "root_z": 0.11488722930916173,
+            "tilt_degrees": 2.391145977887158
+          },
+          {
+            "roll_s": 3.4,
+            "pitch_integral_degrees": 356.3491458218822,
+            "projected_pitch_degrees": 357.6545306753305,
+            "root_z": 0.11487422459829617,
+            "tilt_degrees": 2.370773156604373
+          },
+          {
+            "roll_s": 3.6,
+            "pitch_integral_degrees": 356.3353315800638,
+            "projected_pitch_degrees": 357.63749437623903,
+            "root_z": 0.11485541298758437,
+            "tilt_degrees": 2.3869211268265715
+          },
+          {
+            "roll_s": 3.8000000000000003,
+            "pitch_integral_degrees": 356.33492060276535,
+            "projected_pitch_degrees": 357.6362627889669,
+            "root_z": 0.11484933565850697,
+            "tilt_degrees": 2.387833840735892
+          },
+          {
+            "roll_s": 4.0,
+            "pitch_integral_degrees": 356.3303002359938,
+            "projected_pitch_degrees": 357.6337951021948,
+            "root_z": 0.11484596384752704,
+            "tilt_degrees": 2.390411484381232
+          },
+          {
+            "roll_s": 4.2,
+            "pitch_integral_degrees": 356.3201430393358,
+            "projected_pitch_degrees": 357.62277879490097,
+            "root_z": 0.11483982925396669,
+            "tilt_degrees": 2.401683504739492
+          },
+          {
+            "roll_s": 4.4,
+            "pitch_integral_degrees": 356.3297186035493,
+            "projected_pitch_degrees": 357.634813052385,
+            "root_z": 0.11484089372365791,
+            "tilt_degrees": 2.38994756077455
+          },
+          {
+            "roll_s": 4.6000000000000005,
+            "pitch_integral_degrees": 356.3268980050627,
+            "projected_pitch_degrees": 357.63309701087366,
+            "root_z": 0.11483863968839926,
+            "tilt_degrees": 2.3913539358047182
+          },
+          {
+            "roll_s": 4.8,
+            "pitch_integral_degrees": 356.3295737163286,
+            "projected_pitch_degrees": 357.62974072232527,
+            "root_z": 0.11483564219614434,
+            "tilt_degrees": 2.395032408094581
+          },
+          {
+            "roll_s": 5.0,
+            "pitch_integral_degrees": 356.3380910249494,
+            "projected_pitch_degrees": 357.63870327251726,
+            "root_z": 0.11483721202380985,
+            "tilt_degrees": 2.386015117337267
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 364.37978236244095,
+        "max_lateral_rate_rad_s": 1.5988525382626138,
+        "min_root_height_m": 0.04609927135570128,
+        "final_root_xyz": [
+          0.5819173145190384,
+          -0.02441291090057881,
+          0.11586303484908382
+        ],
+        "final_quaternion": [
+          -0.9974481088672439,
+          -0.0008883980968906812,
+          -0.002270274904884364,
+          0.07135353332411057
+        ],
+        "final_tilt_degrees": 0.2793640470236482
+      },
+      {
+        "initial_state": "standing_policy_1s",
+        "filter": false,
+        "roll_ticks": 250,
+        "recovery_stand_ticks": 150,
+        "finite": true,
+        "roll_end": {
+          "root_xyz": [
+            0.5331015589619237,
+            0.06482778962969915,
+            0.11484013707430334
+          ],
+          "quaternion": [
+            -0.9980907005891315,
+            0.0017773630801017114,
+            0.020683767728617564,
+            -0.058171953126288097
+          ],
+          "pitch_integral_degrees": 357.6655684080915,
+          "projected_pitch_degrees": 357.6454837722922,
+          "tilt_degrees": 2.3790907561258843
+        },
+        "head_touched_floor": true,
+        "max_projected_pitch_degrees": 367.93326175641135,
+        "roll_trace": [
+          {
+            "roll_s": 0.2,
+            "pitch_integral_degrees": 64.35027592353012,
+            "projected_pitch_degrees": 65.79850647888554,
+            "root_z": 0.10565211874916544,
+            "tilt_degrees": 65.79920890946781
+          },
+          {
+            "roll_s": 0.4,
+            "pitch_integral_degrees": 112.03702170508616,
+            "projected_pitch_degrees": 112.8022603250288,
+            "root_z": 0.10551923315953668,
+            "tilt_degrees": 112.7764798445738
+          },
+          {
+            "roll_s": 0.6,
+            "pitch_integral_degrees": 107.9880779397885,
+            "projected_pitch_degrees": 106.45995996819495,
+            "root_z": 0.14873575554609175,
+            "tilt_degrees": 106.45140714661132
+          },
+          {
+            "roll_s": 0.8,
+            "pitch_integral_degrees": 120.25445154468397,
+            "projected_pitch_degrees": 122.47007432424203,
+            "root_z": 0.11541683336423912,
+            "tilt_degrees": 122.46975005437552
+          },
+          {
+            "roll_s": 1.0,
+            "pitch_integral_degrees": 166.0971556548284,
+            "projected_pitch_degrees": 166.42177335007807,
+            "root_z": 0.18450574824868454,
+            "tilt_degrees": 166.22810005477535
+          },
+          {
+            "roll_s": 1.2,
+            "pitch_integral_degrees": 194.8701573130566,
+            "projected_pitch_degrees": 196.47397196232703,
+            "root_z": 0.11765483068391064,
+            "tilt_degrees": 163.4685256080369
+          },
+          {
+            "roll_s": 1.4000000000000001,
+            "pitch_integral_degrees": 273.49914173305325,
+            "projected_pitch_degrees": 275.10817074697127,
+            "root_z": 0.047754653310647426,
+            "tilt_degrees": 84.89192038237319
+          },
+          {
+            "roll_s": 1.6,
+            "pitch_integral_degrees": 325.8555196099269,
+            "projected_pitch_degrees": 327.5314236430002,
+            "root_z": 0.05869173325839575,
+            "tilt_degrees": 32.46898669091829
+          },
+          {
+            "roll_s": 1.8,
+            "pitch_integral_degrees": 356.8153731339128,
+            "projected_pitch_degrees": 356.9812598169727,
+            "root_z": 0.11041781625269521,
+            "tilt_degrees": 3.7234605634386146
+          },
+          {
+            "roll_s": 2.0,
+            "pitch_integral_degrees": 364.54729997574765,
+            "projected_pitch_degrees": 364.7268859410257,
+            "root_z": 0.11792032698277141,
+            "tilt_degrees": 4.996940533254864
+          },
+          {
+            "roll_s": 2.2,
+            "pitch_integral_degrees": 367.636759137025,
+            "projected_pitch_degrees": 367.6704931766964,
+            "root_z": 0.11833217355824006,
+            "tilt_degrees": 7.777883829068371
+          },
+          {
+            "roll_s": 2.4,
+            "pitch_integral_degrees": 367.26478186538736,
+            "projected_pitch_degrees": 367.1745496847323,
+            "root_z": 0.11808922853357937,
+            "tilt_degrees": 7.25395273143129
+          },
+          {
+            "roll_s": 2.6,
+            "pitch_integral_degrees": 362.49718868983734,
+            "projected_pitch_degrees": 362.3070786304894,
+            "root_z": 0.11617107273568443,
+            "tilt_degrees": 2.5140078809438484
+          },
+          {
+            "roll_s": 2.8000000000000003,
+            "pitch_integral_degrees": 357.33893701568854,
+            "projected_pitch_degrees": 357.3025343396669,
+            "root_z": 0.11511390554689649,
+            "tilt_degrees": 2.7236988275307885
+          },
+          {
+            "roll_s": 3.0,
+            "pitch_integral_degrees": 357.3956462300193,
+            "projected_pitch_degrees": 357.38220106712834,
+            "root_z": 0.11510042205307684,
+            "tilt_degrees": 2.649954341204397
+          },
+          {
+            "roll_s": 3.2,
+            "pitch_integral_degrees": 357.5380201576623,
+            "projected_pitch_degrees": 357.52124584164125,
+            "root_z": 0.11498509776271011,
+            "tilt_degrees": 2.502653554485346
+          },
+          {
+            "roll_s": 3.4,
+            "pitch_integral_degrees": 357.61753714122307,
+            "projected_pitch_degrees": 357.5997888010157,
+            "root_z": 0.11493301838161109,
+            "tilt_degrees": 2.427861974437844
+          },
+          {
+            "roll_s": 3.6,
+            "pitch_integral_degrees": 357.6428912849432,
+            "projected_pitch_degrees": 357.6281925621237,
+            "root_z": 0.11489938189915605,
+            "tilt_degrees": 2.3984913585454604
+          },
+          {
+            "roll_s": 3.8000000000000003,
+            "pitch_integral_degrees": 357.657340003453,
+            "projected_pitch_degrees": 357.64212601253786,
+            "root_z": 0.11487604936728979,
+            "tilt_degrees": 2.3834566341249452
+          },
+          {
+            "roll_s": 4.0,
+            "pitch_integral_degrees": 357.6577833598572,
+            "projected_pitch_degrees": 357.6413972194762,
+            "root_z": 0.11485939183219511,
+            "tilt_degrees": 2.382968548374107
+          },
+          {
+            "roll_s": 4.2,
+            "pitch_integral_degrees": 357.65451606912507,
+            "projected_pitch_degrees": 357.64238721387323,
+            "root_z": 0.11485734258926363,
+            "tilt_degrees": 2.3817413054342977
+          },
+          {
+            "roll_s": 4.4,
+            "pitch_integral_degrees": 357.6663994246096,
+            "projected_pitch_degrees": 357.65212733551857,
+            "root_z": 0.11484965322007874,
+            "tilt_degrees": 2.3720234462784733
+          },
+          {
+            "roll_s": 4.6000000000000005,
+            "pitch_integral_degrees": 357.6581735943883,
+            "projected_pitch_degrees": 357.63885585537395,
+            "root_z": 0.11483710856287559,
+            "tilt_degrees": 2.384794432477343
+          },
+          {
+            "roll_s": 4.8,
+            "pitch_integral_degrees": 357.65805214327787,
+            "projected_pitch_degrees": 357.6423305506225,
+            "root_z": 0.1148403361483481,
+            "tilt_degrees": 2.382275740533986
+          },
+          {
+            "roll_s": 5.0,
+            "pitch_integral_degrees": 357.6655684080915,
+            "projected_pitch_degrees": 357.6454837722922,
+            "root_z": 0.11484013707430334,
+            "tilt_degrees": 2.3790907561258843
+          }
+        ],
+        "max_forward_pitch_integral_degrees": 367.9460658728725,
+        "max_lateral_rate_rad_s": 1.925433002865781,
+        "min_root_height_m": 0.047125112142139554,
+        "final_root_xyz": [
+          0.5450303213255094,
+          0.06636517985565744,
+          0.11587534971383655
+        ],
+        "final_quaternion": [
+          -0.9974606855299686,
+          -0.0005489817808636793,
+          -0.002440766758973095,
+          -0.0711752913497228
+        ],
+        "final_tilt_degrees": 0.2866790517475347
+      }
+    ],
+    "limitations": [
+      "Pitch-rate integral describes motion and is not a contact-gated success detector.",
+      "Unwrapped projected pitch can count shoulder rotation; head contact alone does not prove head-top support.",
+      "No guarantee that arbitrary walking/fallen starting states complete a roll."
+    ]
+  }
+]

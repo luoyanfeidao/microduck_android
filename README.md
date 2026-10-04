@@ -1,4 +1,4 @@
-# Android Studio 施工入口（M7：摄像头灰屏修复与前滚翻）
+# Android Studio 施工入口（M7.1：延长前滚翻窗口）
 
 在 Android Studio 中打开当前目录 `android-sim`，不要打开外层 Microduck 目录。由你完成 Sync、编译、安装和真机运行。
 
@@ -6,9 +6,9 @@
 
 当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。另一台Android浏览器可发站立/步行/前滚翻/暂停/复位命令并读状态；视频来自模型的 `head_camera`，随机器人头部运动。手机保留外部观察视角。控制见 [NETWORK.md](NETWORK.md)，相机见 [VIDEO.md](VIDEO.md)，前滚翻见 [SKILLS.md](SKILLS.md)。
 
-**当前功能开发M7：** `0.7-m7` / versionCode=13，标题 `Microduck · Android M7`。修复M6摄像头被模型镜头背面遮挡的灰屏，新增手机和网页“向前翻滚一次”：现有roulade ONNX执行50周期/1秒仿真时间，然后保持当前位置切回站立控制；重复点击不延长在途动作。暂停冻结动作，点翻滚可继续剩余周期；站立/步行或复位取消动作。在Studio编译运行，保持应用前台及“显示3D”开启，开启LAN服务，浏览器刷新并重新连接，勾选“开启机器人摄像头”。相机仍为640×360、10FPS目标、JPEG质量70，网页转90°。无新增Maven依赖。
+**当前功能开发M7.1：** `0.7.1-m71` / versionCode=14，标题 `Microduck · Android M7.1`。修复M6摄像头被模型镜头背面遮挡的灰屏，新增手机和网页“向前翻滚一次”：现有roulade ONNX执行100周期/2秒仿真时间，然后保持当前位置切回站立控制；重复点击不延长在途动作。暂停冻结动作，点翻滚可继续剩余周期；站立/步行或复位取消动作。在Studio编译运行，保持应用前台及“显示3D”开启，开启LAN服务，浏览器刷新并重新连接，勾选“开启机器人摄像头”。相机仍为640×360、10FPS目标、JPEG质量70，网页转90°。无新增Maven依赖。
 
-**检查边界：** [verification/m7-checks.json](verification/m7-checks.json)验证Java/Android JNI、相机及物理对照、翻滚时间窗口/动作倍率、三策略摘要与smoke覆盖、网页/HTTP协议。模型几何射线复现了M6灰屏，四组CPU前滚翻预演数值正常并回到接近直立，但不能据此宣称任意起始姿态都完成标准前滚翻。用户确认M6画面灰且手机报告持续产帧无错误；M7手机画面和动作仍待运行确认。代理未打包/安装/运行APK。性能、温升及前后台验收按用户要求延期。下面M5/M5.4数据是外部观察窗口画面的历史结果。
+**检查边界：** [verification/m71-checks.json](verification/m71-checks.json)验证Java/Android JNI、相机及物理对照、翻滚时间窗口/动作倍率、三策略摘要与smoke覆盖、网页/HTTP协议。用户实测确认M7摄像头修复正常、前滚翻不完整。1秒交接的默认过滤预演仅转约236–254°；M7.1延长至2秒后四组转角积分约356–365°且恢复直立，记录见 [SKILLS.md](SKILLS.md)。支持过早交接的原因与候选修复，不宣称任意起始姿态成功；M7.1动作仍待真机确认。代理未打包/安装/运行APK。性能、温升及前后台验收按用户要求延期。下面M5/M5.4数据是外部观察窗口画面的历史结果。
 
 **历史M5.4视频开启30秒验收通过：** `0.5.4-m54` / versionCode=11。1501周期/6004物理步、墙钟30.007秒/仿真30.02秒，完整工作线程p99=10.648ms/max=19.772ms、超20ms周期0，调度迟到超过20ms周期0；手机30.03FPS、视频298发布帧/9.93FPS、265帧提供HTTP、采集错误0，数值及最终位姿与M5.3一致。报告捕获平均0.285ms/max=0.519ms，队列提交max=0.087ms。证据 [verification/device-M54-video-acceptance.json](verification/device-M54-video-acceptance.json)。单次最大预算余量0.228ms，温度/频率未控制，不代表长期或硬实时保证。
 

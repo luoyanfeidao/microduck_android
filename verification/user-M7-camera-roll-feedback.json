@@ -1,0 +1,12 @@
+{
+  "recorded_date": "2026-10-04",
+  "scope": "User feedback in conversation; no ADB device available during follow-up",
+  "workspace_commit_at_feedback": "03e3a87",
+  "user_feedback": "实测摄像头调整好了，没有完成整圈翻滚",
+  "camera_fix": "user-confirmed",
+  "forward_roll": "user-confirmed incomplete",
+  "limitations": [
+    "No installed APK checksum or device state was captured for this feedback.",
+    "M7.1 two-second roll remains pending device confirmation."
+  ]
+}

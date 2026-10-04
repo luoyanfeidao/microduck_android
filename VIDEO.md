@@ -1,12 +1,12 @@
-# M7：机器人头部摄像头与灰屏修复
+# M7.1：机器人头部摄像头与灰屏修复
 
-当前源码 `0.7-m7` / versionCode=13，手机标题 `Microduck · Android M7`。由用户在Android Studio编译、安装、运行。性能、温升和前后台验收按用户要求延期。
+当前源码 `0.7.1-m71` / versionCode=14，手机标题 `Microduck · Android M7.1`。由用户在Android Studio编译、安装、运行。性能、温升和前后台验收按用户要求延期。
 
 ## 视频源与桌面端的关系
 
 视频来自模型的 `head_camera`：在相机的世界位置、朝向和视场角下重新渲染场景。手机上保留可拖动的外部观察视角，改变该视角不会改变机器人相机。摄像头位置跟随头部关节和机身姿态；相机画面不加入观察窗口的轨迹/接触点标注。
 
-M6用户反馈画面一片灰，[普通手机报告](verification/device-M6-grey-camera-report.json)显示帧持续发布、采集错误为0。因此产帧成功不能证明场景正确。CPU按实际视觉三角形求交，在HOME姿态的9条视线均命中模型 `lens` 的背面，距相机约8.5–9.1mm；剔除背面后这些遮挡消失，见 [几何证据](verification/head-camera-visibility.json) 与 `verification/camera_visibility_check.py:1`。MuJoCo默认开启背面剔除，而Android原外部观察渲染关闭它。M7只在相机pass开启GL_BACK/GL_CCW，并恢复原剔除状态；未移动相机、删除镜头网格或修改训练模型。修复入口 `app/src/main/java/com/microduck/sim/RobotSurfaceView.java:218`；仍待手机显示确认。
+M6用户反馈画面一片灰，[普通手机报告](verification/device-M6-grey-camera-report.json)显示帧持续发布、采集错误为0。因此产帧成功不能证明场景正确。CPU按实际视觉三角形求交，在HOME姿态的9条视线均命中模型 `lens` 的背面，距相机约8.5–9.1mm；剔除背面后这些遮挡消失，见 [几何证据](verification/head-camera-visibility.json) 与 `verification/camera_visibility_check.py:1`。MuJoCo默认开启背面剔除，而Android原外部观察渲染关闭它。M7只在相机pass开启GL_BACK/GL_CCW，并恢复原剔除状态；未移动相机、删除镜头网格或修改训练模型。修复入口 `app/src/main/java/com/microduck/sim/RobotSurfaceView.java:218`。用户随后实测确认摄像头调整正常，来源 [M7反馈](verification/user-M7-camera-roll-feedback.json)。M7.1没有再改相机绘制。
 
 旧M5–M5.4使用PixelCopy复制观察窗口。旧版视频显示及两次30秒预算测试已通过，但它们不是机器人相机的验收结果，历史证据保留在 `verification/device-M54-video-acceptance.json` 和 `verification/device-M54-video-off-acceptance.json`。
 
@@ -25,12 +25,12 @@ M6用户反馈画面一片灰，[普通手机报告](verification/device-M6-grey
 
 ## 在Studio运行和使用
 
-1. 重新编译运行，确认标题M7；保持仿真应用前台及“显示3D”开启。
+1. 重新编译运行，确认标题M7.1；保持仿真应用前台及“显示3D”开启。
 2. 开启局域网控制，控制设备连接同一Wi-Fi，重新打开应用显示的地址，刷新网页并连接。每次服务开启都生成新访问码。
 3. 勾选“开启机器人摄像头”。首次短暂等待后应出现头部相机视野。原始JPEG为640×360，网页旋转后以竖向画面展示。
 4. 可点策略站立或前进观察机器人视野变化。拖动仿真手机的外部观察视角，网页相机视角应保持由机器人头部决定。暂停时还能持续收到静止的相机画面。
 
-本轮只需使用新功能，不要求重新跑30秒性能或前后台测试。Android真实FBO、画面方向及网页显示尚待用户Studio运行确认，主机检查不能替代它们。
+本轮只需使用新功能，不要求重新跑30秒性能或前后台测试。摄像头灰屏修复已有用户实测确认；前滚翻窗口调整见 [SKILLS.md](SKILLS.md)。
 
 当前FBO复用手机GLES上下文与已上传网格，因此需保持手机“显示3D”及Surface可用；关闭3D时返回503等待画面。此实现已分开两套视角，尚未分离GPU上下文以支持隐藏观察窗口时独立运行相机。
 
@@ -65,7 +65,7 @@ GLES线程复用网格，另建颜色纹理与深度缓冲，用相机投影绘�
 
 ## 报告字段
 
-| 字段 | M7含义 |
+| 字段 | M7.1含义 |
 | --- | --- |
 | `video_source` | head_camera |
 | `video_backend` | head_camera GLES framebuffer / JPEG latest-frame HTTP |
@@ -79,13 +79,13 @@ GLES线程复用网格，另建颜色纹理与深度缓冲，用相机投影绘�
 | `video_frame_age_ms` | 状态捕获时距采集请求的帧龄，不是端到端显示延迟或物理状态年龄 |
 | `video_frames_published` / `video_frames_served` | 会话累计发布 / 提供给HTTP，后者不证明浏览器已显示 |
 | `video_capture_failures` / `video_error` | 相机渲染、读回或编码失败统计 |
-| `test_video_frames_published` / `test_video_frames_served` | 保留的30秒测试增量，M7本轮未做真机性能验收 |
+| `test_video_frames_published` / `test_video_frames_served` | 保留的30秒测试增量，M7.1本轮未做真机性能验收 |
 
 ## 检查结果与代码入口
 
-[verification/m7-checks.json](verification/m7-checks.json)包含JDK11/Android34/ORT Java编译、Android ARM64 JNI语法、原物理观测/动作与网格快照、相机矩阵和像素转换、翻滚窗口与倍率、缓存/HTTP/模拟网页检查。三组头部/机身姿态与桌面独立对照最大误差约2.6e-8；没有修改模型相机或训练文件。原500周期物理推进实现对照仍逐项一致。
+[verification/m71-checks.json](verification/m71-checks.json)包含JDK11/Android34/ORT Java编译、Android ARM64 JNI语法、原物理观测/动作与网格快照、相机矩阵和像素转换、翻滚窗口与倍率、缓存/HTTP/模拟网页检查。三组头部/机身姿态与桌面独立对照最大误差约2.6e-8；没有修改模型相机或训练文件。原500周期物理推进实现对照仍逐项一致。
 
-M6手机已实际产帧但用户看到灰屏；主机没有执行M7 Android GLES绘制、JPEG真实图像解码或真实浏览器CSS旋转。灰屏修复仍需手机显示确认。性能、温升、前后台、端到端延迟按用户要求延期；原M5.4性能不能外推到当前相机。
+M6实际产帧但用户看到灰屏；M7已由用户实测确认摄像头调整正常。该确认是用户观察，不包含代理抓取的逐帧图像或安装包哈希。性能、温升、前后台、端到端延迟按用户要求延期；原M5.4性能不能外推到当前相机。
 
 | file:line（相对android-sim） | 作用 |
 | --- | --- |

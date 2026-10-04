@@ -1,8 +1,8 @@
 package com.microduck.sim;
 
-/** One forward roll lasts 50 completed control steps. Pausing does not advance the window. */
+/** One forward roll lasts 100 completed control steps. Pausing does not advance the window. */
 final class RouladeWindow {
-    static final int TICKS=50; // Desktop single-roll duration: 1 second at 50 Hz.
+    static final int TICKS=100; // RL deployment rehearsal gives roulade 2 seconds at 50 Hz.
     private int remaining;
     private long completed;
     boolean active() { return remaining>0; }

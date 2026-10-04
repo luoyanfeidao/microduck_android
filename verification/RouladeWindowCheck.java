@@ -3,8 +3,8 @@ package com.microduck.sim;
 public final class RouladeWindowCheck {
     public static void main(String[] args) {
         RouladeWindow window=new RouladeWindow();
-        if(!window.start() || window.remaining()!=50) throw new AssertionError("Roll not started");
-        for(int tick=0;tick<49;tick++) {
+        if(!window.start() || window.remaining()!=100) throw new AssertionError("Roll not started");
+        for(int tick=0;tick<99;tick++) {
             if(window.start()) throw new AssertionError("Tap restarted active roll");
             window.advance();
             if(!window.active()) throw new AssertionError("Roll ended early");
@@ -17,6 +17,6 @@ public final class RouladeWindowCheck {
         window.start(); window.advance(); window.cancel();
         if(window.active() || window.completed()!=1) throw new AssertionError("Cancel counted as completion");
         window.reset(); if(window.completed()!=0 || window.active()) throw new AssertionError("Reset");
-        System.out.println("{\"exactly_50_completed_steps\":true,\"repeated_requests_do_not_extend\":true,\"cancel_and_reset\":true}");
+        System.out.println("{\"exactly_100_completed_steps\":true,\"repeated_requests_do_not_extend\":true,\"cancel_and_reset\":true}");
     }
 }
