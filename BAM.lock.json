@@ -1,0 +1,43 @@
+{
+  "upstream": "https://github.com/Rhoban/bam",
+  "revision": "62bd8ce12154340be97e06f7f41a0ca8f116d967",
+  "branch": "mjlab_frictionloss",
+  "license": "Apache-2.0",
+  "reference_sha256": {
+    "model.py": "fed54ebf5ccdb1e15d1094e1a1b426a93c29a7dad5944e6861ff0cd023d900ed",
+    "mujoco.py": "62256992ef0d7a4d07e61aff19ff1b930b7e17deb522519f21687764ca02894d",
+    "actuator.py": "6927d7b2341cbaca0e5d872fae4ddce6200056885310d9ee5acaba1f34e09c13",
+    "dynamixel/actuator.py": "8d3ed39d68758981204901dd18dcce11dcb107b842067e036d2b8ac7b1411cec",
+    "params/xl330/m6.json": "61c699362fb3fabdde93eeba5e1ad3bf4ef9ca2f71d03e316b1924ff005b20d3"
+  },
+  "parameters": {
+    "kt": 0.36601349688984386,
+    "R": 2.8113923539223227,
+    "armature": 0.0018077432831600838,
+    "q_offset": 0.0271132870444849,
+    "friction_base": 0.004771183165566,
+    "friction_stribeck": 0.004676345799486616,
+    "load_friction_motor": 0.2667860954283698,
+    "load_friction_external": 8.515871897059342e-06,
+    "load_friction_motor_stribeck": 1.0722918395099123e-05,
+    "load_friction_external_stribeck": 0.08077928978935671,
+    "load_friction_motor_quad": 0.009972471242139415,
+    "load_friction_external_quad": 0.004902565732332559,
+    "dtheta_stribeck": 2.890372094130307,
+    "alpha": 8.683259907618984,
+    "friction_viscous": 0.005359668274599504,
+    "model": "m6",
+    "actuator": "xl330"
+  },
+  "android_profile": {
+    "vin": 7.4,
+    "vin_drop_gain": 0.1,
+    "vin_min": 6.0,
+    "kp_fw": 200,
+    "max_current": null,
+    "timestep": 0.005,
+    "domain_randomization": false,
+    "actuator_delay_steps": 0,
+    "action_filter": "Existing user-selectable desktop filter retained; not training parity"
+  }
+}

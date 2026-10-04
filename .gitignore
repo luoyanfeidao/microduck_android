@@ -16,3 +16,4 @@ __pycache__/
 *.py[cod]
 *.jks
 *.keystore
+verification/rust-simio/target/

@@ -16,6 +16,11 @@ final class NativeSim {
     static native float[] observation(long handle, float[] previousAction, float[] command);
     static native void applyAction(long handle, float[] rawAction, boolean standing, boolean filter);
     static native void applyRouladeAction(long handle, float[] rawAction, boolean filter);
+    static native void setBam(long handle, boolean enabled);
+    static native String bodySensors(long handle);
+    static native void bodyTargets(long handle, double[] wireTargets);
+    static native void bodyGain(long handle, int kp);
+    static native void bodyTorque(long handle, boolean on);
     static native VisualMesh[] visualMeshes(long handle);
     static native float[] visualSnapshot(long handle);
     static native void close(long handle);

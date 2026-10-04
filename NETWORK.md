@@ -1,6 +1,8 @@
-# M8.1：一台 Android 仿真，另一台浏览器看机器人摄像头并控制
+# M9：一台 Android 仿真，另一台浏览器看机器人摄像头并控制
 
-当前源码 `0.8.1-m81` / versionCode=16，标题 `Microduck · Android M8.1`，由用户Studio构建/安装/运行。局域网访问码改为4位数字。独立GL相机支持关闭外部3D；视频使用硬件编码WebRTC，保留JPEG兼容模式。站立、步行、2秒翻滚和控制心跳保留。架构及验收见 [VIDEO.md](VIDEO.md)，源码检查 [verification/m81-checks.json](verification/m81-checks.json)。用户已反馈M8实机验证正常，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)；性能检查延期。
+当前源码 `0.9.0-m9` / versionCode=17，标题 `Microduck · Android M9`，由用户Studio构建/安装/运行。局域网访问码改为4位数字。独立GL相机支持关闭外部3D；视频使用硬件编码WebRTC，保留JPEG兼容模式。站立、步行、2秒翻滚和控制心跳保留。架构及验收见 [VIDEO.md](VIDEO.md)，源码检查 [verification/m9-checks.json](verification/m9-checks.json)。用户已反馈M8实机验证正常，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)；性能检查延期。
+
+M9新增 [Rust SimIo身体服务](BAM_SIMIO.md)：通过USB连接桌面robotd。身体服务开启期间，HTTP控制返回409、网页动作按钮禁用；状态与视频仍可查看。手机按钮可接管并关闭身体服务。
 
 ## 双设备操作
 
@@ -91,7 +93,7 @@ curl -H "Authorization: Bearer $DUCK_LAN_TOKEN" \
 ```bash
 # 在 android-sim 目录；host-json-jar 是测试专用 org.json，不加入 APK。
 python3 scripts/check_source.py \
-  --java-home /Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home \
+  --java-home /Users/navinfo/Library/Java/JavaVirtualMachines/jbr-17.0.14/Contents/Home \
   --android-sdk /Users/navinfo/Android/sdk \
   --ort-aar /private/tmp/microduck-onnxruntime-android-1.20.0.aar \
   --webrtc-aar /private/tmp/microduck-webrtc-stream-1.3.9.aar \
@@ -115,10 +117,10 @@ python3 scripts/check_source.py \
 
 | file:line | 作用 |
 | --- | --- |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:443` | 开启服务、显示地址 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:473` | 仿真线程执行命令及会话检查 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:185` | 控制周期及心跳检查 |
-| `app/src/main/java/com/microduck/sim/MainActivity.java:508` | 退出前台时关闭 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:473` | 开启服务、显示地址 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:505` | 仿真线程执行命令及会话检查 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:205` | 控制周期及心跳检查 |
+| `app/src/main/java/com/microduck/sim/MainActivity.java:570` | 退出前台时关闭 |
 | `app/src/main/java/com/microduck/sim/LanControlServer.java:28` | Socket、线程与请求边界 |
 | `app/src/main/java/com/microduck/sim/LanControlServer.java:84` | HTTP路径、授权和命令路由 |
 | `app/src/main/java/com/microduck/sim/RemoteCommand.java:7` | 命令验证 |
@@ -126,4 +128,4 @@ python3 scripts/check_source.py \
 | `app/src/main/java/com/microduck/sim/RemoteLease.java:4` | 心跳/控制归属 |
 | `app/src/main/assets/controller.html:40` | 浏览器画面、状态和心跳 |
 | `verification/NetworkControlCheck.java:1` | 回环与协议检查 |
-| `verification/m71-checks.json:1` | 当前检查结果及源码摘要 |
+| `verification/m9-checks.json:1` | 当前检查结果及源码摘要 |

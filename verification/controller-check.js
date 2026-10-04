@@ -49,6 +49,9 @@ async function main(){
   assert(requests.slice(count).some(r=>r.url==='/api/command'&&JSON.parse(r.options.body).op==='walk'));
   await buttons[3].onclick();await flush();
   assert(requests.some(r=>r.url==='/api/command'&&JSON.parse(r.options.body).op==='roulade'));
+  vm.runInContext('show({simio_enabled:true})',context);
+  assert(buttons.every(b=>b.disabled));assert(!node('videoToggle').disabled);
+  vm.runInContext('show({simio_enabled:false})',context);assert(buttons.every(b=>!b.disabled));
   node('videoToggle').checked=false;node('videoToggle').onchange();await flush();
   assert(!node('video').src);assert.equal(timers.size,0);
   // Deliver a late HTTP success from a stopped session; it must not revive the picture.
@@ -64,7 +67,7 @@ async function main(){
   node('videoMode').value='jpeg';
   assert(node('videoToggle').disabled);assert(!node('video').src);assert.equal(timers.size,0);
   assert([...created].every(url=>revoked.has(url)));
-  console.log(JSON.stringify({four_digit_pairing:true,leading_zeroes_preserved:true,video_opt_in:true,bearer_header:true,slow_video_does_not_block_controls:true,
+  console.log(JSON.stringify({simio_monitor_disables_controls_keeps_video:true,four_digit_pairing:true,leading_zeroes_preserved:true,video_opt_in:true,bearer_header:true,slow_video_does_not_block_controls:true,
     stop_and_hidden_cancel_requests:true,late_frame_does_not_revive_view:true,background_pause:true,
     unavailable_retries:true,expired_token_disconnects:true,blob_urls_released:true,roulade_command:true}));
 }

@@ -45,11 +45,11 @@ label{display:block;margin:12px 0}label input{display:block;width:100%;margin-to
 const $=id=>document.getElementById(id);
 let exchange=Promise.resolve();
 let token=new URLSearchParams(location.hash.slice(1)).get('token')||'',connected=false,busy=false,polling=false;
-let rtcView=null;
+let rtcView=null,bodyOwnsControl=false;
 let videoEpoch=0,videoTimer=0,videoCancel=null,activeUrl='',lastSequence='',videoFrames=0,videoAt=performance.now();
 if(token) history.replaceState(null,'',location.pathname);
 $('token').value=token;
-function controls(){document.querySelectorAll('#controls button').forEach(b=>b.disabled=!connected||busy);$('videoToggle').disabled=!connected}
+function controls(){document.querySelectorAll('#controls button').forEach(b=>b.disabled=!connected||busy||bodyOwnsControl);$('videoToggle').disabled=!connected}
 function haltVideo(text='画面已关闭'){
   stopRtc();videoEpoch++;clearTimeout(videoTimer);if(videoCancel)videoCancel.abort();videoCancel=null;
   if(activeUrl)URL.revokeObjectURL(activeUrl);activeUrl='';$('video').removeAttribute('src');$('videoStatus').textContent=text;
@@ -190,9 +190,11 @@ async function fetchRequest(path,body,keepalive=false){
   }finally{clearTimeout(timer)}
 }
 function show(data){
+  bodyOwnsControl=data.simio_enabled===true;controls();
   const n=(x,d=3)=>typeof x==='number'?x.toFixed(d):'—';
   $('status').textContent=`${data.app_stage||'Microduck'} · ${data.running?'运行':'暂停'}\n仿真 ${n(data.sim_time)} s\n位置 x ${n(data.root_x)} / y ${n(data.root_y)} / z ${n(data.root_z)} m\n策略 ${data.policy||'未加载'} / 启用 ${!!data.policy_enabled}\n控制 ${n(data.control_with_visual_ms)} ms / 20ms\n画面 ${n(data.render_fps,1)} FPS\n数值正常 ${data.finite===true} / 接触点 ${data.contacts??'—'}\n远程控制 ${!!data.remote_control_active}`;
   if(data.remote_stop_reason==='heartbeat_timeout') message('心跳超时，手机已暂停；点击站立或前进可重新接管');
+  if(bodyOwnsControl)$('status').textContent+='\nRust 正在控制身体；网页可看视频，手机本地按钮可接管';
 }
 async function poll(){
   if(!connected||polling||busy||document.hidden)return;

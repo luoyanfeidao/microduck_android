@@ -1,0 +1,78 @@
+{
+  "scope": "Host Rust/Java/JNI integration, not Android APK or device verification",
+  "rust_client": {
+    "real_upstream_remoteio": true,
+    "jni_bam_physics": true,
+    "fifteen_slots_mouth_zero": true,
+    "gain_torque_slow": true,
+    "reconnect_stays_paused": true
+  },
+  "complete_robotd": {
+    "binary_sha256": "76da799c6b954b2a6a31aba39b5aa699984eceee91fed51ba6fa95813bff6ffe",
+    "enable": {
+      "accepted": true,
+      "reason": "enabled \u2014 driving"
+    },
+    "standing_trunk_z": 0.11504637077,
+    "walk_command": "Walk command finished; standing command sent.",
+    "walk_delta_x": 0.0018232962602000025,
+    "finite": true
+  },
+  "native_final_state": {
+    "nq": 21,
+    "root_x": -0.0708342975351,
+    "body_connected": false,
+    "root_y": 0.0676920142192,
+    "root_z": 0.114738988297,
+    "nu": 14,
+    "nv": 20,
+    "trunk_z": 0.114738988297,
+    "last_batch_ms": 0.305083,
+    "running": false,
+    "trunk_y": 0.0676920142192,
+    "trunk_x": -0.0708342975351,
+    "nmesh": 38,
+    "left_contacts": 3,
+    "foot_geoms_resolved": true,
+    "disconnect_callbacks": 3,
+    "bam_effective_volts": 7.33589975132,
+    "timestep": 0.005,
+    "finite": true,
+    "torque_on": false,
+    "right_contacts": 3,
+    "actuator_model": "bam-xl330-m6",
+    "nbody": 16,
+    "steps": 944,
+    "root_quaternion": [
+      0.970866051369,
+      -0.00147633529753,
+      0.00407974950672,
+      -0.23958356867
+    ],
+    "keyframe": "SIT",
+    "firmware_kp": 160,
+    "sim_time": 4.72,
+    "mujoco": "3.10.0",
+    "contacts": 6
+  },
+  "source_sha256": {
+    "app/src/main/java/com/microduck/sim/NativeSim.java": "11998f1c0710d65d6226a0a7c6fe4c1ec065932f3780113edc30965812ef4481",
+    "app/src/main/java/com/microduck/sim/VisualMesh.java": "0246172a7fdce6f82eef79f8bedad1c6f8ae5c910923a4f6ba3f215918ce5c62",
+    "app/src/main/java/com/microduck/sim/SimIoRequest.java": "1244a83d59524fc57c2b7007ef04b6e92274b8fb4112142a53d1c0f0e9ff0ef6",
+    "app/src/main/java/com/microduck/sim/SimIoServer.java": "f48f00dde3542055a7b05411fd8b44a39186b8fa23bb957cbf856dfe6d22f331",
+    "app/src/main/java/com/microduck/sim/SimIoBody.java": "82628625fe4d15fa7856afc31015cec6d9a096b9cf9af5eff910f8ae5de93704",
+    "verification/SimIoNativeHarness.java": "6e787d8eb71d536cab2f2bfbbf5b9130590d3b09dd7f597c715b2ec48446b9ce",
+    "app/src/main/cpp/native_sim.cpp": "e24837aa959ee2335eba7b253386a5fe11f778e05ca78ee6fec48173dc37e76c",
+    "app/src/main/cpp/bam_actuator.h": "5e3b570b6445fa4feec98e474b6e46e472ac4d1e26aacfcfb8c4e593a628211a",
+    "scripts/check_simio.py": "552e4ef8a496cb9e4bba86cbd7fd2e5919bfd679f0145bb62e98fec5c7791558",
+    "verification/rust-simio/Cargo.toml": "5c65dbb1940da734ba6fc3f4d53cc1f326737a5b81d757ef365d02a50926bde1",
+    "verification/rust-simio/src/main.rs": "e450bc33aeebd89acf237d0dd90aa2961e88f1dd0818bfa261e911350265e49c",
+    "verification/rust-simio/Cargo.lock": "c5d9b7bb0cd24b0087e0e45da1fdc8c089d80865dae828255ee343f46c41ae83",
+    "scripts/android_robotd.py": "aa5342e527899a8d22005136c9513ffc9515a13ea018a4bec5eb000c478e555c"
+  },
+  "upstream_rust_sha256": {
+    "sim.rs": "898d835c9e06af348aab97b7cf2992d8c7ff5427adcb3bc74a890e40498392ca",
+    "io.rs": "2fdbb954b5c8edfb2cdbbc70251a8fa7f5a0679eebb0659bce67268cb1e46e20",
+    "imu.rs": "fa8b56fc7f7ceda56c0cd789b6338db492f6b4d4a1796e7ee699118d6f6e8f80"
+  }
+}

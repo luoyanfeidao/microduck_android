@@ -44,6 +44,11 @@ public final class MainActivity extends Activity {
     private final CapturedReport.Writer reportWriter=this::writeReport;
     private TextView status, report;
     private TextView networkInfo;
+    private TextView bodyInfo;
+    private SimIoServer simIo;
+    private long simIoGeneration;
+    private SimIoBody bodySession;
+    private boolean bamEnabled=true;
     private LanControlServer lan;
     private VideoCapture video;
     private VisualMesh[] visualMeshes;
@@ -93,7 +98,7 @@ public final class MainActivity extends Activity {
         column.setPadding(24, 32, 24, 24);
         column.setBackgroundColor(Color.rgb(237, 244, 247));
         TextView title = new TextView(this);
-        title.setText("Microduck · Android M8.1"); title.setTextSize(24);
+        title.setText("Microduck · Android M9"); title.setTextSize(24);
         title.setTextColor(Color.rgb(23, 52, 75)); column.addView(title);
         TextView scope = new TextView(this);
         scope.setText("3D 物理仿真 + ONNX 站立 / 步行 / 前滚翻\n单指旋转、双指缩放；橙色轨迹、红色接触点。");
@@ -134,6 +139,12 @@ public final class MainActivity extends Activity {
         contacts.setOnCheckedChangeListener((v,checked)->preview.contacts(checked)); cameraControls.addView(contacts);
         CheckBox filter=new CheckBox(this); filter.setText("按桌面运行时过滤动作：头 .5 / 腿 .7"); filter.setChecked(true);
         filter.setOnCheckedChangeListener((v,checked)->enqueueLocal(()->{ if(policies!=null) policies.filter=checked; })); column.addView(filter);
+        CheckBox bam=new CheckBox(this); bam.setText("BAM XL330 执行器（切换会复位 SIT）"); bam.setChecked(bamEnabled);
+        bam.setOnCheckedChangeListener((v,checked)->enqueueLocal(()->{
+            pause(); policyEnabled=false; if(policies!=null) policies.reset();
+            NativeSim.setBam(handle,checked); bamEnabled=checked; keyframe="SIT";
+            publish(NativeSim.state(handle));
+        })); column.addView(bam);
         TextView hint = new TextView(this);
         hint.setText("物理 dt=5ms；每 20ms 推理并推进 4 步。\n策略测试 10s 是快速计算基准；实时测试 30s 按墙钟运行，结束自动暂停。");
         hint.setTextSize(14); column.addView(hint);
@@ -141,9 +152,14 @@ public final class MainActivity extends Activity {
         column.addView(report);
         LinearLayout networkButtons=row(column);
         button(networkButtons,"开启局域网控制",()->enqueue(this::startLan));
-        button(networkButtons,"关闭局域网控制",()->enqueue(()->{ pause(); stopLan(); publish(NativeSim.state(handle)); }));
+        button(networkButtons,"关闭局域网控制",()->enqueueLocal(()->{ pause(); stopLan(); publish(NativeSim.state(handle)); }));
         networkInfo=new TextView(this); networkInfo.setText("局域网控制未开启；另一台 Android 可用浏览器连接。");
         networkInfo.setTextIsSelectable(true); column.addView(networkInfo);
+        LinearLayout bodyButtons=row(column);
+        button(bodyButtons,"开启 Rust 身体服务",()->enqueue(this::startBody));
+        button(bodyButtons,"关闭 Rust 身体服务",()->enqueueLocal(()->publish(NativeSim.state(handle))));
+        bodyInfo=new TextView(this);bodyInfo.setText("Rust 身体服务未开启；通过 USB / adb forward 连接桌面 robotd。");
+        bodyInfo.setTextIsSelectable(true);column.addView(bodyInfo);
         ScrollView scroll = new ScrollView(this); scroll.addView(column);
         LinearLayout screen=new LinearLayout(this); screen.setOrientation(LinearLayout.VERTICAL);
         column.removeView(title); screen.addView(title);
@@ -156,6 +172,7 @@ public final class MainActivity extends Activity {
                 String selected = getIntent().getStringExtra("keyframe");
                 keyframe = selected == null ? "SIT" : selected;
                 handle = NativeSim.open(new File(model,"scene.xml").getAbsolutePath(),keyframe);
+                if(bamEnabled) { NativeSim.setBam(handle,true); NativeSim.reset(handle,keyframe); }
                 visualMeshes=NativeSim.visualMeshes(handle);
                 preview.meshes(visualMeshes);
                 ready = true; publish(NativeSim.state(handle));
@@ -183,7 +200,7 @@ public final class MainActivity extends Activity {
         });
     }
     private void enqueueLocal(Runnable action) {
-        enqueue(()->{ remoteLease.release(); action.run(); });
+        enqueue(()->{ stopBody(); remoteLease.release(); action.run(); });
     }
     private void start() {
         if(ticker != null) return;
@@ -366,6 +383,7 @@ public final class MainActivity extends Activity {
             long begin=System.nanoTime();
             boolean policy=policyEnabled,render=renderEnabled,loaded=ready,running=ticker!=null;
             boolean lanEnabled=lan!=null,remoteActive=remoteLease.active();
+            boolean bodyEnabled=simIo!=null,bodyConnected=bodySession!=null && bodySession.connected;
             double control=controlMs,inference=policyTickMs,physics=physicsMs,snapshot=snapshotMs,withVisual=controlWithVisualMs;
             long commands=remoteCommandsApplied,coalesced=reports.coalesced();
             String stopReason=remoteStopReason,pose=keyframe,device=android.os.Build.MODEL;
@@ -375,9 +393,11 @@ public final class MainActivity extends Activity {
                     data.put("wall_run_seconds",wallRun); data.put("late_ticks",capturedLateTicks); data.put("mode","running");
                 }
                 data.put("model","scene.xml → robot_groundcontact.xml");
-                data.put("stage",policy?"M2: ONNX + XML position servo":"M1: position servo only; no policy");
+                data.put("stage",bodyEnabled?"M9: Rust SimIo body":policy?"M9: Android ONNX":"M9: pose simulation");
                 data.put("policy_enabled",policy); data.put("control_ms",control);
-                data.put("app_stage","M8.1"); data.put("render_enabled",render);
+                data.put("app_stage","M9"); data.put("render_enabled",render);
+                data.put("simio_enabled",bodyEnabled);data.put("simio_connected",bodyConnected);
+                data.put("control_owner",bodyEnabled?"rust-simio":remoteActive?"browser":"local");
                 data.put("ready",loaded); data.put("running",running);
                 data.put("lan_enabled",lanEnabled); data.put("remote_control_active",remoteActive);
                 data.put("remote_commands_applied",commands); data.put("remote_stop_reason",stopReason);
@@ -430,6 +450,8 @@ public final class MainActivity extends Activity {
             data.getInt("benchmark_steps"),data.getDouble("wall_seconds"),data.getDouble("realtime_factor"),
             data.getDouble("step_mean_us"),data.getDouble("step_p50_us"),data.getDouble("step_p95_us"),
             data.getDouble("step_p99_us"),data.getDouble("step_max_us")) : "";
+        details+="\n执行器 "+data.optString("actuator_model")+" / 控制方 "+data.optString("control_owner")
+            +"\nRust 身体连接 "+data.optBoolean("simio_connected");
         if(data.has("policy")) details+=String.format(Locale.ROOT,
             "\n策略 %s / 启用 %s\nONNX %.3f ms / 控制周期 %.3f ms\n推理对照最大误差 %.7f\n%s",
             data.getString("policy"),data.getBoolean("policy_enabled"),data.getDouble("inference_ms"),data.getDouble("control_ms"),
@@ -483,6 +505,9 @@ public final class MainActivity extends Activity {
     private String applyRemote(RemoteCommand command,long generation) throws Exception {
         if(destroyed || !foreground || !ready || lan==null || lanGeneration!=generation)
             throw new LanControlServer.CommandFailure(503,"LAN session ended");
+        if(simIo!=null && !command.op.equals("heartbeat")) {
+            throw new LanControlServer.CommandFailure(409,"Rust SimIo owns control; use a local button to take over");
+        }
         if(realtimeTesting && !command.op.equals("heartbeat"))
             throw new LanControlServer.CommandFailure(409,"Local realtime test owns control");
         long now=System.nanoTime();
@@ -504,6 +529,33 @@ public final class MainActivity extends Activity {
         return new JSONObject().put("ok",true).put("op",command.op).put("running",ticker!=null)
             .put("remote_control_active",remoteLease.active()).put("command_count",remoteCommandsApplied).toString();
     }
+    private void startBody() {
+        if(simIo!=null)return;
+        if(!foreground || realtimeTesting)throw new IllegalStateException("请保持前台并先结束本地测试");
+        pause();policyEnabled=false;if(policies!=null)policies.reset();
+        NativeSim.bodyTorque(handle,false);
+        long generation=++simIoGeneration;
+        try {
+            bodySession=new SimIoBody(handle,new SimIoBody.Control(){
+                @Override public boolean active(){return !destroyed && foreground && simIo!=null && generation==simIoGeneration;}
+                @Override public void pause(){MainActivity.this.pause();}
+                @Override public void start(){MainActivity.this.start();}
+                @Override public void disconnected(){
+                    remoteStopReason="simio_disconnected";publish(NativeSim.state(handle));
+                }
+            });
+            simIo=new SimIoServer(7801,worker,bodySession);
+            main.post(()->{if(!destroyed)bodyInfo.setText("Rust 身体服务已开启：127.0.0.1:7801\n电脑执行 adb forward tcp:17801 tcp:7801，再运行 scripts/android_robotd.py run（详见 BAM_SIMIO.md）。\n本地控制按钮接管时会关闭身体服务；网页仍可看视频。");});
+            publish(NativeSim.state(handle));
+        }catch(Exception e){stopBody();bodySession=null;NativeSim.bodyGain(handle,200);NativeSim.bodyTorque(handle,true);
+            throw new IllegalStateException("Cannot start SimIo body service",e);}
+    }
+    private void stopBody() {
+        if(simIo==null)return;
+        ++simIoGeneration;simIo.close();simIo=null;bodySession=null;
+        pause();NativeSim.bodyGain(handle,200);NativeSim.bodyTorque(handle,true);
+        main.post(()->{if(!destroyed && bodyInfo!=null)bodyInfo.setText("Rust 身体服务已关闭；本地控制已接管。");});
+    }
     private void stopLan() {
         lanGeneration++; remoteLease.release();
         if(video!=null) video.close();
@@ -511,20 +563,20 @@ public final class MainActivity extends Activity {
         main.post(()->{ if(!destroyed && networkInfo!=null) networkInfo.setText("局域网控制已关闭"); });
     }
     private void failed(Throwable e) {
-        pause(); stopLan(); policyEnabled=false; Log.e("MicroduckM1","Simulation error",e);
+        pause(); stopBody(); stopLan(); policyEnabled=false; Log.e("MicroduckM1","Simulation error",e);
         String text="暂停："+e.getClass().getSimpleName()+"\n"+e.getMessage();
         main.post(()->{ if(!destroyed) status.setText(text); });
     }
     @Override protected void onStop() {
         super.onStop();
         foreground=false;
-        if(!destroyed) worker.execute(()->{ pause(); stopLan(); }); // Local and LAN runs require a visible Activity.
+        if(!destroyed) worker.execute(()->{ pause(); stopBody(); stopLan(); }); // Local and LAN runs require a visible Activity.
     }
     @Override protected void onResume() { super.onResume(); foreground=true; if(preview!=null) preview.onResume(); }
     @Override protected void onPause() { if(preview!=null) preview.onPause(); super.onPause(); }
     @Override protected void onDestroy() {
         destroyed=true;
-        worker.execute(()->{ pause(); stopLan(); if(policies!=null) policies.close(); if(handle!=0) { NativeSim.close(handle); handle=0; } reports.close(); });
+        worker.execute(()->{ pause(); stopBody(); stopLan(); if(policies!=null) policies.close(); if(handle!=0) { NativeSim.close(handle); handle=0; } reports.close(); });
         worker.shutdown(); super.onDestroy();
     }
 }

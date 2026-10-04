@@ -1,0 +1,49 @@
+{
+  "scope": "Host C++/upstream Python BAM comparison, not Android device validation",
+  "scalar_cases": 1000,
+  "scalar_max_abs_error": 1.1102230246251565e-16,
+  "cpu_bam_600_steps_max_abs_error": 1.283417816466681e-13,
+  "wire_mouth_mapping_and_unavailable_load": true,
+  "reset_and_xml_switch": true,
+  "torque_off_is_limp": true,
+  "policy_rollouts": {
+    "alpha_stand": {
+      "seconds": 5.0,
+      "final_trunk_z": 0.11577629059181381,
+      "final_tilt_deg": 0.12836533452703422,
+      "max_tilt_deg": 2.2928519322810943,
+      "pitch_travel_deg": -0.14786148495944573,
+      "finite": true
+    },
+    "alpha_walking": {
+      "seconds": 5.0,
+      "final_trunk_z": 0.11937449731399377,
+      "final_tilt_deg": 2.8935704367798802,
+      "max_tilt_deg": 3.998288225551433,
+      "pitch_travel_deg": 0.6842702248106798,
+      "finite": true
+    },
+    "roulade": {
+      "seconds": 2.0,
+      "final_trunk_z": 0.11585326663742465,
+      "final_tilt_deg": 1.1791360117650953,
+      "max_tilt_deg": 178.2670109680756,
+      "pitch_travel_deg": 355.8610326412496,
+      "finite": true
+    }
+  },
+  "source_sha256": {
+    "app/src/main/cpp/bam_actuator.h": "5e3b570b6445fa4feec98e474b6e46e472ac4d1e26aacfcfb8c4e593a628211a",
+    "app/src/main/cpp/native_sim.cpp": "e24837aa959ee2335eba7b253386a5fe11f778e05ca78ee6fec48173dc37e76c",
+    "verification/bam-bridge.cpp": "736f628e2d16bcc2a799bbd1d2606dbcf475314e0688422c8a75986ca1479ac7",
+    "scripts/check_bam.py": "163866a810063ae8bf078a9cb5d8d3db72d0d88a7a89c2d6b0be3d1a5ec06399",
+    "BAM.lock.json": "e1e7c4bab8f626c471ee60d5166b58b8834a53f7222dfc3be2eb48d1eeb1dacb"
+  },
+  "upstream_bam_sha256": {
+    "model.py": "fed54ebf5ccdb1e15d1094e1a1b426a93c29a7dad5944e6861ff0cd023d900ed",
+    "mujoco.py": "62256992ef0d7a4d07e61aff19ff1b930b7e17deb522519f21687764ca02894d",
+    "actuator.py": "6927d7b2341cbaca0e5d872fae4ddce6200056885310d9ee5acaba1f34e09c13",
+    "dynamixel/actuator.py": "8d3ed39d68758981204901dd18dcce11dcb107b842067e036d2b8ac7b1411cec",
+    "params/xl330/m6.json": "61c699362fb3fabdde93eeba5e1ad3bf4ef9ca2f71d03e316b1924ff005b20d3"
+  }
+}

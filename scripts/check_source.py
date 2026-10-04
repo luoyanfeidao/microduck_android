@@ -27,8 +27,8 @@ def main():
     parser.add_argument("--ort-aar", type=pathlib.Path, required=True)
     parser.add_argument("--mujoco-dir", type=pathlib.Path, required=True,
                         help="Desktop MuJoCo 3.10.0 Python package with include/ and libmujoco")
-    parser.add_argument("--stage", default="M8.1")
-    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m81-checks.json")
+    parser.add_argument("--stage", default="M9")
+    parser.add_argument("--report", type=pathlib.Path, default=ROOT / "verification/m9-checks.json")
     parser.add_argument("--host-json-jar", type=pathlib.Path,
                         help="Host-only org.json jar to execute LAN loopback tests; not an APK dependency")
     args = parser.parse_args()
@@ -38,8 +38,9 @@ def main():
     java = args.java_home / "bin"
     sdk = args.android_sdk.resolve()
     mujoco = args.mujoco_dir.resolve()
-    if not run([java / "javac", "-version"]).startswith("javac 11"):
-        parser.error("Use JDK 11 to check the unchanged Android Studio build chain")
+    java_version = run([java / "javac", "-version"])
+    if not java_version.startswith(("javac 11", "javac 17")):
+        parser.error("Use JDK 17 (Studio) or the historical JDK 11 check toolchain")
     report = {"date": datetime.datetime.now().astimezone().isoformat(),
               "stage": args.stage + " source checks",
               "scope": "Host source checks only; no Gradle/APK/device execution"}
@@ -68,10 +69,12 @@ def main():
             raise ValueError("WebRTC AAR differs from pinned publisher artifact")
         sources = sorted((ROOT / "app/src/main/java/com/microduck/sim").glob("*.java"))
         sources += [ROOT / "verification" / (test + ".java") for test in
-                    ("SceneFrameCheck", "HeadCameraCheck", "RouladeWindowCheck", "RenderOptimizationCheck", "ReportDispatcherCheck", "NetworkControlCheck", "VideoFramesCheck", "CapturedReportCheck", "RtcSessionCheck")]
-        run([java / "javac", "-Xlint:all", "-cp",
+                    ("SceneFrameCheck", "HeadCameraCheck", "RouladeWindowCheck", "RenderOptimizationCheck", "ReportDispatcherCheck", "NetworkControlCheck", "VideoFramesCheck", "CapturedReportCheck", "RtcSessionCheck", "SimIoCheck")]
+        run([java / "javac", "--release", "11", "-Xlint:all", "-cp",
              f"{sdk / 'platforms/android-34/android.jar'}:{out / 'ort.jar'}:{out / 'webrtc.jar'}", "-d", out, *sources])
-        report["java_android34_ort120_jdk11_compile"] = "passed"
+        report["java_android34_ort120_compile"] = "passed"
+        report["java_compiler"] = java_version
+        report["java_release"] = 11
         for test in ("SceneFrameCheck", "HeadCameraCheck", "RouladeWindowCheck", "RenderOptimizationCheck", "ReportDispatcherCheck", "VideoFramesCheck"):
             report[test] = json.loads(run([java / "java", "-cp", out, "com.microduck.sim." + test]))
         if args.host_json_jar:
@@ -81,10 +84,13 @@ def main():
                 str(out) + ":" + str(args.host_json_jar.resolve()), "com.microduck.sim.CapturedReportCheck"]))
             report["RtcSessionCheck"] = json.loads(run([java / "java", "-cp",
                 str(out) + ":" + str(args.host_json_jar.resolve()), "com.microduck.sim.RtcSessionCheck"]))
+            report["SimIoCheck"] = json.loads(run([java / "java", "-cp",
+                str(out) + ":" + str(args.host_json_jar.resolve()), "com.microduck.sim.SimIoCheck"]))
         else:
             report["NetworkControlCheck"] = "Not executed; provide --host-json-jar for loopback tests"
             report["CapturedReportCheck"] = "Not executed; provide --host-json-jar for deferred JSON checks"
             report["RtcSessionCheck"] = "Not executed; provide --host-json-jar for signaling session tests"
+            report["SimIoCheck"] = "Not executed; provide --host-json-jar for body protocol tests"
         node = shutil.which("node")
         if node:
             script = (ROOT / "app/src/main/assets/controller.html").read_text().split("<script>", 1)[1].split("</script>", 1)[0]
@@ -112,7 +118,8 @@ def main():
                  library, exe])
             report[name] = json.loads(run([exe, ROOT / "app/src/main/assets/model/scene.xml",
                                           ROOT / "verification" / fixture]))
-    paths = [ROOT / "VIDEO_DEPENDENCIES.lock.json", ROOT / "gradle.properties",
+    paths = [ROOT / "BAM.lock.json", ROOT / "app/src/main/assets/licenses/BAM-APACHE-2.0.txt",
+             ROOT / "app/src/main/assets/licenses/BAM-NOTICES.txt", ROOT / "VIDEO_DEPENDENCIES.lock.json", ROOT / "gradle.properties",
              ROOT / "scripts/check_video_dependencies.py", ROOT / "app/build.gradle", ROOT / "app/src/main/AndroidManifest.xml",
              ROOT / "app/src/main/assets/controller.html", pathlib.Path(__file__).resolve()]
     paths += sorted((ROOT / "app/src/main/cpp").glob("*"))
@@ -127,7 +134,7 @@ def main():
                                 for p in paths if p.is_file()}
     report["baseline_device_report"] = "device-M3-realtime-render-test.json"
     report["previous_device_report"] = "device-M54-video-on-realtime-test.json (external viewer capture, not head camera)"
-    report["device_status"] = "M8 functional device verification user-confirmed; no new ADB codec or performance evidence. Pending user Android Studio " + args.stage + " build for four-digit LAN pairing; performance checks deferred by user"
+    report["device_status"] = "M8 functional device verification user-confirmed. Pending user Android Studio " + args.stage + " build for BAM and SimIo body; performance checks deferred by user"
     target = args.report
     target.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))

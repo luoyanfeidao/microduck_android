@@ -1,10 +1,12 @@
-# M8.1：独立机器人相机与硬件编码 WebRTC
+# M9：独立机器人相机与硬件编码 WebRTC
 
-当前源码 `0.8.1-m81` / versionCode=16，手机标题 `Microduck · Android M8.1`。由用户在Android Studio Sync、编译、安装和运行。两项优先工作均已实现：独立相机 EGL/Surface 与 WebRTC 视频轨道/硬件编码。用户已反馈M8“实机验证正常”，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)。M8.1仅将局域网访问码改为4位数字；实际codec/硬件编码器细节未另取设备报告，性能/温升长测仍延期。
+当前源码 `0.9.0-m9` / versionCode=17，手机标题 `Microduck · Android M9`。由用户在Android Studio Sync、编译、安装和运行。两项优先工作均已实现：独立相机 EGL/Surface 与 WebRTC 视频轨道/硬件编码。用户已反馈M8“实机验证正常”，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)。M8.1仅将局域网访问码改为4位数字；实际codec/硬件编码器细节未另取设备报告，性能/温升长测仍延期。
+
+M9增加BAM与Rust身体服务，见 [BAM_SIMIO.md](BAM_SIMIO.md)。视频链路保持；身体服务期间网页只监看，动作控制由Rust接管。M8功能已由用户确认，M9仍待Studio运行。
 
 ## Studio运行与功能验收
 
-1. Sync、Build、Run；确认标题M8.1。首次Sync下载Stream WebRTC 1.3.9及传递依赖，当前Studio使用JBR 17.0.14作为Gradle JDK；AGP7.2.2/Gradle7.5保持，Java源码/输出兼容级别为11。
+1. Sync、Build、Run；确认标题M9。首次Sync下载Stream WebRTC 1.3.9及传递依赖，当前Studio使用JBR 17.0.14作为Gradle JDK；AGP7.2.2/Gradle7.5保持，Java源码/输出兼容级别为11。
 2. 手机保持应用前台，开启局域网控制；控制设备用同一Wi-Fi/热点，刷新控制网页，使用本次4位数字访问码连接。
 3. 勾选“开启机器人摄像头”，默认WebRTC。画面下方应显示 `video/H264` 或实际协商codec、解码累计帧和接收FPS。设置是优先H.264，不能把“设置了优先”当成已经协商成功。
 4. 手机关闭“显示3D”，点站立/前进：浏览器相机应继续随机器人头部运动；开启3D并拖动外部观察视角，相机应仍由头部姿态决定。
@@ -96,7 +98,7 @@ adb -s <SERIAL> logcat -d -s MicroduckM1:I HardwareVideoEncoder:D SurfaceTexture
 
 M7灰屏修复及M7.1整圈翻滚已有用户确认。M8新增Java/实际AAR/ARM64 JNI、相机/物理对照、HTTP信令认证/大小、会话替换与乱序、浏览器异步控制检查见 [verification/m8-checks.json](verification/m8-checks.json)。这些不能证明Android实际EGL/编码器/媒体连接已运行成功。
 
-- `app/src/main/java/com/microduck/sim/MainActivity.java:279`：worker生成快照并分别送预览/相机。
+- `app/src/main/java/com/microduck/sim/MainActivity.java:296`：worker生成快照并分别送预览/相机。
 - `app/src/main/java/com/microduck/sim/SceneRenderer.java:148`：相机投影/剔除/FBO。
 - `app/src/main/java/com/microduck/sim/SceneRenderer.java:183`：FBO到独立Surface。
 - `app/src/main/java/com/microduck/sim/VideoCapture.java:34`：独立EGL和helper。

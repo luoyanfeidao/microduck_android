@@ -1,0 +1,14 @@
+BAM M6 / Dynamixel XL330 actuator port
+
+Derived from Better Actuator Models (BAM): https://github.com/Rhoban/bam
+Copyright 2025 Marc Duclusaud & Grégoire Passault
+Apache License 2.0; full license in BAM-APACHE-2.0.txt.
+Pinned upstream revision: 62bd8ce12154340be97e06f7f41a0ca8f116d967 (mjlab_frictionloss)
+Reference files: bam/model.py, bam/actuator.py, bam/mujoco.py,
+bam/dynamixel/actuator.py, bam/params/xl330/m6.json.
+
+Android changes: C++ implementation of the XL330 PWM/back-EMF and M6 friction
+equations, MuJoCo actuator conversion, deterministic 7.4 V / 0.1 sag profile,
+single simulation-worker ownership, switchable XML baseline, explicit torque-off
+and reset handling. Python/BAM/PyTorch are not runtime dependencies of this APK.
+Parameter and reference-source hashes are recorded in BAM.lock.json in the source repository.

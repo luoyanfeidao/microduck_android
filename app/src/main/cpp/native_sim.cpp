@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include "visual_snapshot.h"
+#include "bam_actuator.h"
 
 namespace {
 using Clock = std::chrono::steady_clock;
@@ -30,6 +31,7 @@ struct Simulation {
     int root_qpos = -1, root_dof = -1;
     double base_gain[N] = {}, previous_target[N] = {};
     bool has_previous_target = false, home_placement = false;
+    duck_bam::Actuators bam;
     ~Simulation() { if (data) mj_deleteData(data); if (model) mj_deleteModel(model); }
 };
 std::string utf(JNIEnv* env, jstring value) {
@@ -56,15 +58,17 @@ void reset(Simulation& s, int key) {
     mj_resetDataKeyframe(s.model, s.data, key);
     s.key = key; s.steps = 0; s.last_batch_ms = 0;
     s.home_placement = false; s.has_previous_target = false;
-    for(int i=0;i<N;++i) {
+    for(int i=0;i<N && !s.bam.enabled;++i) {
         s.model->actuator_gainprm[s.actuators[i]*mjNGAIN] = s.base_gain[i];
         s.model->actuator_biasprm[s.actuators[i]*mjNBIAS+1] = -s.base_gain[i];
     }
+    s.bam.reset(s.model,s.data);
     mj_forward(s.model, s.data);
     if (!finite(s)) throw std::runtime_error("Non-finite reset state");
 }
 void one_step(Simulation& s) {
     if (!finite(s)) throw std::runtime_error("Non-finite input state");
+    s.bam.update(s.model,s.data);
     mj_step(s.model, s.data); ++s.steps;
     if (!finite(s) || s.data->warning[mjWARN_BADQPOS].number ||
         s.data->warning[mjWARN_BADQVEL].number || s.data->warning[mjWARN_BADQACC].number) {
@@ -94,15 +98,65 @@ void apply_scaled_action(Simulation& s,const float* raw,double scale,double gain
         double target=HOME[i]+scale*raw[i];
         double alpha=(i>=5 && i<=8)?.5:.7;
         if(filter && s.has_previous_target) target=alpha*target+(1-alpha)*s.previous_target[i];
-        s.data->ctrl[s.actuators[i]]=target; s.previous_target[i]=target;
+        if(s.bam.enabled) s.bam.targets[i]=target;
+        else s.data->ctrl[s.actuators[i]]=target;
+        s.previous_target[i]=target;
         double gain=s.base_gain[i]*gain_ratio;
-        s.model->actuator_gainprm[s.actuators[i]*mjNGAIN]=gain;
-        s.model->actuator_biasprm[s.actuators[i]*mjNBIAS+1]=-gain;
+        if(!s.bam.enabled) {
+            s.model->actuator_gainprm[s.actuators[i]*mjNGAIN]=gain;
+            s.model->actuator_biasprm[s.actuators[i]*mjNBIAS+1]=-gain;
+        }
     }
     s.has_previous_target=true;
+    s.bam.kp=200*gain_ratio; s.bam.powered=true;
 }
 void apply_policy_action(Simulation& s,const float* raw,bool standing,bool filter) {
     apply_scaled_action(s,raw,standing?1.0:.9,standing?.8:1.0,filter);
+}
+void body_targets(Simulation& s,const double* wire) {
+    for(int i=0;i<15;++i) if(!std::isfinite(wire[i]) || std::abs(wire[i])>100)
+        throw std::runtime_error("Invalid SimIo target");
+    for(int i=0;i<N;++i) {
+        double target=wire[i<9?i:i+1]; // Slot 9 is the unmodelled mouth.
+        s.bam.targets[i]=target;
+        if(!s.bam.enabled) s.data->ctrl[s.actuators[i]]=target;
+    }
+    s.has_previous_target=false;
+}
+void body_gain(Simulation& s,int kp) {
+    if(kp<0 || kp>65535) throw std::runtime_error("Invalid firmware gain");
+    s.bam.kp=kp;
+    if(!s.bam.enabled) for(int i=0;i<N;++i) {
+        double gain=s.bam.powered?s.base_gain[i]*kp/200.0:0;
+        s.model->actuator_gainprm[s.actuators[i]*mjNGAIN]=gain;
+        s.model->actuator_biasprm[s.actuators[i]*mjNBIAS+1]=-gain;
+    }
+}
+void body_torque(Simulation& s,bool on) {
+    s.bam.powered=on;
+    if(on) for(int i=0;i<N;++i) {
+        double q=s.data->qpos[s.qpos[i]]; s.bam.targets[i]=q;
+        if(!s.bam.enabled) s.data->ctrl[s.actuators[i]]=q;
+    }
+    body_gain(s,static_cast<int>(s.bam.kp));
+    if(!on && s.bam.enabled) for(int i=0;i<N;++i) s.data->ctrl[s.actuators[i]]=0;
+}
+std::string body_sensors(const Simulation& s) {
+    if(!finite(s)) throw std::runtime_error("Non-finite body sensors");
+    std::ostringstream o; o<<std::setprecision(17)<<"{\"positions\":[";
+    for(int w=0;w<15;++w) { if(w) o<<","; o<<(w==9?0:s.data->qpos[s.qpos[w<9?w:w-1]]); }
+    o<<"],\"velocities\":[";
+    for(int w=0;w<15;++w) { if(w) o<<","; o<<(w==9?0:s.data->qvel[s.qvel[w<9?w:w-1]]); }
+    const auto* quat=s.data->qpos+s.root_qpos+3;
+    mjtNum rotation[9]; mju_quat2Mat(rotation,quat);
+    o<<"],\"imu\":{\"gyro\":[";
+    for(int i=0;i<3;++i) { if(i) o<<","; o<<s.data->qvel[s.root_dof+3+i]; }
+    o<<"],\"gravity\":[";
+    for(int i=0;i<3;++i) { if(i) o<<","; o<<-rotation[6+i]; }
+    o<<"],\"quat\":[";
+    for(int i=0;i<4;++i) { if(i) o<<","; o<<quat[i]; }
+    o<<"]},\"sim_time\":"<<s.data->time<<",\"trunk_z\":"<<s.data->qpos[s.root_qpos+2]<<"}";
+    return o.str(); // No currents_ma: no calibrated load sensor is modelled.
 }
 std::string state(const Simulation& s) {
     int feet[2] = {0,0};
@@ -134,6 +188,9 @@ std::string state(const Simulation& s) {
       << ",\"right_contacts\":" << feet[1]
       << ",\"foot_geoms_resolved\":" << (s.floor >= 0 && s.left_foot >= 0 && s.right_foot >= 0 ? "true" : "false")
       << ",\"finite\":" << (finite(s) ? "true" : "false")
+      << ",\"actuator_model\":\"" << (s.bam.enabled?"bam-xl330-m6":"xml-position") << "\""
+      << ",\"firmware_kp\":" << s.bam.kp << ",\"torque_on\":" << (s.bam.powered?"true":"false")
+      << ",\"bam_effective_volts\":" << s.bam.effective_volts
       << ",\"last_batch_ms\":" << s.last_batch_ms << "}";
     return o.str();
 }
@@ -220,6 +277,26 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_microduck_sim_NativeSim_benchmark(
 extern "C" JNIEXPORT void JNICALL Java_com_microduck_sim_NativeSim_close(JNIEnv*,jclass,jlong handle) {
     delete reinterpret_cast<Simulation*>(static_cast<std::uintptr_t>(handle));
 }
+extern "C" JNIEXPORT void JNICALL Java_com_microduck_sim_NativeSim_setBam(JNIEnv* env,jclass,jlong handle,jboolean enabled) {
+    try { auto& s=sim(handle); s.bam.configure(s.model,s.data,s.actuators,enabled);
+        reset(s,mj_name2id(s.model,mjOBJ_KEY,"SIT"));
+    } catch(const std::exception& e) { fail(env,e); }
+}
+extern "C" JNIEXPORT jstring JNICALL Java_com_microduck_sim_NativeSim_bodySensors(JNIEnv* env,jclass,jlong handle) {
+    try { return java_string(env,body_sensors(sim(handle))); } catch(const std::exception& e) { fail(env,e); return nullptr; }
+}
+extern "C" JNIEXPORT void JNICALL Java_com_microduck_sim_NativeSim_bodyTargets(JNIEnv* env,jclass,jlong handle,jdoubleArray targets) {
+    try {
+        if(!targets || env->GetArrayLength(targets)!=15) throw std::runtime_error("Expected 15 SimIo targets");
+        double wire[15]; env->GetDoubleArrayRegion(targets,0,15,wire); body_targets(sim(handle),wire);
+    } catch(const std::exception& e) { fail(env,e); }
+}
+extern "C" JNIEXPORT void JNICALL Java_com_microduck_sim_NativeSim_bodyGain(JNIEnv* env,jclass,jlong handle,jint kp) {
+    try { body_gain(sim(handle),kp); } catch(const std::exception& e) { fail(env,e); }
+}
+extern "C" JNIEXPORT void JNICALL Java_com_microduck_sim_NativeSim_bodyTorque(JNIEnv* env,jclass,jlong handle,jboolean on) {
+    try { body_torque(sim(handle),on); } catch(const std::exception& e) { fail(env,e); }
+}
 
 extern "C" JNIEXPORT jstring JNICALL Java_com_microduck_sim_NativeSim_resetHome(JNIEnv* env,jclass,jlong handle) {
     try {
@@ -229,9 +306,12 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_microduck_sim_NativeSim_resetHome(
         root[0]=root[1]=0; root[2]=.125; root[3]=1; root[4]=root[5]=root[6]=0;
         for(int i=0;i<N;++i) {
             s.data->qpos[s.qpos[i]]=HOME[i]; s.data->ctrl[s.actuators[i]]=HOME[i];
-            s.model->actuator_gainprm[s.actuators[i]*mjNGAIN]=s.base_gain[i];
-            s.model->actuator_biasprm[s.actuators[i]*mjNBIAS+1]=-s.base_gain[i];
+            if(!s.bam.enabled) {
+                s.model->actuator_gainprm[s.actuators[i]*mjNGAIN]=s.base_gain[i];
+                s.model->actuator_biasprm[s.actuators[i]*mjNBIAS+1]=-s.base_gain[i];
+            }
         }
+        s.bam.reset(s.model,s.data);
         mj_forward(s.model,s.data); return java_string(env,state(s));
     } catch(const std::exception& e) { fail(env,e); return nullptr; }
 }

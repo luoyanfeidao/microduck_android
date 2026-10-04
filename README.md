@@ -1,4 +1,4 @@
-# Android Studio 施工入口（M8.1：4位访问码 + 独立机器人相机 / WebRTC）
+# Android Studio 施工入口（M9：BAM执行器 + Rust SimIo身体服务）
 
 在 Android Studio 中打开当前目录 `android-sim`，不要打开外层 Microduck 目录。由你完成 Sync、编译、安装和真机运行。
 
@@ -6,11 +6,13 @@
 
 当前实现是 **Android arm64 上的 MuJoCo + ONNX + 3D 测试应用**：加载桌面 duck-body 使用的 `scene.xml → robot_groundcontact.xml`，保留 M1/M2 测试、真实 CAD 网格视图和按墙钟运行的30秒测试。另一台Android浏览器可发站立/步行/前滚翻/暂停/复位命令并读状态；视频来自模型的 `head_camera`，随机器人头部运动。手机保留外部观察视角。控制见 [NETWORK.md](NETWORK.md)，相机见 [VIDEO.md](VIDEO.md)，前滚翻见 [SKILLS.md](SKILLS.md)。
 
-**当前功能开发 M8.1：** `0.8.1-m81` / versionCode=16，标题 `Microduck · Android M8.1`。局域网访问码改为4位数字，每次开启服务重新随机生成，保留前导零。用户已反馈M8实机验证正常，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)。机器人相机拥有独立 EGL 上下文和 Surface，关闭手机“显示3D”后仍能出流。网页提供 WebRTC（目标20FPS、优先H.264硬件编码、单观看者）与JPEG兼容模式（640×360、10FPS、质量70）。在Studio重新Build、Run，保持应用前台，开启LAN并刷新控制网页，输入新4位访问码。保留站立/步行、2秒翻滚、滤波、伺服及50Hz控制基线，抬头慢/僵硬未在这次改动中修复。视频方案、架构和功能验收见 [VIDEO.md](VIDEO.md)。
+**当前功能开发 M9：** `0.9.0-m9` / versionCode=17。默认使用BAM XL330 M6执行器，可切回XML伺服；新增USB SimIo身体服务，由桌面原版Rust robotd控制Android MuJoCo身体。APK没有嵌入Rust。方案、架构、控制权和运行命令见 [BAM_SIMIO.md](BAM_SIMIO.md)。JDK17/release11源码回归见 [m9-checks.json](verification/m9-checks.json)，BAM数值对照见 [m9-bam-checks.json](verification/m9-bam-checks.json)，真实Rust/Java/JNI及完整robotd联调见 [m9-simio-checks.json](verification/m9-simio-checks.json)。M9待用户Studio编译运行；主机验证不能代替设备动作质量确认。
 
-**详细技术说明：** [PDF](docs/Android_Microduck_方案架构与编译复用说明.pdf) / [Markdown](docs/Android_Microduck_方案架构与编译复用说明.md)，重点说明Android与两个Pollen仓库的资源复用、构建边界、NDK引擎编译、训练BAM差异，并包含架构图、关键源码注解、依赖及使用方法。生成与源码引用检查见 [docs/README.md](docs/README.md)。
+**历史功能 M8.1：** `0.8.1-m81` / versionCode=16，标题 `Microduck · Android M8.1`。局域网访问码改为4位数字，每次开启服务重新随机生成，保留前导零。用户已反馈M8实机验证正常，记录见 [user-M8-video-feedback.json](verification/user-M8-video-feedback.json)。机器人相机拥有独立 EGL 上下文和 Surface，关闭手机“显示3D”后仍能出流。网页提供 WebRTC（目标20FPS、优先H.264硬件编码、单观看者）与JPEG兼容模式（640×360、10FPS、质量70）。在Studio重新Build、Run，保持应用前台，开启LAN并刷新控制网页，输入新4位访问码。保留站立/步行、2秒翻滚、滤波、伺服及50Hz控制基线，抬头慢/僵硬未在这次改动中修复。视频方案、架构和功能验收见 [VIDEO.md](VIDEO.md)。
 
-**检查边界：** [verification/m81-checks.json](verification/m81-checks.json)验证实际WebRTC AAR/JDK11 Java编译、JNI/物理/相机对照、动作窗口及网页/HTTP协议，覆盖4位访问码、前导零保留、非法格式拒绝、信令大小、会话替换、迟到回调、关闭与offer乱序检查。依赖AAR、arm64库及原AGP7.2.2 D8的转换检查见 [m8-video-dependencies.json](verification/m8-video-dependencies.json)。M8设备功能已获用户确认，尚无这次实际codec及性能的新增ADB证据；M8.1访问码修改待用户Studio编译运行。用户已确认M7摄像头正常、M7.1整圈翻滚通过，反馈抬头慢、整体动作僵硬；只读手机日志证据见 [device-M71-roll-acceptance.json](verification/device-M71-roll-acceptance.json)。采样未见推理瓶颈，主机对照发现交接时头颈恢复不同步、视线先向下再恢复；关闭恢复阶段头部滤波仅小幅改善，诊断见 [SKILLS.md](SKILLS.md)。当前保留已通过的2秒配置，不宣称任意起始姿态成功或动作质量已修复。代理未打包/安装/运行APK。性能、温升及前后台验收按用户要求延期。下面M5/M5.4数据是外部观察窗口画面的历史结果。
+**详细技术说明（保留M8.1快照，本轮不同步）：** [PDF](docs/Android_Microduck_方案架构与编译复用说明.pdf) / [Markdown](docs/Android_Microduck_方案架构与编译复用说明.md)，重点说明Android与两个Pollen仓库的资源复用、构建边界、NDK引擎编译、训练BAM差异，并包含架构图、关键源码注解、依赖及使用方法。生成与源码引用检查见 [docs/README.md](docs/README.md)。
+
+**历史检查边界（M8.1）：** [verification/m81-checks.json](verification/m81-checks.json)验证实际WebRTC AAR/JDK11 Java编译、JNI/物理/相机对照、动作窗口及网页/HTTP协议，覆盖4位访问码、前导零保留、非法格式拒绝、信令大小、会话替换、迟到回调、关闭与offer乱序检查。依赖AAR、arm64库及原AGP7.2.2 D8的转换检查见 [m8-video-dependencies.json](verification/m8-video-dependencies.json)。M8设备功能已获用户确认，尚无这次实际codec及性能的新增ADB证据；M8.1访问码修改待用户Studio编译运行。用户已确认M7摄像头正常、M7.1整圈翻滚通过，反馈抬头慢、整体动作僵硬；只读手机日志证据见 [device-M71-roll-acceptance.json](verification/device-M71-roll-acceptance.json)。采样未见推理瓶颈，主机对照发现交接时头颈恢复不同步、视线先向下再恢复；关闭恢复阶段头部滤波仅小幅改善，诊断见 [SKILLS.md](SKILLS.md)。当前保留已通过的2秒配置，不宣称任意起始姿态成功或动作质量已修复。代理未打包/安装/运行APK。性能、温升及前后台验收按用户要求延期。下面M5/M5.4数据是外部观察窗口画面的历史结果。
 
 **历史M5.4视频开启30秒验收通过：** `0.5.4-m54` / versionCode=11。1501周期/6004物理步、墙钟30.007秒/仿真30.02秒，完整工作线程p99=10.648ms/max=19.772ms、超20ms周期0，调度迟到超过20ms周期0；手机30.03FPS、视频298发布帧/9.93FPS、265帧提供HTTP、采集错误0，数值及最终位姿与M5.3一致。报告捕获平均0.285ms/max=0.519ms，队列提交max=0.087ms。证据 [verification/device-M54-video-acceptance.json](verification/device-M54-video-acceptance.json)。单次最大预算余量0.228ms，温度/频率未控制，不代表长期或硬实时保证。
 
@@ -124,7 +126,7 @@ Mac 上可重复执行；下面路径对应本机环境，其他机器按实际�
 ```bash
 # 在 android-sim 目录执行；先准备好模型 assets。
 python3 scripts/check_source.py \
-  --java-home /Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home \
+  --java-home /Users/navinfo/Library/Java/JavaVirtualMachines/jbr-17.0.14/Contents/Home \
   --android-sdk /Users/navinfo/Android/sdk \
   --ort-aar /private/tmp/microduck-onnxruntime-android-1.20.0.aar \
   --webrtc-aar /private/tmp/microduck-webrtc-stream-1.3.9.aar \
@@ -137,11 +139,11 @@ python3 scripts/check_source.py \
 
 观测：`gyro[3] + gravity[3] + (q-home)[14] + qvel[14] + previous_raw_action[14] + command[13]`。Free joint 的角速度直接作为躯干局部 gyro；投影重力为 `Rᵀ × [0,0,-1]`。关节按名字定位 qpos/qvel/actuator，不假设数组偏移。命令依次为 twist(3)、head(4)、body(6)，body x/y/yaw 强制零。
 
-命令模长 `<0.05` 用 stand，其余用 walk；目标为 `HOME + scale × raw_action`，stand scale=1.0/gain=160，walk scale=0.9/gain=200。XML 增益按 gain/200 缩放。原始 action 写回下一帧观测，不把目标角或滤波结果写回。
+命令模长 `<0.05` 用 stand，其余用 walk；目标为 `HOME + scale × raw_action`，stand scale=1.0/gain=160，walk scale=0.9/gain=200。BAM直接使用固件gain；切回XML时增益按gain/200缩放。原始 action 写回下一帧观测，不把目标角或滤波结果写回。
 
 过滤复选框默认采用 Rust `Tuning::default` 的目标 EMA：头 alpha=0.5、腿 alpha=0.7，第一帧不滤波；可以关闭做 A/B。训练仓库要求无 action low-pass，与运行时存在差异，所以这里明确记录设置，不声称与训练物理完全一致。没有对头目标再加一次命令，也没有额外观测归一化；现有 ONNX 自带 normalizer。
 
-这是桌面 duck-body 的 **XML 位置伺服**路径，不是训练用 BAM M6。未移植 Rust 的完整 Safety、调度、skill、command EMA 或参数覆盖，仅在仿真内测试，不能直接控制实物机器人。
+M9默认使用BAM M6的名义参数CPU实现，XML位置伺服保留作对照；训练的随机化与执行器延迟尚未移植。本地Android策略没有Rust完整Safety/skill等逻辑；开启SimIo身体服务时，这些逻辑由电脑原版robotd执行，详见 [BAM_SIMIO.md](BAM_SIMIO.md)。本项目连接仿真身体，不直接控制实物机器人。
 
 换 ONNX 后要重新生成桌面对照，不能只更新 manifest：
 
