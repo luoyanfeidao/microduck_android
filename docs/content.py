@@ -16,7 +16,7 @@ def write_content(api):
     p('直接证据：' + ref('A/app/build.gradle', 'tasks.register') + '；' +
       ref('A/app/src/main/cpp/CMakeLists.txt', 'add_library(microduck_m1') + '；' +
       ref('A/scripts/prepare_assets.py', 'SOURCE=') + '。当前版本来源：' + ref('A/app/build.gradle', "versionName") + '。')
-    note('本说明核对M7.1源码及已有验证记录。用户继续通过Studio构建、安装、运行；本轮只生成文档，未构建APK、运行训练或操作手机按钮。')
+    note('本说明核对M8源码及已有验证记录。M8落地独立相机EGL/Surface与硬件WebRTC，主机检查通过；实际APK与新增视频功能尚待用户Studio编译运行。没有运行Gradle、打包APK、训练或自动操作手机按钮。')
 
     section('三个项目的职责与复用类型', '文件复用、代码移植、设计借鉴分别列出。')
     diagram('reuse', '三个仓库的输入边界；本地ONNX位于runtime仓库目录，不代表由Rust编译器生成。')
@@ -34,7 +34,7 @@ def write_content(api):
     diagram('build', '这是逻辑依赖图；Java与原生任务的具体调度由Gradle决定。')
     table(['构建分支', '输入', '输出'], [
         ['资源', 'scene.xml/robot_groundcontact.xml/附加XML/STL；三份ONNX', 'assets/model和assets/policies的副本与摘要清单'],
-        ['Java', 'Android Java源码、Android SDK、ORT Android AAR', 'DEX；AAR的Java/native依赖合并进APK'],
+        ['Java', 'Android Java源码、Android SDK、ORT与WebRTC Android AAR', 'DEX；AAR的Java/native依赖合并进APK'],
         ['Native', 'MuJoCo上游源码、native_sim.cpp/visual_snapshot.h、NDK', 'libmujoco.so、libmicroduck_m1.so，ABI=arm64-v8a'],
         ['打包', 'Manifest、DEX、assets、共享库', 'APK，由Studio安装运行；不会附带.venv或Rust daemon'],
     ], [66, 270, 173])
@@ -43,7 +43,7 @@ def write_content(api):
     section('Gradle如何触发资源和原生编译', '关键代码：app/build.gradle。')
     code('A/app/build.gradle', "dependencies {", 10)
     p('注解①：ONNX Runtime以implementation依赖加入，Gradle从Maven仓库解析AAR。AAR提供Java推理API及对应Android native库，工程没有在CMake中从源码构建ORT。')
-    p('注解②：prepareModelAssets的工作目录是Android根目录；脚本路径由app模块向上定位到scripts。preBuild依赖该Exec任务，因此正常Studio构建会执行资源收集，不要求用户先手工复制assets。')
+    p('注解②：Stream WebRTC 1.3.9同样以预编译AAR加入；MediaCodec编码及WebRTC传输来自Android SDK/AAR，不从Pollen仓库或GStreamer编译。固定来源和摘要见VIDEO_DEPENDENCIES.lock.json。注解③：prepareModelAssets的工作目录是Android根目录；脚本路径由app模块向上定位到scripts。preBuild依赖该Exec任务，因此正常Studio构建会执行资源收集，不要求用户先手工复制assets。')
     code('A/app/build.gradle', "ndk { abiFilters", 11)
     p('注解③：abiFilters只打arm64-v8a；externalNativeBuild只请求microduck_m1目标，它通过target_link_libraries带入MuJoCo。ANDROID_STL=c++_static指定应用原生构建所用C++运行库；不能据此推断ORT AAR内部如何构建。')
     p('AGP插件版本与仓库设置：' + ref('A/build.gradle', "classpath") + '、' + ref('A/settings.gradle', 'repositoriesMode') +
@@ -78,13 +78,14 @@ def write_content(api):
         ['Android构建', 'JDK11 / Gradle7.5 / AGP7.2.2', 'Java11编译链；A/app/build.gradle、A/build.gradle、Wrapper配置'],
         ['Android构建', 'SDK34 / NDK25.1.8937393 / CMake3.30.3', 'compile/target=34、min=28；交叉编译arm64；' + ref('A/app/build.gradle', "ndkVersion")],
         ['资源收集', 'Python3.9+，标准库；Git', 'Path.is_relative_to等用于复制/摘要；不导入torch/mjlab；' + ref('A/scripts/prepare_assets.py', 'from pathlib')],
-        ['Android运行', 'MuJoCo3.10.0 / ORT Android1.20.0', '原生物理与Java CPU推理；' + ref('A/app/build.gradle', "implementation")],
-        ['Android运行', 'GLES3 / Android Bitmap/JPEG / Java Socket', 'SDK平台能力；Manifest要求GLES3及INTERNET；' + ref('A/app/src/main/AndroidManifest.xml', 'uses-feature')],
+        ['Android运行', 'MuJoCo3.10.0 / ORT Android1.20.0', '原生物理与Java CPU推理；' + ref('A/app/build.gradle', "implementation 'com.microsoft.onnxruntime")],
+        ['Android运行', 'Stream WebRTC1.3.9 / GLES3 / JPEG / Socket', 'SDK平台能力；Manifest要求GLES3及INTERNET；' + ref('A/app/src/main/AndroidManifest.xml', 'uses-feature')],
         ['主机对照', 'mujoco / numpy / onnxruntime / 可选org.json JAR', 'Python预演和Mac Java协议检查；不作为训练依赖打包进APK；' + ref('A/scripts/check_source.py', 1)],
         ['训练端', 'Python3.12 / mjlab1.3.0 / warp-lang1.12.0 / torch2.9.1 / BAM', 'pyproject当前声明；CUDA训练条件与Android无关；' + ref('T/pyproject.toml', 'requires-python =')],
         ['桌面Rust仿真', 'Cargo/Rust、Python身体端；相机需GStreamer', 'scripts/duck-sim启动真实Rust daemon与Python身体；Android不调用这条链。'],
     ], [68, 172, 269])
     p('MuJoCo当前缓存优先复用ccd、lodepng、marchingcubecpp、miniz、qhull、tinyobjloader、tinyxml2源码；缺失时由上游FetchContent按固定提交下载。见 ' + ref('A/app/src/main/cpp/CMakeLists.txt', 'foreach(DEP') + '。Eigen3/abseil等在上游特定构建分支出现，不应把依赖文件列出的所有测试/示例依赖都当成APK组件。')
+    p('M8固定WebRTC AAR class major55/minSdk21/arm64 JNI 16KB对齐；实际AGP7.2.2内D8 3.2.74成功转换AAR classes、Kotlin stdlib1.9.25和annotation-jvm1.9.1，无警告。只检查依赖DEX、未构建应用或APK，结果 ' + ref('A/verification/m8-video-dependencies.json', 1) + '；整个APK仍有ORT的4KB限制。')
     note('文档导出工具reportlab/PyMuPDF/Pillow只用于生成PDF和检查排版，不进入应用。Android本机SDK路径、构建缓存与模型副本不纳入Git。')
 
     section('CAD、JSON、MJCF与Android模型收集', '“JSON转XML”发生在模型制作环节，Android构建消费其产物。')
@@ -135,7 +136,9 @@ def write_content(api):
     table(['线程/模块', '拥有的状态', '传给其他模块的数据'], [
         ['UI / MainActivity', '按钮、视图、Activity生命周期', '任务投递；不直接读mjData'],
         ['单worker', 'Native句柄、策略Session、previous action、速度、翻滚窗口', '不可变场景快照、已捕获报告字段'],
-        ['GLES线程', '网格GPU缓冲、观察视角、相机FBO', 'RGBA帧；不持有mjData指针'],
+        ['预览GLES线程', '独立GPU网格、外部观察视角', '只消费CPU快照；不访问mjData'],
+        ['相机GL线程', '独立EGL/Surface、GPU网格、相机FBO', 'Surface图像；JPEG模式才RGBA读回'],
+        ['WebRTC / helper', 'peer/track/source、OES纹理/引用计数、硬件编码器', 'ICE信令与DTLS-SRTP视频；不访问MuJoCo'],
         ['报告线程', '待写最新状态、已完成测试队列', '文件/logcat/HTTP JSON缓存'],
         ['HTTP线程', 'socket、请求验证、有限队列', '命令投递；只读JSON及最新JPEG'],
         ['JPEG线程', '单个采集任务的像素缓冲、Bitmap', '最新不可变JPEG'],
@@ -191,16 +194,21 @@ def write_content(api):
     p('Native层从MuJoCo编译后的网格构建索引顶点/法线，保持硬边；场景快照携带每个可见geom的mesh id、世界位置/旋转、颜色与接触点。每个快照没有mjData指针；Java/GLES依据数组绘制。')
     p('快照v2结构：9float头 + 每geom17float + 每contact3float + 相机尾16float。相机尾包括存在/FOV/位置3/旋转9/near/far。MuJoCo row-major 3×3转GLES column-major 4×4由SceneFrame处理。依据 ' + ref('A/app/src/main/cpp/visual_snapshot.h', 'constexpr int kHeader') + '、' + ref('A/app/src/main/java/com/microduck/sim/SceneFrame.java', 'void modelMatrix') + '。')
     p('相机姿态在快照中右乘diag(1,-1,-1)，沿用桌面local X 180°修正，不修改MJCF。GLES用独立640×360 FBO、模型FOV/裁剪重新绘制；JPEG质量70、目标10FPS；网页再顺时针90°。')
-    p('相机灰屏修复只在相机pass启用GL_BACK/GL_CCW背面剔除，避免镜头/头壳内部背面遮挡。手机观察视角保持独立、可拖动。GLES共享Surface/上下文，关闭3D或离开应用时无法独立提供相机。')
-    p('关键来源：' + ref('A/app/src/main/java/com/microduck/sim/RobotSurfaceView.java', 'void renderHeadCamera') + '；' + ref('A/app/src/main/java/com/microduck/sim/VideoCapture.java', 'private void capture()') + '；桌面对照 ' + ref('T/src/mjlab_microduck/sim/camera.py', 94) + '、' + ref('R/mediad/src/main.rs', 229) + '。')
+    p('相机灰屏修复只在相机pass启用GL_BACK/GL_CCW背面剔除，避免镜头/头壳内部背面遮挡。手机观察视角保持独立、可拖动。M8由预览与相机分别实例化SceneRenderer，各自拥有GPU网格与EGL上下文；关闭手机3D仍更新相机快照。相机的独立Surface由SurfaceTextureHelper承接，硬件编码器通过共享纹理上下文消费；离开应用仍暂停并关闭LAN。')
+    p('关键来源：' + ref('A/app/src/main/java/com/microduck/sim/SceneRenderer.java', 'void renderHeadCamera') + '；' + ref('A/app/src/main/java/com/microduck/sim/VideoCapture.java', 'private void capture()') + '；桌面对照 ' + ref('T/src/mjlab_microduck/sim/camera.py', 94) + '、' + ref('R/mediad/src/main.rs', 229) + '。')
 
-    section('浏览器控制、状态与JPEG传输', '同局域网HTTP；控制与视频请求独立。')
+    p('WebRTC目标20FPS，HardwareVideoEncoderFactory优先H.264、上限1.5Mbps；JPEG保留目标10FPS/质量70作手动兼容模式。RTC纹理路径不执行应用层glReadPixels/JPEG。SurfaceTextureHelper处理纹理引用计数和BufferQueue/EGL同步，占用时跳过采集；是否实际Surface编码仍需设备日志。RTC携带90°旋转，浏览器video不再叠加CSS旋转。')
+    code('A/app/src/main/java/com/microduck/sim/VideoCapture.java', 'textureHelper=SurfaceTextureHelper.create', 11)
+    p('独立相机初始化入口 ' + ref('A/app/src/main/java/com/microduck/sim/VideoCapture.java', 'VideoCapture(Context context)') + '；FBO到Surface ' + ref('A/app/src/main/java/com/microduck/sim/SceneRenderer.java', 'void presentHeadCamera') + '。两项均为M8源码实现，隐藏3D/实际codec/图像方向的真机验收未完成。')
+
+    section('浏览器控制、状态与视频传输', '控制用HTTP；WebRTC媒体用ICE/DTLS-SRTP，JPEG作为兼容模式。')
     table(['接口', '行为', '访问码'], [
         ['GET /', '手机提供controller.html', '无需；连接时填写'],
         ['GET /health', '服务/协议检查', '无需'],
         ['GET /api/state', '读取报告线程维护的JSON缓存', 'Bearer'],
         ['GET /api/frame', '最新JPEG；不可用时503', 'Bearer'],
         ['POST /api/command', '校验并投递command，执行后确认', 'Bearer'],
+        ['POST /api/rtc', 'open/poll/close；offer/answer、增量ICE与会话租期', 'Bearer'],
     ], [114, 303, 92])
     table(['JSON命令', '作用'], [
         ['{"op":"stand"}', '启用站立并运行'],
@@ -209,9 +217,12 @@ def write_content(api):
         ['{"op":"pause"} / {"op":"reset","pose":"SIT"}', '暂停 / 关键帧复位并关闭策略'],
         ['{"op":"heartbeat"}', '续租已有远程运行；不会自行恢复/启动'],
     ], [299, 210])
-    p('Socket使用2个处理线程、4个等待连接；HTTP头上限4096byte、命令体512byte，读阶段2秒、处理起总期限3秒。RemoteMailbox最多一条等待确认命令，1秒超时未执行时可取消；已开始操作不能随断开回滚。HTTP线程不执行JNI/ORT。')
-    p('浏览器远程运行需3秒租期内心跳；本地按钮释放远程控制。Activity离开前台暂停并关闭LAN，回前台需手动开启新会话。服务访问码随机每次生成，不进入普通状态或验证记录。视频采集只保留一个在途任务和最新JPEG，近期无人请求时停采集。')
+    p('Socket使用2个处理线程、4个等待连接；HTTP头上限4096byte、命令体512byte、RTC信令体32KiB，读阶段2秒、处理起总期限3秒。RemoteMailbox最多一条等待确认命令，1秒超时未执行时可取消；已开始操作不能随断开回滚。HTTP线程不执行JNI/ORT。')
+    p('浏览器远程运行需3秒租期内心跳；本地按钮释放远程控制。Activity离开前台暂停并关闭LAN，回前台需手动开启新会话。服务访问码随机每次生成，不进入普通状态或验证记录。JPEG只保留一个在途任务和最新帧，2秒无请求停采集；RTC只允许一个观看者、8秒无poll释放peer。每个回调匹配generation，旧close不关新peer，取消id避免迟到open恢复会话。浏览器关闭/隐藏时关peer并尽力发close。')
     p('代码：' + ref('A/app/src/main/java/com/microduck/sim/LanControlServer.java', 'private final ThreadPoolExecutor clients') + '、' + ref('A/app/src/main/java/com/microduck/sim/RemoteMailbox.java', 1) + '、' + ref('A/app/src/main/java/com/microduck/sim/RemoteLease.java', 'static final long TIMEOUT_NS') + '、' + ref('A/app/src/main/java/com/microduck/sim/MainActivity.java', 'protected void onStop()') + '。')
+
+    p('RTC信令不经控制串行队列；browser创建recvonly offer并先收集本地ICE，Android异步设置远端/创建answer，poll返回answer及增量候选。没有STUN/TURN或音频，限同一局域网；HTTP连通不证明媒体连通。实际协商与编码器由rtc_codec、rtc_encoder_implementation和接收端framesDecoded验证，不以硬件优先设置代替实测。')
+    p('入口 ' + ref('A/app/src/main/java/com/microduck/sim/RtcVideo.java', 'private void open(') + '；会话隔离 ' + ref('A/app/src/main/java/com/microduck/sim/RtcSession.java', 'final class RtcSession') + '；固定依赖 ' + ref('A/VIDEO_DEPENDENCIES.lock.json', 1) + '。')
 
     section('单次前滚翻与当前抬头问题', '已通过一圈；动作质量诊断尚未等同修复。')
     code('A/app/src/main/java/com/microduck/sim/RouladeWindow.java', 'static final int TICKS=', 12)
@@ -224,7 +235,7 @@ def write_content(api):
     section('与桌面duck-sim的编译/运行关系', '两套方案都复用模型与策略，控制执行主体不同。')
     diagram('desktop', '桌面真实Rust daemon通过TCP连接Python身体；Android在应用内完成闭环。')
     p('scripts/duck-sim up会调用cargo build构建robotd等服务，并用microduck_rl/.venv中的Python启动mjlab_microduck.sim.body_server。Rust通过SimIo用TCP JSON read/write/gain等协议访问模拟身体；身体端用CPU MuJoCo推进世界。它不是PPO训练器在实时运行。')
-    p('有相机时，Python camera.py用MuJoCo Renderer产生帧，经TCP输出给Rust mediad；mediad走GStreamer/WebRTC。macOS曾报缺GStreamer就是这条桌面媒体链的依赖问题；当前Android自写GLES/JPEG/HTTP不使用mediad或GStreamer。')
+    p('有相机时，Python camera.py用MuJoCo Renderer产生帧，经TCP输出给Rust mediad；mediad走GStreamer/WebRTC。macOS曾报缺GStreamer就是这条桌面媒体链的依赖问题；当前Android自写GLES/独立Surface，并以Android WebRTC AAR/MediaCodec与JPEG兼容模式实现视频，不使用mediad或GStreamer。')
     p('关键证据：' + ref('R/scripts/duck-sim', 'build_daemons()') + '、' + ref('R/scripts/duck-sim', 'PY_BIN="$RL/.venv/bin/python"') + '、' + ref('R/duck-control/src/sim.rs', 1) + '、' + ref('T/src/mjlab_microduck/sim/body_server.py', 'DEFAULT_SCENE =') + '。')
     note('当前Android HTTP /api/command不是Rust Unix socket JSON-RPC或SimIo TCP协议；网页控制功能相似，不能宣称与桌面duckctl、robotctl、mediad直接协议兼容。')
 
@@ -255,7 +266,7 @@ def write_content(api):
         ['前进0.30m/s', '切walking并保留已启用时的姿态/历史'],
         ['向前翻滚一次', '建议先站稳；2秒仿真窗口后切stand继续运行'],
         ['局域网控制', '同Wi-Fi或热点，浏览器打开手机显示地址并配对'],
-        ['开启机器人摄像头', '仿真应用保持前台与显示3D开启；浏览器勾选相机'],
+        ['开启机器人摄像头', '仿真应用保持前台；3D可关闭，浏览器选择RTC/JPEG并勾选相机'],
     ], [112, 397])
     p('“策略测试10s”是不等待墙钟的500周期计算基准，不显示每帧动画；“实时测试30s”是墙钟测试，结束自动暂停。性能/温升/前后台验收已按用户要求延期，当前不以重跑测试作为功能开发前置条件。')
     command('adb devices -l\nadb -s <SERIAL> shell dumpsys package com.microduck.sim\nadb -s <SERIAL> shell run-as com.microduck.sim cat files/last-report.json\nadb -s <SERIAL> logcat -d -s MicroduckM1:I "*:S"', '已由用户Studio运行的debug应用；只读设备状态，不安装或启动应用')
@@ -278,7 +289,7 @@ def write_content(api):
 
     section('检查证据与当前验收边界', '主机编译/数值对照、用户观察、真机报告分别列出。')
     table(['证据', '可支持的结论', '不能外推'], [
-        ['verification/m71-checks.json', 'Java/JNI源码检查、观察/动作/场景/相机/协议与100周期窗口检查', '不是本轮APK构建/实机全功能验收'],
+        ['verification/m8-checks.json', '实际WebRTC AAR/JDK11编译、Java/JNI/物理对照，增加RTC认证/大小/回调/乱序及浏览器检查', '不是本轮APK构建/实机全功能验收'],
         ['device-M2-policy-benchmark.json', '手机实际ONNX与物理短基准完成', '不代表网络视频或持续运行'],
         ['device-M4-lan-acceptance及realtime-acceptance', '用户按钮反馈、断连心跳暂停、短期网络实时报告', '不能代替新版机器人相机性能'],
         ['device-M54-video-acceptance与video-off', '旧观察窗口画面的30秒两组预算通过', '不是M7.1头部相机/长期温升证据'],
@@ -286,8 +297,8 @@ def write_content(api):
         ['device-M71-roll-acceptance.json', '用户确认一圈；ADB读到0.7.1-m71和翻滚采样', '无关节日志；不等于动作僵硬已修复'],
         ['host-M71-head-recovery.json', '主机复现头颈恢复/相机下沉及参数对照', '不是手机动作精确重放'],
     ], [142, 205, 162])
-    p('对应证据入口：' + ref('A/verification/m71-checks.json', 1) + '；' + ref('A/verification/device-M2-policy-benchmark.json', 1) + '；' + ref('A/verification/device-M4-realtime-acceptance.json', 1) + '；' + ref('A/verification/device-M54-video-acceptance.json', 1) + '；' + ref('A/verification/user-M7-camera-roll-feedback.json', 1) + '。')
-    note('尚未完成：M7.1头部相机整段性能/持续温升/前后台/独立隐藏3D相机；16KB页设备；任意起始姿态完整翻滚；BAM物理一致性；抬头慢和整体僵硬的手机关节级归因。性能相关项目按用户要求延期。')
+    p('对应证据入口：' + ref('A/verification/m8-checks.json', 1) + '；' + ref('A/verification/device-M2-policy-benchmark.json', 1) + '；' + ref('A/verification/device-M4-realtime-acceptance.json', 1) + '；' + ref('A/verification/device-M54-video-acceptance.json', 1) + '；' + ref('A/verification/user-M7-camera-roll-feedback.json', 1) + '。')
+    note('尚未完成：M8完整APK构建、隐藏3D相机、实际WebRTC/H.264/Surface编码、图像方向与设备释放；相机整段性能/持续温升/前后台；16KB页设备；任意起始姿态完整翻滚；BAM物理一致性；抬头慢和整体僵硬的手机关节级归因。性能相关项目按用户要求延期。')
 
     section('常见构建与运行问题定位', '按失败发生的层次排查，减少误改模型与构建链。')
     table(['现象', '优先检查', '对应层'], [
@@ -297,7 +308,8 @@ def write_content(api):
         ['smoke checksum或shape失败', '新模型是否匹配smoke、61D/14D和名字/float类型、是否feedforward', '策略格式/来源'],
         ['模型可见但不能站稳', 'HOME/关节顺序/反馈语义、动作倍率/过滤、XML vs BAM执行器', '控制闭环'],
         ['浏览器打不开', 'LAN是否开启、同网段/热点、显示IP、客户端隔离、前台是否已退出', '网络连接'],
-        ['HTTP401 / 503', '401查当前会话访问码；相机503查显示3D/Surface/相机与新帧', '认证 / 画面供给'],
+        ['HTTP401 / 503', '401查本次访问码；503查独立camera_gl_ready/error或RTC初始化', '认证 / 画面供给'],
+        ['RTC无图而JPEG正常', '查rtc_hardware_codecs/error/connection、同网设备互通与编码器日志', '信令/ICE/硬件编码'],
         ['产帧但画面全灰', '真实相机姿态、模型背面遮挡与剔除；不能只据frames/error=0判正常', '相机几何/绘制'],
         ['翻完抬头慢', '交接期间头颈raw/filtered目标、实际角度、相机方向与伺服响应', '动作质量；采样日志不足以归因'],
     ], [105, 339, 65])
@@ -308,10 +320,10 @@ def write_content(api):
         ['当前Java/JNI手机内闭环', '依赖少、可用双Android验证、控制与画面独立', '持续保留61D/14D契约及动作回归；已有功能基线'],
         ['头颈交接优化', '减少翻滚后视线先下沉及抬头迟滞', '50Hz关节目标/实际轨迹与力矩，保留已通过2秒基线做对照'],
         ['移植BAM执行器', '缩小训练与手机执行物理差异', '逐项参数/单位/更新率映射；站立/步行/翻滚闭环重验'],
-        ['独立相机GL上下文/Surface', '隐藏观察窗口时仍可输出机器人相机', '生命周期、网格资源所有权、GPU成本与上下文共享方案'],
-        ['H.264/WebRTC', '可能降低带宽并改善流式体验', 'Android编码/网络协商、线程预算、端到端测量；不等同复制mediad'],
+        ['独立相机GL上下文/Surface', 'M8源码已实现；隐藏观察窗口仍供相机', '主机编译通过，设备隐藏3D/方向/资源释放待确认；GPU成本延期测量'],
+        ['H.264/WebRTC', 'M8源码已接视频轨道与硬件编码、H.264优先', 'AAR/旧D8兼容通过；实际codec与媒体设备验收待做，预算/延迟延期；非复制mediad'],
         ['Rust核心复用或SimIo身体服务', '减少控制逻辑移植差异或联调真实daemon', '先审查crate依赖/平台接口/协议/15槽映射；当前没有这条编译或运行链'],
     ], [128, 170, 211])
     p('方法：先沿调用链确认实际数据和使用方，再做单变量对照。形状正确不代表关节语义正确；推理成功不代表动作成功；产帧成功不代表相机视野正确。每项判断标明代码确认、主机对照或用户/设备实测，避免跨版本挪用性能结论。')
-    p('接续阅读顺序：app/build.gradle → prepare_assets.py → CMakeLists → ModelAssets/NativeSim.open → MainActivity.controlStep → PolicyRunner.tick → native观测/动作 → visual_snapshot/RobotSurfaceView → VideoCapture/LanControlServer。需深挖上游时，继续Rust obs/control或RL任务/执行器/导出，不在生成的Android资源副本里做持久修改。')
+    p('接续阅读顺序：app/build.gradle → prepare_assets.py → CMakeLists → ModelAssets/NativeSim.open → MainActivity.controlStep → PolicyRunner.tick → native观测/动作 → visual_snapshot/SceneRenderer → VideoCapture/SurfaceTextureHelper → RtcVideo/RtcSession/LanControlServer。需深挖上游时，继续Rust obs/control或RL任务/执行器/导出，不在生成的Android资源副本里做持久修改。')
     p('配套文档：A/README.md（使用入口）、A/DEPENDENCIES.md（恢复工程）、A/NETWORK.md（双设备/HTTP）、A/VIDEO.md（相机）、A/SKILLS.md（前滚翻/动作诊断）、工作区HANDOFF.md（历史交接）。本PDF和Markdown由docs/content.py统一生成，代码摘录由构建脚本读取真实源码。')

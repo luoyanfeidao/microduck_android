@@ -1,15 +1,17 @@
 {
   "date": "2026-10-04",
-  "android_source_base_commit": "8a435425341ad5e10a4b5350fd916c80c72b57dc",
+  "android_source_base_commit": "6c572c5bd65032bae316c49e5357ef37684280ea",
+  "android_version": "0.8.0-m8",
+  "android_snapshot": "working tree with source hashes",
   "microduck_commit": "a9ec4b2079ef8ee7904014089c885bb07d57d63c",
   "microduck_rl_commit": "cb70b792312d559a4da09064d92009079671815f",
   "scope": "Local source and prior evidence, not new Gradle/APK/training execution",
   "refs": [
     {
       "file": "android-sim/app/build.gradle",
-      "line": 35,
+      "line": 36,
       "anchor": "tasks.register",
-      "sha256": "4196faa1515cc389f92141745ed352b6c9a2266ccc4ea211e86596c3d86f02c9"
+      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
     },
     {
       "file": "android-sim/app/src/main/cpp/CMakeLists.txt",
@@ -27,7 +29,7 @@
       "file": "android-sim/app/build.gradle",
       "line": 11,
       "anchor": "versionName",
-      "sha256": "4196faa1515cc389f92141745ed352b6c9a2266ccc4ea211e86596c3d86f02c9"
+      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
     },
     {
       "file": "Pollen/microduck/Cargo.toml",
@@ -51,25 +53,25 @@
       "file": "android-sim/app/build.gradle",
       "line": 21,
       "anchor": "cmake { path",
-      "sha256": "4196faa1515cc389f92141745ed352b6c9a2266ccc4ea211e86596c3d86f02c9"
+      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
     },
     {
       "file": "android-sim/app/build.gradle",
-      "line": 39,
+      "line": 40,
       "anchor": "tasks.named('preBuild')",
-      "sha256": "4196faa1515cc389f92141745ed352b6c9a2266ccc4ea211e86596c3d86f02c9"
+      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
     },
     {
       "file": "android-sim/app/build.gradle",
       "line": 30,
       "anchor": "dependencies {",
-      "sha256": "4196faa1515cc389f92141745ed352b6c9a2266ccc4ea211e86596c3d86f02c9"
+      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
     },
     {
       "file": "android-sim/app/build.gradle",
       "line": 12,
       "anchor": "ndk { abiFilters",
-      "sha256": "4196faa1515cc389f92141745ed352b6c9a2266ccc4ea211e86596c3d86f02c9"
+      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
     },
     {
       "file": "android-sim/build.gradle",
@@ -105,7 +107,7 @@
       "file": "android-sim/README.md",
       "line": 41,
       "anchor": "该 AAR 的 JNI 库仅有",
-      "sha256": "300b050456490d31ee7dce96e5ef42d81daaa531e1de0192d02f328d171e08b0"
+      "sha256": "ec5d1772f34087cb2560f1668b9f9f1767cb29e64cdd703b39d9f36e1fd6d1b6"
     },
     {
       "file": "android-sim/patches/mujoco-3.10.0-ndk25.patch",
@@ -127,9 +129,9 @@
     },
     {
       "file": "android-sim/scripts/check_source.py",
-      "line": 88,
+      "line": 99,
       "anchor": "--target=aarch64-linux-android28",
-      "sha256": "de7270e1add30a9954822030109d88c78ba2438d4aec2eafbe411d49107cbd4d"
+      "sha256": "033b8d5288bdb2359228ef5089b5d2ed02099dc2de6e2d44fde3c973a1bea28c"
     },
     {
       "file": "Pollen/microduck/Cargo.toml",
@@ -141,7 +143,7 @@
       "file": "android-sim/app/build.gradle",
       "line": 5,
       "anchor": "ndkVersion",
-      "sha256": "4196faa1515cc389f92141745ed352b6c9a2266ccc4ea211e86596c3d86f02c9"
+      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
     },
     {
       "file": "android-sim/scripts/prepare_assets.py",
@@ -152,8 +154,8 @@
     {
       "file": "android-sim/app/build.gradle",
       "line": 31,
-      "anchor": "implementation",
-      "sha256": "4196faa1515cc389f92141745ed352b6c9a2266ccc4ea211e86596c3d86f02c9"
+      "anchor": "implementation 'com.microsoft.onnxruntime",
+      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
     },
     {
       "file": "android-sim/app/src/main/AndroidManifest.xml",
@@ -165,7 +167,7 @@
       "file": "android-sim/scripts/check_source.py",
       "line": 1,
       "anchor": 1,
-      "sha256": "de7270e1add30a9954822030109d88c78ba2438d4aec2eafbe411d49107cbd4d"
+      "sha256": "033b8d5288bdb2359228ef5089b5d2ed02099dc2de6e2d44fde3c973a1bea28c"
     },
     {
       "file": "Pollen/microduck_rl/pyproject.toml",
@@ -178,6 +180,12 @@
       "line": 40,
       "anchor": "foreach(DEP",
       "sha256": "8ec7bae504cea1158da67ff0e5b6ac1b5215a53bb4d2caeefc84288e12d3ba1c"
+    },
+    {
+      "file": "android-sim/verification/m8-video-dependencies.json",
+      "line": 1,
+      "anchor": 1,
+      "sha256": "0f3dddabac6c41288cc23fa5fea80391e66687f33fc5c836e3f9e5eabf95633d"
     },
     {
       "file": "Pollen/microduck_rl/src/mjlab_microduck/robot/microduck/config_mjcf_groundcontact.json",
@@ -259,15 +267,15 @@
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
-      "line": 153,
+      "line": 155,
       "anchor": "File model = ModelAssets.prepare",
-      "sha256": "bcb69562f478a1bd24c9953db5db91b86d14f73b9b0b95f7c37e2e63099e0544"
+      "sha256": "b9c1fd48f14c621fcf1f42763f317b825494b0fe2b480ff961b886304f34c715"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
       "line": 39,
       "anchor": "newSingleThreadScheduledExecutor",
-      "sha256": "bcb69562f478a1bd24c9953db5db91b86d14f73b9b0b95f7c37e2e63099e0544"
+      "sha256": "b9c1fd48f14c621fcf1f42763f317b825494b0fe2b480ff961b886304f34c715"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/ReportDispatcher.java",
@@ -277,15 +285,15 @@
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
-      "line": 264,
+      "line": 267,
       "anchor": "private void controlStep(boolean withVisual)",
-      "sha256": "bcb69562f478a1bd24c9953db5db91b86d14f73b9b0b95f7c37e2e63099e0544"
+      "sha256": "b9c1fd48f14c621fcf1f42763f317b825494b0fe2b480ff961b886304f34c715"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
-      "line": 185,
+      "line": 188,
       "anchor": "private void start()",
-      "sha256": "bcb69562f478a1bd24c9953db5db91b86d14f73b9b0b95f7c37e2e63099e0544"
+      "sha256": "b9c1fd48f14c621fcf1f42763f317b825494b0fe2b480ff961b886304f34c715"
     },
     {
       "file": "android-sim/app/src/main/cpp/native_sim.cpp",
@@ -384,16 +392,16 @@
       "sha256": "a8018160243cb8b23e99c3dfead92657781bc70c97dd176543e0f245a4ad76e0"
     },
     {
-      "file": "android-sim/app/src/main/java/com/microduck/sim/RobotSurfaceView.java",
-      "line": 218,
+      "file": "android-sim/app/src/main/java/com/microduck/sim/SceneRenderer.java",
+      "line": 148,
       "anchor": "void renderHeadCamera",
-      "sha256": "8b9cec1e1eec4f9824169d4f456382d6420f1d7d08325dec030201fa14e57742"
+      "sha256": "a2c518d44f2a186b00c568a4e44a9ca414534a86acfa33d68ae5d1f85796eea7"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/VideoCapture.java",
-      "line": 29,
+      "line": 72,
       "anchor": "private void capture()",
-      "sha256": "deedf7e450f0a5f40feb00e38aae380857c7ceec54c68b417a60bb7ba2232e80"
+      "sha256": "294c0fcc795c5816fdd0c86105eb18568148db4830190cb9beff617074bdefad"
     },
     {
       "file": "Pollen/microduck_rl/src/mjlab_microduck/sim/camera.py",
@@ -408,10 +416,28 @@
       "sha256": "0ff94d227a26b90d982d5d34c3f367ba33e4f713c271f552c2c761d1431d4311"
     },
     {
+      "file": "android-sim/app/src/main/java/com/microduck/sim/VideoCapture.java",
+      "line": 49,
+      "anchor": "textureHelper=SurfaceTextureHelper.create",
+      "sha256": "294c0fcc795c5816fdd0c86105eb18568148db4830190cb9beff617074bdefad"
+    },
+    {
+      "file": "android-sim/app/src/main/java/com/microduck/sim/VideoCapture.java",
+      "line": 34,
+      "anchor": "VideoCapture(Context context)",
+      "sha256": "294c0fcc795c5816fdd0c86105eb18568148db4830190cb9beff617074bdefad"
+    },
+    {
+      "file": "android-sim/app/src/main/java/com/microduck/sim/SceneRenderer.java",
+      "line": 183,
+      "anchor": "void presentHeadCamera",
+      "sha256": "a2c518d44f2a186b00c568a4e44a9ca414534a86acfa33d68ae5d1f85796eea7"
+    },
+    {
       "file": "android-sim/app/src/main/java/com/microduck/sim/LanControlServer.java",
-      "line": 41,
+      "line": 42,
       "anchor": "private final ThreadPoolExecutor clients",
-      "sha256": "e4aa3e62f9b05c43b96542ef30892e1fc27593bbd76019e54bfbafafebee3b26"
+      "sha256": "d9b3a5dc2ab631e1d8f3f899a5cd1432fc5609e98fe4a917016cb4915f1933bc"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/RemoteMailbox.java",
@@ -427,9 +453,27 @@
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
-      "line": 508,
+      "line": 518,
       "anchor": "protected void onStop()",
-      "sha256": "bcb69562f478a1bd24c9953db5db91b86d14f73b9b0b95f7c37e2e63099e0544"
+      "sha256": "b9c1fd48f14c621fcf1f42763f317b825494b0fe2b480ff961b886304f34c715"
+    },
+    {
+      "file": "android-sim/app/src/main/java/com/microduck/sim/RtcVideo.java",
+      "line": 93,
+      "anchor": "private void open(",
+      "sha256": "24d21dcb11d5ec1467ef3f170818abf762d2f880813d99f93a61f9833531baeb"
+    },
+    {
+      "file": "android-sim/app/src/main/java/com/microduck/sim/RtcSession.java",
+      "line": 9,
+      "anchor": "final class RtcSession",
+      "sha256": "914dec904357c18f1bc90edb9707c6d246d4054c985692d8fbaf20af92fd4b04"
+    },
+    {
+      "file": "android-sim/VIDEO_DEPENDENCIES.lock.json",
+      "line": 1,
+      "anchor": 1,
+      "sha256": "2193692c137a8221ba535ac81e97f493ec99e8f88e33eb212ccad016639deb5f"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/RouladeWindow.java",
@@ -501,19 +545,19 @@
       "file": "android-sim/DEPENDENCIES.md",
       "line": 1,
       "anchor": 1,
-      "sha256": "6b4199f865482211b7c1d9fdd6017e409f29c45213e5936453fe957fe335f4e4"
+      "sha256": "3d53702bbc2643707494b5b99597a40f988d8c1f279bcf683f68eb605bbfa168"
     },
     {
       "file": "android-sim/README.md",
       "line": 34,
       "anchor": "Gradle JDK 选择",
-      "sha256": "300b050456490d31ee7dce96e5ef42d81daaa531e1de0192d02f328d171e08b0"
+      "sha256": "ec5d1772f34087cb2560f1668b9f9f1767cb29e64cdd703b39d9f36e1fd6d1b6"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
-      "line": 404,
+      "line": 412,
       "anchor": "private void writeReport",
-      "sha256": "bcb69562f478a1bd24c9953db5db91b86d14f73b9b0b95f7c37e2e63099e0544"
+      "sha256": "b9c1fd48f14c621fcf1f42763f317b825494b0fe2b480ff961b886304f34c715"
     },
     {
       "file": "android-sim/.gitignore",
@@ -522,10 +566,10 @@
       "sha256": "038f7eed7785d226e3a7472371a70712171066fa7c397cd1f4650c8a4316fd49"
     },
     {
-      "file": "android-sim/verification/m71-checks.json",
+      "file": "android-sim/verification/m8-checks.json",
       "line": 1,
       "anchor": 1,
-      "sha256": "e0720d357d5e7caa8747c871bde975a0e2fd036d33fc42855dacbb5ca4e888fb"
+      "sha256": "bc7dc6d51e1ac93d623ab4f06aec330779abd99f830b7445e375a71e6de46971"
     },
     {
       "file": "android-sim/verification/device-M2-policy-benchmark.json",
@@ -557,7 +601,7 @@
       "file": "android-sim/app/build.gradle",
       "start": 30,
       "end": 39,
-      "text": "dependencies {\n    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.20.0'\n}\n\n// Rebuild the MJCF dependency bundle from the sibling training repository before packaging.\ntasks.register('prepareModelAssets', Exec) {\n    workingDir rootProject.projectDir\n    commandLine 'python3', file('../scripts/prepare_assets.py').absolutePath\n}\ntasks.named('preBuild').configure { dependsOn 'prepareModelAssets' }"
+      "text": "dependencies {\n    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.20.0'\n    implementation 'io.getstream:stream-webrtc-android:1.3.9'\n}\n\n// Rebuild the MJCF dependency bundle from the sibling training repository before packaging.\ntasks.register('prepareModelAssets', Exec) {\n    workingDir rootProject.projectDir\n    commandLine 'python3', file('../scripts/prepare_assets.py').absolutePath\n}"
     },
     {
       "file": "android-sim/app/build.gradle",
@@ -603,9 +647,9 @@
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
-      "start": 264,
-      "end": 276,
-      "text": "    private void controlStep(boolean withVisual) {\n        long begin=System.nanoTime();\n        try { if(policyEnabled) policies.tick(handle); }\n        catch(Exception e) { throw new IllegalStateException(\"Policy inference failed\",e); }\n        long physicsBegin=System.nanoTime(); policyTickMs=(physicsBegin-begin)/1e6;\n        NativeSim.advance(handle,4); physicsMs=(System.nanoTime()-physicsBegin)/1e6;\n        if(policyEnabled) policies.afterStep();\n        controlMs=(System.nanoTime()-begin)/1e6;\n        snapshotMs=0;\n        if(withVisual && renderEnabled && visualCadence.due(System.nanoTime())) pushVisual();\n        controlWithVisualMs=(System.nanoTime()-begin)/1e6;\n    }\n    private void pushVisual() {"
+      "start": 267,
+      "end": 279,
+      "text": "    private void controlStep(boolean withVisual) {\n        long begin=System.nanoTime();\n        try { if(policyEnabled) policies.tick(handle); }\n        catch(Exception e) { throw new IllegalStateException(\"Policy inference failed\",e); }\n        long physicsBegin=System.nanoTime(); policyTickMs=(physicsBegin-begin)/1e6;\n        NativeSim.advance(handle,4); physicsMs=(System.nanoTime()-physicsBegin)/1e6;\n        if(policyEnabled) policies.afterStep();\n        controlMs=(System.nanoTime()-begin)/1e6;\n        snapshotMs=0;\n        if(withVisual && (renderEnabled || lan!=null) && visualCadence.due(System.nanoTime())) pushVisual();\n        controlWithVisualMs=(System.nanoTime()-begin)/1e6;\n    }\n    private void pushVisual() {"
     },
     {
       "file": "android-sim/app/src/main/cpp/native_sim.cpp",
@@ -624,6 +668,12 @@
       "start": 91,
       "end": 104,
       "text": "void apply_scaled_action(Simulation& s,const float* raw,double scale,double gain_ratio,bool filter) {\n    for(int i=0;i<N;++i) if(!std::isfinite(raw[i])) throw std::runtime_error(\"Non-finite policy action\");\n    for(int i=0;i<N;++i) {\n        double target=HOME[i]+scale*raw[i];\n        double alpha=(i>=5 && i<=8)?.5:.7;\n        if(filter && s.has_previous_target) target=alpha*target+(1-alpha)*s.previous_target[i];\n        s.data->ctrl[s.actuators[i]]=target; s.previous_target[i]=target;\n        double gain=s.base_gain[i]*gain_ratio;\n        s.model->actuator_gainprm[s.actuators[i]*mjNGAIN]=gain;\n        s.model->actuator_biasprm[s.actuators[i]*mjNBIAS+1]=-gain;\n    }\n    s.has_previous_target=true;\n}\nvoid apply_policy_action(Simulation& s,const float* raw,bool standing,bool filter) {"
+    },
+    {
+      "file": "android-sim/app/src/main/java/com/microduck/sim/VideoCapture.java",
+      "start": 49,
+      "end": 59,
+      "text": "                textureHelper=SurfaceTextureHelper.create(\"microduck-rtc-texture\",egl.getEglBaseContext());\n                if(textureHelper==null) throw new IllegalStateException(\"Texture helper creation failed\");\n                textureHelper.setTextureSize(HeadCamera.WIDTH,HeadCamera.HEIGHT);\n                textureHelper.setFrameRotation(HeadCamera.MOUNT_ROTATE);\n                // The camera has its own window Surface, backed by a SurfaceTexture, with no UI owner.\n                egl.releaseSurface(); egl.createSurface(textureHelper.getSurfaceTexture()); egl.makeCurrent();\n                if(!closed) {\n                    rtc=new RtcVideo(context,egl.getEglBaseContext());\n                    textureHelper.startListening(frame->{ RtcVideo video=rtc; if(video!=null) video.frame(frame); });\n                }\n                glReady=true;"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/RouladeWindow.java",
@@ -650,7 +700,7 @@
     "推理、动作滤波与XML位置伺服",
     "训练BAM与手机XML伺服的差异",
     "CAD渲染与机器人相机架构",
-    "浏览器控制、状态与JPEG传输",
+    "浏览器控制、状态与视频传输",
     "单次前滚翻与当前抬头问题",
     "与桌面duck-sim的编译/运行关系",
     "训练插件与新策略接入流程",

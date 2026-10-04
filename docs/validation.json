@@ -1,14 +1,14 @@
 {
   "scope": "Document checks only; no Gradle/APK/device or training execution",
-  "pages": 31,
+  "pages": 32,
   "sections_and_bookmarks": 28,
-  "source_references": 91,
-  "exact_source_snippets": 13,
+  "source_references": 98,
+  "exact_source_snippets": 14,
   "vector_diagrams": 6,
   "source_sha256_and_snippets_match": true,
   "out_of_bounds_text": [],
-  "pdf_bytes": 421710,
-  "text_characters": 38832,
+  "pdf_bytes": 428778,
+  "text_characters": 41914,
   "review_pages": [
     1,
     2,
@@ -16,7 +16,7 @@
     5,
     14,
     19,
-    21,
-    24
+    22,
+    25
   ]
 }
