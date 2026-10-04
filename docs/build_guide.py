@@ -111,7 +111,7 @@ class GuideDoc(BaseDocTemplate):
         canvas.rect(0, HEIGHT - 8, WIDTH, 8, fill=1, stroke=0)
         canvas.setFont('CN', 8)
         canvas.setFillColor(TEAL)
-        canvas.drawString(MARGIN, HEIGHT - 32, 'Android Microduck · M8 · 编译复用与技术实现')
+        canvas.drawString(MARGIN, HEIGHT - 32, 'Android Microduck · M8.1 · 编译复用与技术实现')
         canvas.setStrokeColor(colors.HexColor('#d5e0e6'))
         canvas.line(MARGIN, 40, WIDTH - MARGIN, 40)
         canvas.setFont('CN', 7)
@@ -171,7 +171,7 @@ def main():
     cover = para('Android Microduck\n方案、架构与编译复用', 28, 39, NAVY)
     story.extend([Spacer(1, 58), cover, Spacer(1, 16),
         para('从资源来源到 APK，从策略输入到机器人相机', 14, 22, TEAL), Spacer(1, 20),
-        para('核对日期：2026-10-04\n当前 Android：0.8.0-m8 / versionCode 15\n三项目边界、构建链、关键代码、运行方法与验收证据。', 11, 19),
+        para('核对日期：2026-10-04\n当前 Android：0.8.1-m81 / versionCode 16\n三项目边界、构建链、关键代码、运行方法与验收证据。', 11, 19),
         Spacer(1, 15), diagrams['reuse'], Spacer(1, 15),
         para('A/ = android-sim/；R/ = Pollen/microduck/；T/ = Pollen/microduck_rl/。\n全文基于本地源码；示例命令没有在本轮执行。用户继续使用 Android Studio 构建和运行。', 9, 14),
         PageBreak(), para('目录', 22, 30, NAVY), toc, PageBreak()])
@@ -223,7 +223,7 @@ def main():
     GuideDoc(OUT / (NAME + '.pdf')).multiBuild(story)
     (OUT / (NAME + '.md')).write_text('\n'.join(markdown))
     snapshot = {'date': '2026-10-04', 'android_source_base_commit': git_head('android-sim'),
-        'android_version': '0.8.0-m8', 'android_snapshot': 'working tree with source hashes',
+        'android_version': '0.8.1-m81', 'android_snapshot': 'working tree with source hashes',
         'microduck_commit': git_head(R), 'microduck_rl_commit': git_head(T),
         'scope': 'Local source and prior evidence, not new Gradle/APK/training execution',
         'refs': list(REFS.values()), 'snippets': SNIPPETS,

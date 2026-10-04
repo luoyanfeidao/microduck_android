@@ -19,7 +19,7 @@
 
 直接证据：A/app/build.gradle:36；A/app/src/main/cpp/CMakeLists.txt:57；A/scripts/prepare_assets.py:6。当前版本来源：A/app/build.gradle:11。
 
-> 本说明核对M8源码及已有验证记录。M8落地独立相机EGL/Surface与硬件WebRTC，主机检查通过；实际APK与新增视频功能尚待用户Studio编译运行。没有运行Gradle、打包APK、训练或自动操作手机按钮。
+> 本说明核对M8.1源码及已有验证记录。M8落地独立相机EGL/Surface与硬件WebRTC，用户反馈实机验证正常；M8.1把局域网访问码改为4位数字，主机检查通过，待用户Studio重新编译运行。代理没有运行Gradle、打包APK、训练或自动操作手机按钮。
 
 
 ## 02 三个项目的职责与复用类型
@@ -508,7 +508,7 @@ WebRTC目标20FPS，HardwareVideoEncoderFactory优先H.264、上限1.5Mbps；JPE
   59                  glReady=true;
 ```
 
-独立相机初始化入口 A/app/src/main/java/com/microduck/sim/VideoCapture.java:34；FBO到Surface A/app/src/main/java/com/microduck/sim/SceneRenderer.java:183。两项均为M8源码实现，隐藏3D/实际codec/图像方向的真机验收未完成。
+独立相机初始化入口 A/app/src/main/java/com/microduck/sim/VideoCapture.java:34；FBO到Surface A/app/src/main/java/com/microduck/sim/SceneRenderer.java:183。两项均为M8源码实现，用户已反馈实机验证正常；反馈未附实际codec或硬件编码器日志。
 
 
 ## 18 浏览器控制、状态与视频传输
@@ -534,7 +534,7 @@ WebRTC目标20FPS，HardwareVideoEncoderFactory优先H.264、上限1.5Mbps；JPE
 
 Socket使用2个处理线程、4个等待连接；HTTP头上限4096byte、命令体512byte、RTC信令体32KiB，读阶段2秒、处理起总期限3秒。RemoteMailbox最多一条等待确认命令，1秒超时未执行时可取消；已开始操作不能随断开回滚。HTTP线程不执行JNI/ORT。
 
-浏览器远程运行需3秒租期内心跳；本地按钮释放远程控制。Activity离开前台暂停并关闭LAN，回前台需手动开启新会话。服务访问码随机每次生成，不进入普通状态或验证记录。JPEG只保留一个在途任务和最新帧，2秒无请求停采集；RTC只允许一个观看者、8秒无poll释放peer。每个回调匹配generation，旧close不关新peer，取消id避免迟到open恢复会话。浏览器关闭/隐藏时关peer并尽力发close。
+浏览器远程运行需3秒租期内心跳；本地按钮释放远程控制。Activity离开前台暂停并关闭LAN，回前台需手动开启新会话。M8.1服务访问码每次用SecureRandom生成4位数字（0000–9999），网页保留前导零；不进入普通状态或验证记录。内部RTC观看者id仍为32位十六进制。JPEG只保留一个在途任务和最新帧，2秒无请求停采集；RTC只允许一个观看者、8秒无poll释放peer。每个回调匹配generation，旧close不关新peer，取消id避免迟到open恢复会话。浏览器关闭/隐藏时关peer并尽力发close。
 
 代码：A/app/src/main/java/com/microduck/sim/LanControlServer.java:42、A/app/src/main/java/com/microduck/sim/RemoteMailbox.java:1、A/app/src/main/java/com/microduck/sim/RemoteLease.java:5、A/app/src/main/java/com/microduck/sim/MainActivity.java:518。
 
@@ -706,7 +706,8 @@ adb -s <SERIAL> forward --remove tcp:18080
 
 | 证据 | 可支持的结论 | 不能外推 |
 | --- | --- | --- |
-| verification/m8-checks.json | 实际WebRTC AAR/JDK11编译、Java/JNI/物理对照，增加RTC认证/大小/回调/乱序及浏览器检查 | 不是本轮APK构建/实机全功能验收 |
+| verification/m81-checks.json | 实际WebRTC AAR/JDK11编译、Java/JNI/物理对照，RTC及4位配对/前导零/非法格式检查 | 不是本轮APK构建/实机全功能验收 |
+| user-M8-video-feedback.json | 用户反馈M8实机验证正常 | 未附实际codec日志；不是性能、温升或M8.1配对验收 |
 | device-M2-policy-benchmark.json | 手机实际ONNX与物理短基准完成 | 不代表网络视频或持续运行 |
 | device-M4-lan-acceptance及realtime-acceptance | 用户按钮反馈、断连心跳暂停、短期网络实时报告 | 不能代替新版机器人相机性能 |
 | device-M54-video-acceptance与video-off | 旧观察窗口画面的30秒两组预算通过 | 不是M7.1头部相机/长期温升证据 |
@@ -714,9 +715,9 @@ adb -s <SERIAL> forward --remove tcp:18080
 | device-M71-roll-acceptance.json | 用户确认一圈；ADB读到0.7.1-m71和翻滚采样 | 无关节日志；不等于动作僵硬已修复 |
 | host-M71-head-recovery.json | 主机复现头颈恢复/相机下沉及参数对照 | 不是手机动作精确重放 |
 
-对应证据入口：A/verification/m8-checks.json:1；A/verification/device-M2-policy-benchmark.json:1；A/verification/device-M4-realtime-acceptance.json:1；A/verification/device-M54-video-acceptance.json:1；A/verification/user-M7-camera-roll-feedback.json:1。
+对应证据入口：A/verification/m81-checks.json:1；A/verification/user-M8-video-feedback.json:1；A/verification/device-M2-policy-benchmark.json:1；A/verification/device-M4-realtime-acceptance.json:1；A/verification/device-M54-video-acceptance.json:1；A/verification/user-M7-camera-roll-feedback.json:1。
 
-> 尚未完成：M8完整APK构建、隐藏3D相机、实际WebRTC/H.264/Surface编码、图像方向与设备释放；相机整段性能/持续温升/前后台；16KB页设备；任意起始姿态完整翻滚；BAM物理一致性；抬头慢和整体僵硬的手机关节级归因。性能相关项目按用户要求延期。
+> 尚未完成：M8.1四位访问码设备复验；M8实际codec/Surface编码的详细日志；相机整段性能/持续温升/前后台及资源释放专项；16KB页设备；任意起始姿态完整翻滚；BAM物理一致性；抬头慢和整体僵硬的手机关节级归因。性能相关项目按用户要求延期。
 
 
 ## 26 常见构建与运行问题定位
@@ -748,8 +749,8 @@ adb -s <SERIAL> forward --remove tcp:18080
 | 当前Java/JNI手机内闭环 | 依赖少、可用双Android验证、控制与画面独立 | 持续保留61D/14D契约及动作回归；已有功能基线 |
 | 头颈交接优化 | 减少翻滚后视线先下沉及抬头迟滞 | 50Hz关节目标/实际轨迹与力矩，保留已通过2秒基线做对照 |
 | 移植BAM执行器 | 缩小训练与手机执行物理差异 | 逐项参数/单位/更新率映射；站立/步行/翻滚闭环重验 |
-| 独立相机GL上下文/Surface | M8源码已实现；隐藏观察窗口仍供相机 | 主机编译通过，设备隐藏3D/方向/资源释放待确认；GPU成本延期测量 |
-| H.264/WebRTC | M8源码已接视频轨道与硬件编码、H.264优先 | AAR/旧D8兼容通过；实际codec与媒体设备验收待做，预算/延迟延期；非复制mediad |
+| 独立相机GL上下文/Surface | M8已实现；用户反馈实机正常 | 主机编译通过，资源释放专项未另验收；GPU成本延期测量 |
+| H.264/WebRTC | M8已接视频轨道与硬件编码、H.264优先；用户反馈实机正常 | AAR/旧D8兼容通过；实际codec日志未另取，预算/延迟延期；非复制mediad |
 | Rust核心复用或SimIo身体服务 | 减少控制逻辑移植差异或联调真实daemon | 先审查crate依赖/平台接口/协议/15槽映射；当前没有这条编译或运行链 |
 
 方法：先沿调用链确认实际数据和使用方，再做单变量对照。形状正确不代表关节语义正确；推理成功不代表动作成功；产帧成功不代表相机视野正确。每项判断标明代码确认、主机对照或用户/设备实测，避免跨版本挪用性能结论。
@@ -829,6 +830,7 @@ sources.json保存每处引用的完整路径、定位锚点、行号与SHA-256�
 | android-sim/verification/device-M71-roll-acceptance.json | 1 |
 | android-sim/verification/device-M71-roll-log-samples.json | 1 |
 | android-sim/verification/host-M71-head-recovery.json | 1 |
-| android-sim/verification/m8-checks.json | 1 |
 | android-sim/verification/m8-video-dependencies.json | 1 |
+| android-sim/verification/m81-checks.json | 1 |
 | android-sim/verification/user-M7-camera-roll-feedback.json | 1 |
+| android-sim/verification/user-M8-video-feedback.json | 1 |

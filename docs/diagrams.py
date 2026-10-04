@@ -121,7 +121,7 @@ def make_diagrams(width, out):
     box(d, 183, 88, 145, 54, 'HTTP /api/frame', 'Bearer / 最新一帧\nimg CSS旋转90°')
     arrow(d, 366, 115, 329, 115)
     label(d, 255, 48, 'HTTP /api/rtc 交换信令；HTTP命令与3秒控制心跳保持')
-    label(d, 255, 22, '关闭手机3D可继续相机；M8新增设备功能待用户Studio验证')
+    label(d, 255, 22, '关闭手机3D可继续相机；M8用户反馈实机验证正常')
 
 
     d = new('desktop', 289)

@@ -63,7 +63,7 @@
 			<path d="M 366,115 L 329,115 Z" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1.2;"/>
 			<polygon points="329 115, 334.4027 112.3902, 334.4027 117.6098" style="stroke: rgb(3%,49%,54%); stroke-linecap: butt; stroke-width: 1; fill: rgb(3%,49%,54%); fill-rule: evenodd;"/>
 			<text x="151.5784912109375" y="48" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,96) scale(1,-1)">HTTP /api/rtc 交换信令；HTTP命令与3秒控制心跳保持</text>
-			<text x="142.362548828125" y="22" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,44) scale(1,-1)">关闭手机3D可继续相机；M8新增设备功能待用户Studio验证</text>
+			<text x="158.6632080078125" y="22" style="font-family: CN; font-size: 8.5px;fill: rgb(3%,49%,54%); stroke:none;" transform="translate(0,44) scale(1,-1)">关闭手机3D可继续相机；M8用户反馈实机验证正常</text>
 		</g>
 	</g>
 </svg>

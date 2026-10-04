@@ -1,7 +1,7 @@
 {
   "date": "2026-10-04",
-  "android_source_base_commit": "6c572c5bd65032bae316c49e5357ef37684280ea",
-  "android_version": "0.8.0-m8",
+  "android_source_base_commit": "d0c6484c8e2ec05b96d89abfab79b55e644d379c",
+  "android_version": "0.8.1-m81",
   "android_snapshot": "working tree with source hashes",
   "microduck_commit": "a9ec4b2079ef8ee7904014089c885bb07d57d63c",
   "microduck_rl_commit": "cb70b792312d559a4da09064d92009079671815f",
@@ -11,7 +11,7 @@
       "file": "android-sim/app/build.gradle",
       "line": 36,
       "anchor": "tasks.register",
-      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
+      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
     },
     {
       "file": "android-sim/app/src/main/cpp/CMakeLists.txt",
@@ -29,7 +29,7 @@
       "file": "android-sim/app/build.gradle",
       "line": 11,
       "anchor": "versionName",
-      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
+      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
     },
     {
       "file": "Pollen/microduck/Cargo.toml",
@@ -53,25 +53,25 @@
       "file": "android-sim/app/build.gradle",
       "line": 21,
       "anchor": "cmake { path",
-      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
+      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
     },
     {
       "file": "android-sim/app/build.gradle",
       "line": 40,
       "anchor": "tasks.named('preBuild')",
-      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
+      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
     },
     {
       "file": "android-sim/app/build.gradle",
       "line": 30,
       "anchor": "dependencies {",
-      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
+      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
     },
     {
       "file": "android-sim/app/build.gradle",
       "line": 12,
       "anchor": "ndk { abiFilters",
-      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
+      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
     },
     {
       "file": "android-sim/build.gradle",
@@ -107,7 +107,7 @@
       "file": "android-sim/README.md",
       "line": 41,
       "anchor": "该 AAR 的 JNI 库仅有",
-      "sha256": "ec5d1772f34087cb2560f1668b9f9f1767cb29e64cdd703b39d9f36e1fd6d1b6"
+      "sha256": "71cb8a68faaa77a4e3ac60daec37d2b4f4e2a3c5ce65ce84abbb4823b8f7332c"
     },
     {
       "file": "android-sim/patches/mujoco-3.10.0-ndk25.patch",
@@ -131,7 +131,7 @@
       "file": "android-sim/scripts/check_source.py",
       "line": 99,
       "anchor": "--target=aarch64-linux-android28",
-      "sha256": "033b8d5288bdb2359228ef5089b5d2ed02099dc2de6e2d44fde3c973a1bea28c"
+      "sha256": "c718c704482532bcbef61f437aaf22607f71354a0310dca8f989b95d31b70b12"
     },
     {
       "file": "Pollen/microduck/Cargo.toml",
@@ -143,7 +143,7 @@
       "file": "android-sim/app/build.gradle",
       "line": 5,
       "anchor": "ndkVersion",
-      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
+      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
     },
     {
       "file": "android-sim/scripts/prepare_assets.py",
@@ -155,7 +155,7 @@
       "file": "android-sim/app/build.gradle",
       "line": 31,
       "anchor": "implementation 'com.microsoft.onnxruntime",
-      "sha256": "241902369c038f686d8e7595e519c522a3380753ef6439ef892469ada8d8edca"
+      "sha256": "8c24f9b021a3283bc7771313cdb59750709816c9cee50af71629becb76315ff0"
     },
     {
       "file": "android-sim/app/src/main/AndroidManifest.xml",
@@ -167,7 +167,7 @@
       "file": "android-sim/scripts/check_source.py",
       "line": 1,
       "anchor": 1,
-      "sha256": "033b8d5288bdb2359228ef5089b5d2ed02099dc2de6e2d44fde3c973a1bea28c"
+      "sha256": "c718c704482532bcbef61f437aaf22607f71354a0310dca8f989b95d31b70b12"
     },
     {
       "file": "Pollen/microduck_rl/pyproject.toml",
@@ -269,13 +269,13 @@
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
       "line": 155,
       "anchor": "File model = ModelAssets.prepare",
-      "sha256": "b9c1fd48f14c621fcf1f42763f317b825494b0fe2b480ff961b886304f34c715"
+      "sha256": "90adb752bb9a29a238baf32c78a08d77643afa05d1b58bb77f7413117fc81fc1"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
       "line": 39,
       "anchor": "newSingleThreadScheduledExecutor",
-      "sha256": "b9c1fd48f14c621fcf1f42763f317b825494b0fe2b480ff961b886304f34c715"
+      "sha256": "90adb752bb9a29a238baf32c78a08d77643afa05d1b58bb77f7413117fc81fc1"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/ReportDispatcher.java",
@@ -287,13 +287,13 @@
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
       "line": 267,
       "anchor": "private void controlStep(boolean withVisual)",
-      "sha256": "b9c1fd48f14c621fcf1f42763f317b825494b0fe2b480ff961b886304f34c715"
+      "sha256": "90adb752bb9a29a238baf32c78a08d77643afa05d1b58bb77f7413117fc81fc1"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
       "line": 188,
       "anchor": "private void start()",
-      "sha256": "b9c1fd48f14c621fcf1f42763f317b825494b0fe2b480ff961b886304f34c715"
+      "sha256": "90adb752bb9a29a238baf32c78a08d77643afa05d1b58bb77f7413117fc81fc1"
     },
     {
       "file": "android-sim/app/src/main/cpp/native_sim.cpp",
@@ -437,7 +437,7 @@
       "file": "android-sim/app/src/main/java/com/microduck/sim/LanControlServer.java",
       "line": 42,
       "anchor": "private final ThreadPoolExecutor clients",
-      "sha256": "d9b3a5dc2ab631e1d8f3f899a5cd1432fc5609e98fe4a917016cb4915f1933bc"
+      "sha256": "3494ca5508699b36774816ddabad9337050fe02eb172f31ab84e21bb57a4523f"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/RemoteMailbox.java",
@@ -455,7 +455,7 @@
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
       "line": 518,
       "anchor": "protected void onStop()",
-      "sha256": "b9c1fd48f14c621fcf1f42763f317b825494b0fe2b480ff961b886304f34c715"
+      "sha256": "90adb752bb9a29a238baf32c78a08d77643afa05d1b58bb77f7413117fc81fc1"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/RtcVideo.java",
@@ -551,13 +551,13 @@
       "file": "android-sim/README.md",
       "line": 34,
       "anchor": "Gradle JDK 选择",
-      "sha256": "ec5d1772f34087cb2560f1668b9f9f1767cb29e64cdd703b39d9f36e1fd6d1b6"
+      "sha256": "71cb8a68faaa77a4e3ac60daec37d2b4f4e2a3c5ce65ce84abbb4823b8f7332c"
     },
     {
       "file": "android-sim/app/src/main/java/com/microduck/sim/MainActivity.java",
       "line": 412,
       "anchor": "private void writeReport",
-      "sha256": "b9c1fd48f14c621fcf1f42763f317b825494b0fe2b480ff961b886304f34c715"
+      "sha256": "90adb752bb9a29a238baf32c78a08d77643afa05d1b58bb77f7413117fc81fc1"
     },
     {
       "file": "android-sim/.gitignore",
@@ -566,10 +566,16 @@
       "sha256": "038f7eed7785d226e3a7472371a70712171066fa7c397cd1f4650c8a4316fd49"
     },
     {
-      "file": "android-sim/verification/m8-checks.json",
+      "file": "android-sim/verification/m81-checks.json",
       "line": 1,
       "anchor": 1,
-      "sha256": "bc7dc6d51e1ac93d623ab4f06aec330779abd99f830b7445e375a71e6de46971"
+      "sha256": "9d52ca91940b9cfaf0b57f056fd4b9db2cd51fb123bb9c66a54b96756b0de5b2"
+    },
+    {
+      "file": "android-sim/verification/user-M8-video-feedback.json",
+      "line": 1,
+      "anchor": 1,
+      "sha256": "6d2fb38fbd79ff7e85d2066d84eb524f6b2af3fdcc19b4d4755c1cf8be18c0eb"
     },
     {
       "file": "android-sim/verification/device-M2-policy-benchmark.json",
