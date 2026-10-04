@@ -60,12 +60,15 @@ def main():
                         standing=json.loads(server.stdout.readline())
                         assert standing['running'] and standing['body_connected'] and standing['finite'],standing
                         assert standing['trunk_z']>.095,standing
-                        walked=subprocess.run(helper+['walk','--seconds','1'],capture_output=True,text=True,check=True,timeout=10)
+                        walked=subprocess.run(helper+['walk','--seconds','3'],capture_output=True,text=True,check=True,timeout=10)
                         server.stdin.write('state\n');server.stdin.flush()
                         walking=json.loads(server.stdout.readline());assert walking['finite'] and walking['running']
+                        delta_x=walking['root_x']-standing['root_x']
+                        assert delta_x>.05,('Default walk must visibly advance, not merely accept RPC',delta_x)
+                        assert walking['trunk_z']>.095,walking
                         report['complete_robotd']={'binary_sha256':hashlib.sha256(robotd.read_bytes()).hexdigest(),
                             'enable':json.loads(enabled.stdout),'standing_trunk_z':standing['trunk_z'],
-                            'walk_command':walked.stdout.strip(),'walk_delta_x':walking['root_x']-standing['root_x'],
+                            'walk_command':walked.stdout.strip(),'walk_delta_x':delta_x,'walk_duration_s':3,'minimum_forward_displacement_m':.05,
                             'finite':walking['finite']}
                     except Exception:
                         log.flush();log.seek(0);print(log.read()[-6000:],file=sys.stderr);raise

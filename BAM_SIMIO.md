@@ -49,9 +49,11 @@ python3 scripts/android_robotd.py run
 ```bash
 cd /Users/navinfo/AndroidStudioProjects/deepLearning/microduck/android-sim
 python3 scripts/android_robotd.py enable
-python3 scripts/android_robotd.py walk --vx 0.15 --seconds 3
+python3 scripts/android_robotd.py walk --vx 0.3 --seconds 3
 python3 scripts/android_robotd.py disable
 ```
+
+`walk`默认vx=0.30m/s，与手机和网页前进按钮一致；因此也可直接运行 `python3 scripts/android_robotd.py walk --seconds 3`。这是速度指令，不保证实测速度等于0.30m/s。旧闭环记录已发现vx=0.15几乎不前进（`README.md:254`、`verification/host-policy-rehearsal.json:1`）；M9用户也确认Rust连接正常、0.30才能明显行走。显式传入0.15仍原样发送，脚本不会暗中放大速度。
 
 `enable`发出上游`robot.enable`请求，坐姿启动交由sitstand策略起身；`walk`以10Hz持续发`robot.move`，结束时发送零速度。按Ctrl-C退出第一个终端中的robotd；Android观察到断线后暂停。
 
@@ -117,9 +119,9 @@ Socket读超时500ms、每行总期限1s、行上限4096字节；提交worker等
 
 - [m9-checks.json](verification/m9-checks.json)：JDK17/release11、真实Android34/ORT/WebRTC AAR Java编译，ARM64 JNI语法、原有XML/相机/HTTP回归、SimIo校验/单客户端/超时取消/断线、网页监看与控制隔离。
 - [m9-bam-checks.json](verification/m9-bam-checks.json)：1000组公式误差约1.1e-16；与上游Python BAM逐步比较600步，最大误差约1.3e-13；BAM→XML恢复、复位和torque-off下落；真实ONNX站立5秒、步行5秒、翻滚2秒数值正常。翻滚投影累计约355.9°、最终倾角约1.18°，只支持这次HOME起始的主机结果。
-- [m9-simio-checks.json](verification/m9-simio-checks.json)：直接编译上游sim.rs/io.rs/imu.rs，连接生产Java服务及真实JNI/MuJoCo/BAM；再运行本机已有完整robotd，启用后躯干约0.115m、步行命令正常应答，退出后暂停且力矩关闭。完整daemon按实际二进制SHA记录，不能用源码HEAD代替该二进制的构建来源。
+- [m9-simio-checks.json](verification/m9-simio-checks.json)：直接编译上游sim.rs/io.rs/imu.rs，连接生产Java服务及真实JNI/MuJoCo/BAM；再运行本机已有完整robotd，启用后躯干约0.115m、默认前进指令运行3秒并检查前向位移超过0.05m，退出后暂停且力矩关闭。完整daemon按实际二进制SHA记录，不能用源码HEAD代替该二进制的构建来源。
 
-这些是主机检查；M9的Android EGL/策略动作观感、USB联调及速度跟踪仍待用户Studio运行确认。性能、温升和30秒专项继续延期。PDF未更新。
+以上自动化结果是主机检查。用户已确认M9 Rust连接测试通过，vx=0.30可见行走，反馈见 [user-M9-simio-feedback.json](verification/user-M9-simio-feedback.json)；低速跟踪、实测速度和动作质量尚未完成验证。性能、温升和30秒专项继续延期。PDF未更新。
 
 主机新增检查命令（在android-sim；JDK路径和org.json JAR按本机实际位置替换）：
 

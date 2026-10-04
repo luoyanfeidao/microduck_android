@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-04",
+  "source": "user feedback",
+  "statement": "rust连接测试通过，但是python3 scripts/android_robotd.py walk --vx 0.15 --seconds 3中的0.15要改成0.3才能看到机器人走，之前有解决过这个问题",
+  "rust_connection": "user-confirmed passed",
+  "visible_walking_command_vx": 0.3,
+  "vx_0_15": "no obvious walking per user",
+  "boundary": "No new device logs or measured velocity; does not establish low-speed tracking."
+}

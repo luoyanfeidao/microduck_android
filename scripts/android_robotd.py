@@ -26,7 +26,7 @@ def main():
     commands=p.add_subparsers(dest='command',required=True)
     run=commands.add_parser('run');run.add_argument('--body',default='127.0.0.1:17801')
     commands.add_parser('enable');commands.add_parser('disable')
-    walk=commands.add_parser('walk');walk.add_argument('--vx',type=float,default=.15)
+    walk=commands.add_parser('walk');walk.add_argument('--vx',type=float,default=.30,help='Forward command in m/s (default: 0.30, verified walking baseline)')
     walk.add_argument('--vy',type=float,default=0.);walk.add_argument('--yaw',type=float,default=0.)
     walk.add_argument('--seconds',type=float,default=3.)
     args=p.parse_args();runtime=args.runtime_dir.resolve();endpoint=runtime/'robotd.sock'
