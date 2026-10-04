@@ -47,13 +47,18 @@ M7沿用了Rust原型的1秒窗口 `Pollen/microduck/robotd-params/src/lib.rs:13
 | 2秒，HOME | 356° | 2.76° |
 | 2秒，站稳 | 360° | 1.80° |
 
-2秒四组pitch积分约356–365°，解包后的姿态投影约357–365°，交接时倾角1.8–5.0°；再接站立3秒倾角约0.24–0.26°，均数值有限。这支持“1秒过早交接”的原因与2秒候选修复。角速度积分、姿态投影和头部接触仍不等于严格的头顶支撑滚翻成功检测；任意步行/跌倒起始姿态及M7.1真机效果待确认。
+2秒四组pitch积分约356–365°，解包后的姿态投影约357–365°，交接时倾角1.8–5.0°；再接站立3秒倾角约0.24–0.26°，均数值有限。这支持“1秒过早交接”的原因与2秒修复。角速度积分、姿态投影和头部接触仍不等于严格的头顶支撑滚翻成功检测；任意步行/跌倒起始姿态未验收。
+
+2026-10-04用户确认M7.1“整圈翻滚了”，随后纠正动作问题为“不是起身慢，是抬头慢”，并反馈整体动作僵硬。只读ADB确认安装版为0.7.1-m71；最新进程翻滚的8份采样及前后状态见 `verification/device-M71-roll-log-samples.json:1`，汇总与边界见 `verification/device-M71-roll-acceptance.json:1`。约1.42秒采样已转到360°投影、机身倾角1.99°、双脚接触，仍要到2秒才交接站立；采样推理0.81–1.12ms、控制加快照4.44–9.81ms、调度迟到计数0。250ms左右的报告间隔不能证明每个周期都无卡顿，也没有头部关节目标或力矩，不能由机身直立推断已抬头。
+
+`scripts/head_recovery_rehearsal.py:1`用实际ONNX/XML伺服、站稳1秒初始姿态，比较2秒/1.5秒交接及恢复头部滤波0.5/1.0，结果 `verification/host-M71-head-recovery.json:1`。当前2秒基线在交接时neck_pitch约-1.45rad、head_pitch约1.35rad，恢复前0.2秒颈部先转回、头部仍保持折叠，相机仰角由约-18°降至约-83°，然后恢复；四个头关节回到最终姿态0.1rad以内约需0.50秒，仅关闭恢复头部滤波约需0.46秒。此为主机可复现的头颈协同问题候选，不是手机动作重放；不能归因于滤波或宣称手机已修好。1.5秒案例只用于诊断，不修改已实测通过的2秒窗口。下一步应比较交接期间头颈目标和实际跟踪，再选择交接/执行器方案；暂不直接加大增益、覆盖策略头部目标或缩短窗口。
 
 在外层工作区手动重放（需要RL的Python环境）：
 
 ```bash
 Pollen/microduck_rl/.venv/bin/python android-sim/scripts/roulade_rehearsal.py
 Pollen/microduck_rl/.venv/bin/python android-sim/scripts/roulade_rehearsal.py --sweep
+Pollen/microduck_rl/.venv/bin/python android-sim/scripts/head_recovery_rehearsal.py
 Pollen/microduck_rl/.venv/bin/python android-sim/verification/camera_visibility_check.py
 ```
 

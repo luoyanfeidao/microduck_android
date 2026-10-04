@@ -170,5 +170,5 @@
   },
   "baseline_device_report": "device-M3-realtime-render-test.json",
   "previous_device_report": "device-M54-video-on-realtime-test.json (external viewer capture, not head camera)",
-  "device_status": "M7 camera fix user-confirmed; M7 roll user-confirmed incomplete. Pending user Android Studio M7.1 build and 2-second forward-roll validation; performance/lifecycle checks deferred by user"
+  "device_status": "M7 camera user-confirmed; M7.1 full roll user-confirmed. Read-only ADB confirms version 0.7.1-m71 and sampled roll states; user reports slow head lift and stiff motion. See device-M71-roll-acceptance.json and host-M71-head-recovery.json. Motion quality unresolved; performance/lifecycle checks deferred by user"
 }

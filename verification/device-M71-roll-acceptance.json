@@ -1,0 +1,193 @@
+{
+  "captured_at": "2026-10-04T11:15:48.508957+08:00",
+  "scope": "User observation plus read-only ADB package/state/app-tag logs; no new benchmark or automated controls",
+  "app_version": {
+    "versionCode": 14,
+    "versionName": "0.7.1-m71"
+  },
+  "user_feedback": "整圈翻滚了，不是很灵活，实机已连接你可以看看日志",
+  "full_roll_visual_result": "user-confirmed",
+  "motion_quality": "user-corrected: slow head lift after roll and stiff overall motion; not slow standing up",
+  "roll_duration_s": 2.0,
+  "log_json_samples_current_process": 635,
+  "samples_file": "device-M71-roll-log-samples.json",
+  "samples_sha256": "3fb7c2a84268f171ab713dec0ebac95339907fec2a01c19bbebb47f4246a568a",
+  "episodes": [
+    {
+      "log_pid": "11880",
+      "start_sim_time_inferred": 3.54,
+      "samples": 8,
+      "filter": "runtime defaults: head .5 / legs .7",
+      "duration_s": 2,
+      "inference_sample_ms_min_median_max": [
+        0.813385,
+        1.0099225,
+        1.116302
+      ],
+      "control_visual_sample_ms_min_max": [
+        4.440781,
+        9.811615
+      ],
+      "all_finite": true,
+      "late_ticks_at_first_last": [
+        0,
+        0
+      ],
+      "no_ground_contact_samples": 1,
+      "root_z_sample_min_max": [
+        0.0607263077062,
+        0.185965805003
+      ],
+      "render_fps_sample_min_max": [
+        29.796237210192373,
+        30.449560762777725
+      ],
+      "before": {
+        "log_prefix": "10-04 11:11:00.798 11880 11907 I ",
+        "sim_time": 3.4,
+        "policy": "alpha_stand"
+      },
+      "first_after": {
+        "log_prefix": "10-04 11:11:03.105 11880 11907 I ",
+        "sim_time": 5.74,
+        "policy": "alpha_stand",
+        "roulade_completed": 1,
+        "tilt_degrees": 1.226390213666354
+      },
+      "trajectory": [
+        {
+          "log_time": "11:11:01.056",
+          "elapsed_sim_s": 0.12,
+          "remaining_ticks": 94,
+          "projected_pitch_unwrapped_degrees": 37.885320053734056,
+          "tilt_degrees": 37.88551232184415,
+          "root_z": 0.109574392221,
+          "contacts": 2,
+          "left_contacts": 1,
+          "right_contacts": 1,
+          "control_with_visual_ms": 9.811615,
+          "inference_ms": 0.99849,
+          "late_ticks": 0
+        },
+        {
+          "log_time": "11:11:01.312",
+          "elapsed_sim_s": 0.38,
+          "remaining_ticks": 81,
+          "projected_pitch_unwrapped_degrees": 110.70381262726298,
+          "tilt_degrees": 110.64428855204685,
+          "root_z": 0.1036138712,
+          "contacts": 1,
+          "left_contacts": 0,
+          "right_contacts": 0,
+          "control_with_visual_ms": 5.277656,
+          "inference_ms": 1.116302,
+          "late_ticks": 0
+        },
+        {
+          "log_time": "11:11:01.567",
+          "elapsed_sim_s": 0.64,
+          "remaining_ticks": 68,
+          "projected_pitch_unwrapped_degrees": 165.65719850092495,
+          "tilt_degrees": 164.73995710195157,
+          "root_z": 0.185965805003,
+          "contacts": 1,
+          "left_contacts": 0,
+          "right_contacts": 0,
+          "control_with_visual_ms": 4.614219,
+          "inference_ms": 1.021355,
+          "late_ticks": 0
+        },
+        {
+          "log_time": "11:11:01.825",
+          "elapsed_sim_s": 0.9,
+          "remaining_ticks": 55,
+          "projected_pitch_unwrapped_degrees": 202.0962820864391,
+          "tilt_degrees": 157.4056253794478,
+          "root_z": 0.11744815687,
+          "contacts": 1,
+          "left_contacts": 0,
+          "right_contacts": 0,
+          "control_with_visual_ms": 4.440781,
+          "inference_ms": 1.036562,
+          "late_ticks": 0
+        },
+        {
+          "log_time": "11:11:02.080",
+          "elapsed_sim_s": 1.16,
+          "remaining_ticks": 42,
+          "projected_pitch_unwrapped_degrees": 303.0104289362017,
+          "tilt_degrees": 56.997611812998294,
+          "root_z": 0.0607263077062,
+          "contacts": 0,
+          "left_contacts": 0,
+          "right_contacts": 0,
+          "control_with_visual_ms": 4.49776,
+          "inference_ms": 0.953645,
+          "late_ticks": 0
+        },
+        {
+          "log_time": "11:11:02.337",
+          "elapsed_sim_s": 1.42,
+          "remaining_ticks": 29,
+          "projected_pitch_unwrapped_degrees": 360.04067362676176,
+          "tilt_degrees": 1.9879714395468637,
+          "root_z": 0.109879738775,
+          "contacts": 4,
+          "left_contacts": 1,
+          "right_contacts": 1,
+          "control_with_visual_ms": 7.827656,
+          "inference_ms": 1.021406,
+          "late_ticks": 0
+        },
+        {
+          "log_time": "11:11:02.592",
+          "elapsed_sim_s": 1.68,
+          "remaining_ticks": 16,
+          "projected_pitch_unwrapped_degrees": 363.2972810045977,
+          "tilt_degrees": 3.4685504507065836,
+          "root_z": 0.117200239166,
+          "contacts": 4,
+          "left_contacts": 1,
+          "right_contacts": 1,
+          "control_with_visual_ms": 8.676198,
+          "inference_ms": 0.813385,
+          "late_ticks": 0
+        },
+        {
+          "log_time": "11:11:02.847",
+          "elapsed_sim_s": 1.94,
+          "remaining_ticks": 3,
+          "projected_pitch_unwrapped_degrees": 357.3490405779303,
+          "tilt_degrees": 2.682174780702447,
+          "root_z": 0.115172595663,
+          "contacts": 8,
+          "left_contacts": 3,
+          "right_contacts": 3,
+          "control_with_visual_ms": 9.220885,
+          "inference_ms": 0.882604,
+          "late_ticks": 0
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "App reports sample about every 250 ms; timings are sampled, not per-tick percentiles.",
+    "Pose projection is not a contact-gated roll success detector; completion is based on user observation.",
+    "A zero-contact sample proves a captured state was airborne, not its duration or exact cause.",
+    "No raw/filtered joint targets, joint velocities or torque traces are in these reports.",
+    "Installed package version was read, but no installed APK source hash was obtained.",
+    "Performance, thermal and lifecycle acceptance remain deferred."
+  ],
+  "user_feedback_followups": [
+    "翻完后起身慢；整体动作僵硬",
+    "不是起身慢，是抬头慢"
+  ],
+  "host_diagnostic": {
+    "file": "host-M71-head-recovery.json",
+    "sha256": "7a3b8443c0998d2427ed07db5ca9f7ef43539aed698fee2e39cb28f603a7b797",
+    "script": "scripts/head_recovery_rehearsal.py",
+    "findings": "Host baseline reproduces neck/head recovery mismatch and transient downward camera orientation after handoff; recovery-only unfiltered head improves settling by 40 ms but retains camera dip",
+    "runtime_changed": false,
+    "limitation": "Host starting state is not an exact replay of the phone episode; no head joints were logged on phone"
+  }
+}
